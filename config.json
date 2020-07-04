@@ -2,10 +2,10 @@
     "n_gpu": 1,
     "model": {},
     "data": {
-        "data_dir": "/home/hien/Documents/datasets",
+        "data_dir": "datasets",
         "download": true,
         "extract": true,
-        "batch_size": 2,
+        "batch_size": 32,
         "num_workers": 4,
         "pin_memory": true
     },

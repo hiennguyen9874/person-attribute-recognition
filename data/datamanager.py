@@ -47,7 +47,7 @@ class DataManger(object):
             )
 
             self.val_loader = DataLoader(
-                dataset=training_set,
+                dataset=val_set,
                 batch_size=config['batch_size'],
                 shuffle=False,
                 num_workers=config['num_workers'],

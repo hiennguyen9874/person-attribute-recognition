@@ -135,9 +135,7 @@ class Trainer(BaseTrainer):
                 preds[preds >= 0.5] = 0
                 # update loss and accuracy in MetricTracker
                 self.train_metrics.update('loss', loss.item())
-                temp1 = torch.eq(preds, labels.data)
-                temp2 = torch.sum(temp1, dim=0).cpu().numpy()
-                self.train_metrics.update('accuracy', torch.sum(preds == labels.data).double().item() / data.size(0))
+                self.train_metrics.update('accuracy', torch.mean(torch.eq(preds, labels.data).double()).data.cpu().item())
 
                 # update process bar
                 epoch_pbar.set_postfix({
@@ -154,21 +152,23 @@ class Trainer(BaseTrainer):
         with torch.no_grad():
             with tqdm(total=len(self.datamanager.get_dataloader('val'))) as epoch_pbar:
                 epoch_pbar.set_description(f'Epoch {epoch}')
-                for batch_idx, (data, labels, _) in enumerate(self.datamanager.get_dataloader('val')):
+                for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('val')):
                     # push data to device
                     data, labels = data.to(self.device), labels.to(self.device)
                     
                     # forward batch
-                    score, feat = self.model(data)
+                    out = self.model(data)
 
                     # calculate loss and accuracy
-                    loss = self.criterion(score, feat, labels) + self.center_loss(feat, labels) * self.config['losses']['beta']
-                    _, preds = torch.max(score.data, dim=1)
+                    loss =  self.criterion(out, labels)
+
+                    preds = torch.sigmoid(out)
+                    preds[preds < 0.5] = 0
+                    preds[preds >= 0.5] = 0
 
                     # update loss and accuracy in MetricTracker
                     self.valid_metrics.update('loss', loss.item())
-                    self.valid_metrics.update('accuracy', torch.sum(
-                        preds == labels.data).double().item() / data.size(0))
+                    self.valid_metrics.update('accuracy', torch.mean(torch.eq(preds, labels.data).double()).data.cpu().item())
 
                     # update process bar
                     epoch_pbar.set_postfix({
