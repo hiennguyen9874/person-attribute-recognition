@@ -41,9 +41,10 @@ class DataManger(object):
             self.train_loader = DataLoader(
                 dataset=training_set,
                 batch_size=config['batch_size'],
-                shuffle=False,
+                shuffle=config['shuffle'],
                 num_workers=config['num_workers'],
-                pin_memory=config['pin_memory']
+                pin_memory=config['pin_memory'],
+                drop_last=config['drop_last']
             )
 
             self.val_loader = DataLoader(
@@ -51,7 +52,8 @@ class DataManger(object):
                 batch_size=config['batch_size'],
                 shuffle=False,
                 num_workers=config['num_workers'],
-                pin_memory=config['pin_memory']
+                pin_memory=config['pin_memory'],
+                drop_last=config['drop_last']
             )
         elif phase == 'test':
             self.test_loader = DataLoader(test_set['query'], batch_size=32, shuffle=False, drop_last=False)

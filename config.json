@@ -6,8 +6,10 @@
         "download": true,
         "extract": true,
         "batch_size": 32,
+        "shuffle": true,
         "num_workers": 4,
-        "pin_memory": true
+        "pin_memory": true,
+        "drop_last": true
     },
     "optimizer": {
         "lr": 0.065,

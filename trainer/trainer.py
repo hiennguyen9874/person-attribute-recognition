@@ -183,9 +183,8 @@ class Trainer(BaseTrainer):
         state = {
             'epoch': epoch,
             'state_dict': self.model.state_dict(),
-            'center_loss': self.center_loss.state_dict(),
+            'loss': self.criterion.state_dict(),
             'optimizer': self.optimizer.state_dict(),
-            'optimizer_centerloss': self.optimizer_centerloss.state_dict(),
             'lr_scheduler': self.lr_scheduler.state_dict(),
             'best_accuracy': self.best_accuracy
         }
@@ -206,9 +205,8 @@ class Trainer(BaseTrainer):
         checkpoint = torch.load(resume_path, map_location=self.map_location)
         self.start_epoch = checkpoint['epoch'] + 1
         self.model.load_state_dict(checkpoint['state_dict'])
-        self.center_loss.load_state_dict(checkpoint['center_loss'])
+        self.criterion.load_state_dict(checkpoint['loss'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])
-        self.optimizer_centerloss.load_state_dict(checkpoint['optimizer_centerloss'])
         self.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
         self.best_accuracy = checkpoint['best_accuracy']
         self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))
