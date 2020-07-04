@@ -130,12 +130,19 @@ class Trainer(BaseTrainer):
                 # optimize
                 self.optimizer.step()
                 
-                preds = torch.sigmoid(out)
+                # caculate instabce-based accuracy
+                preds = torch.sigmoid(out).data.cpu().numpy()
                 preds[preds < 0.5] = 0
-                preds[preds >= 0.5] = 0
+                preds[preds >= 0.5] = 1
+                labels = labels.data.cpu().numpy().astype(bool)
+                preds = preds.astype(bool)
+                intersect = (preds & labels).astype(float)
+                union = (preds | labels).astype(float)
+                accuracy = (intersect.sum(1) / union.sum(1)).mean()
+                
                 # update loss and accuracy in MetricTracker
                 self.train_metrics.update('loss', loss.item())
-                self.train_metrics.update('accuracy', torch.mean(torch.eq(preds, labels.data).double()).data.cpu().item())
+                self.train_metrics.update('accuracy', accuracy)
 
                 # update process bar
                 epoch_pbar.set_postfix({
@@ -162,13 +169,19 @@ class Trainer(BaseTrainer):
                     # calculate loss and accuracy
                     loss =  self.criterion(out, labels)
 
-                    preds = torch.sigmoid(out)
+                    # caculate accuracy
+                    preds = torch.sigmoid(out).data.cpu().numpy()
                     preds[preds < 0.5] = 0
-                    preds[preds >= 0.5] = 0
+                    preds[preds >= 0.5] = 1
+                    labels = labels.data.cpu().numpy().astype(bool)
+                    preds = preds.astype(bool)
+                    intersect = (preds & labels).astype(float)
+                    union = (preds | labels).astype(float)
+                    accuracy = (intersect.sum(1) / union.sum(1)).mean()
 
                     # update loss and accuracy in MetricTracker
                     self.valid_metrics.update('loss', loss.item())
-                    self.valid_metrics.update('accuracy', torch.mean(torch.eq(preds, labels.data).double()).data.cpu().item())
+                    self.valid_metrics.update('accuracy', accuracy)
 
                     # update process bar
                     epoch_pbar.set_postfix({
