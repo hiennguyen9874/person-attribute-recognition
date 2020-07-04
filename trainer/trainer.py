@@ -131,18 +131,19 @@ class Trainer(BaseTrainer):
                 self.optimizer.step()
                 
                 # caculate instabce-based accuracy
-                preds = torch.sigmoid(out).data.cpu().numpy()
+                preds = torch.sigmoid(out)
                 preds[preds < 0.5] = 0
                 preds[preds >= 0.5] = 1
-                labels = labels.data.cpu().numpy().astype(bool)
-                preds = preds.astype(bool)
-                intersect = (preds & labels).astype(float)
-                union = (preds | labels).astype(float)
-                accuracy = (intersect.sum(1) / union.sum(1)).mean()
+                
+                labels = labels.type(torch.BoolTensor)
+                preds = preds.type(torch.BoolTensor)
+                intersect = (preds & labels).type(torch.FloatTensor)
+                union = (preds | labels).type(torch.FloatTensor)
+                accuracy = torch.mean((torch.sum(intersect, dim=1) / torch.sum(union, dim=1)))
                 
                 # update loss and accuracy in MetricTracker
                 self.train_metrics.update('loss', loss.item())
-                self.train_metrics.update('accuracy', accuracy)
+                self.train_metrics.update('accuracy', accuracy.item())
 
                 # update process bar
                 epoch_pbar.set_postfix({
@@ -169,19 +170,20 @@ class Trainer(BaseTrainer):
                     # calculate loss and accuracy
                     loss =  self.criterion(out, labels)
 
-                    # caculate accuracy
-                    preds = torch.sigmoid(out).data.cpu().numpy()
+                    # caculate instabce-based accuracy
+                    preds = torch.sigmoid(out)
                     preds[preds < 0.5] = 0
                     preds[preds >= 0.5] = 1
-                    labels = labels.data.cpu().numpy().astype(bool)
-                    preds = preds.astype(bool)
-                    intersect = (preds & labels).astype(float)
-                    union = (preds | labels).astype(float)
-                    accuracy = (intersect.sum(1) / union.sum(1)).mean()
+                    
+                    labels = labels.type(torch.BoolTensor)
+                    preds = preds.type(torch.BoolTensor)
+                    intersect = (preds & labels).type(torch.FloatTensor)
+                    union = (preds | labels).type(torch.FloatTensor)
+                    accuracy = torch.mean((torch.sum(intersect, dim=1) / torch.sum(union, dim=1)))
 
                     # update loss and accuracy in MetricTracker
                     self.valid_metrics.update('loss', loss.item())
-                    self.valid_metrics.update('accuracy', accuracy)
+                    self.valid_metrics.update('accuracy', accuracy.item())
 
                     # update process bar
                     epoch_pbar.set_postfix({
