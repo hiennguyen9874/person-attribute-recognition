@@ -2,7 +2,7 @@
     "n_gpu": 1,
     "model": {},
     "data": {
-        "data_dir": "datasets",
+        "data_dir": "/home/hien/Documents/datasets",
         "download": true,
         "extract": true,
         "batch_size": 32,
@@ -12,7 +12,7 @@
         "drop_last": true
     },
     "optimizer": {
-        "lr": 0.065,
+        "lr": 0.005,
         "momentum": 0.9,
         "weight_decay": 0.0005
     },

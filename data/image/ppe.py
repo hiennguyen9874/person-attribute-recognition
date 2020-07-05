@@ -39,9 +39,9 @@ class PPE(object):
         train_idx = np.delete(idx_full, np.arange(0, len_valid))
         self.train = [data[idx] for idx in train_idx.tolist()]
         self.val = [data[idx] for idx in valid_idx.tolist()]
-        self.weight_train = np.asarray(self.train[0][1])
-        for _, _attribute_label in self.train[1:]:
-            self.weight_train += np.asarray(_attribute_label)
+        self.weight_train = np.zeros((len(self.attr_name)))
+        for _, _attribute_label in self.train:
+            self.weight_train += _attribute_label
         self.weight_train = np.divide(self.weight_train, int(len(self.train)))
         pass
 
@@ -61,6 +61,8 @@ class PPE(object):
                     dict_attribute[temp[j]] = list(map(float, temp[j+1:j+5]))
                     j+=5
                 all_data.append((file_path, list(dict_attribute.keys())))
+        all_attribute.add('no_hat')
+        all_attribute.add('no_vest')
         data = []
         for _sampler in all_data:
             attribute_label = dict()
@@ -120,6 +122,6 @@ class PPE(object):
             return True
         return False
 
-# if __name__ == "__main__":
-#     datasource = PPE(root_dir='/home/hien/Documents/datasets', download=True, extract=True)
-#     pass
+if __name__ == "__main__":
+    datasource = PPE(root_dir='/home/hien/Documents/datasets', download=True, extract=True)
+    pass
