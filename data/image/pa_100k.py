@@ -19,6 +19,7 @@ class PA_100K(object):
     dataset_dir = 'pa_100k'
     dataset_id = '13UjvKJQlkNXAmvsPG6h5dwOlhJQA_TcT'
     file_name = 'PA-100K.zip'
+    list_phases = ['train', 'val', 'test']
     google_drive_api = 'AIzaSyAVfS-7Dy34a3WjWgR509o-u_3Of59zizo'
     group_order = [7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 9, 10, 11, 12, 1, 2, 3, 0, 4, 5, 6]
     
@@ -59,23 +60,26 @@ class PA_100K(object):
         self.test = list(zip(image_name['test'], label['test']))
         self.weight_train = np.mean(label['train'], axis=0).astype(np.float32)
 
-    def get_data(self, mode='train'):
-        if mode == 'train':
+    def get_data(self, phase='train'):
+        if phase == 'train':
             return self.train
-        elif mode == 'val':
+        elif phase == 'val':
             return self.val
-        elif mode == 'test':
+        elif phase == 'test':
             return self.test
         else:
-            raise ValueError('mode error')
+            raise ValueError('phase error, phase in [train, val, test]')
         
     def get_attribute(self, mode = 'train'):
         return self.attr_name
     
-    def get_weight(self, mode = 'train'):
-        if mode == 'train':
+    def get_weight(self, phase = 'train'):
+        if phase == 'train':
             return self.weight_train
-        raise ValueError('mode error, mode in [train, val, train_val, test]')
+        raise ValueError('phase error, phase in [train]')
+
+    def get_list_phase(self):
+        return self.list_phases
 
     def _download(self):
         os.makedirs(os.path.join(self.root_dir,

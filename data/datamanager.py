@@ -16,12 +16,13 @@ from .image import PA_100K, Penta, PPE
 from .transforms import RandomErasing
 
 class DataManger(object):
-    __datasets = {'pa100k': PA_100K, 'ppe': PPE}
-    def __init__(self, config, phase='train', data_name='pa100k'):
+    __datasets = {'pa_100k': PA_100K, 'penta': Penta, 'ppe': PPE}
+
+    def __init__(self, config, phase='train'):
         super().__init__()
 
-        assert data_name in list(self.__datasets.keys())
-        self.data_name = data_name
+        assert config['name'] in list(self.__datasets.keys())
+        self.data_name = config['name']
 
         self.datasource = self.__datasets[self.data_name](
             root_dir=config['data_dir'],
@@ -37,19 +38,23 @@ class DataManger(object):
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
-
-        transform['test'] = transforms.Compose([
+        
+        transform['val'] = transforms.Compose([
             transforms.Resize(size=(256, 128)),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
 
+        if 'test' in self.datasource.get_list_phase():
+            transform['test'] = transforms.Compose([
+                transforms.Resize(size=(256, 128)),
+                transforms.ToTensor(),
+                transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            ])
+
         dataset = dict()
-        dataset['train'] = ImageDataset(self.datasource.get_data('train'), transform=transform['train'])
-        dataset['val'] = ImageDataset(self.datasource.get_data('val'), transform=transform['test'])
-        
-        if data_name in ['pa100k']:
-            dataset['test'] = ImageDataset(self.datasource.get_data('test'), transform=transform['test'])
+        for _phase in self.datasource.get_list_phase():
+            dataset[_phase] = ImageDataset(self.datasource.get_data(_phase), transform=transform[_phase])
 
         if phase == 'train':
             self.train_loader = DataLoader(
@@ -70,7 +75,7 @@ class DataManger(object):
                 drop_last=config['drop_last']
             )
         elif phase == 'test':
-            if data_name in ['pa100k']:
+            if 'test' in self.datasource.get_list_phase():
                 self.test_loader = DataLoader(dataset['test'], batch_size=32, shuffle=False, drop_last=False)
         else:
             raise ValueError("phase == train or phase == test")

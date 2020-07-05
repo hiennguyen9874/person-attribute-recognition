@@ -18,6 +18,7 @@ class Penta(object):
     dataset_dir = 'penta'
     dataset_id = '13UvQ4N-sY67htGnK6qheb027XuMx9Jbr'
     file_name = 'PETA-New.zip'
+    list_phases = ['train', 'val', 'test']
     google_drive_api = 'AIzaSyAVfS-7Dy34a3WjWgR509o-u_3Of59zizo'
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]
   
@@ -54,35 +55,37 @@ class Penta(object):
             _test = peta_data['peta'][0][0][3][idx][0][0][0][2][:, 0] - 1
             _trainval = np.concatenate((_train, _val), axis=0)
 
-            self.train.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx].tolist()) for idx in _train])
-            self.val.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx].tolist()) for idx in _val])
-            self.trainval.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx].tolist()) for idx in _trainval])
-            self.test.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx].tolist()) for idx in _test])
+            self.train.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _train])
+            self.val.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _val])
+            self.trainval.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _trainval])
+            self.test.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _test])
 
             self.weight_train.append(np.mean(label[_train], axis=0))
             self.weight_trainval.append(np.mean(label[_trainval], axis=0))
-        pass
 
-    def get_data(self, mode='train'):
-        if mode == 'train':
-            return self.train
-        elif mode == 'val':
-            return self.val
-        elif mode == 'train_val':
-            return self.trainval
-        elif mode == 'test':
-            return self.test
-        raise ValueError('mode error, mode in [train, val, train_val, test]')
+    def get_data(self, phase='train'):
+        if phase == 'train':
+            return self.train[0]
+        elif phase == 'val':
+            return self.val[0]
+        elif phase == 'train_val':
+            return self.trainval[0]
+        elif phase == 'test':
+            return self.test[0]
+        raise ValueError('phase error, phase in [train, val, train_val, test]')
 
-    def get_attribute(self, mode = 'train'):
+    def get_attribute(self, phase = 'train'):
         return self.attr_name
     
-    def get_weight(self, mode = 'train'):
-        if mode == 'train':
-            return self.weight_train
-        elif mode == 'train_val':
-            return self.weight_trainval
-        raise ValueError('mode error, mode in [train, val, train_val, test]')
+    def get_weight(self, phase = 'train'):
+        if phase == 'train':
+            return self.weight_train[0]
+        elif phase == 'train_val':
+            return self.weight_trainval[0]
+        raise ValueError('phase error, phase in [train, val]')
+    
+    def get_list_phase(self):
+        return self.list_phases
 
     def _download(self):
         os.makedirs(os.path.join(self.root_dir, self.dataset_dir, 'raw'), exist_ok=True)
@@ -114,4 +117,4 @@ class Penta(object):
 
 if __name__ == "__main__":
     datasource = Penta(root_dir='/home/hien/Documents/datasets')
-    path = datasource.get_data()[0][0]
+    path = datasource.get_data()[0]

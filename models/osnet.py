@@ -270,4 +270,5 @@ class OSNet(nn.Module):
 if __name__ == "__main__":
     model = OSNet(num_classes=26)
     summary(model, input_size=(3, 256, 128), batch_size=32, device='cpu')
+    params = model.state_dict()
     pass

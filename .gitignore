@@ -1,6 +1,5 @@
 datasets/
 dataset/
-.vscode/
 .venv/
 logs/
 __pycache__/

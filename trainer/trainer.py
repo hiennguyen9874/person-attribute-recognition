@@ -20,7 +20,7 @@ from utils import MetricTracker
 class Trainer(BaseTrainer):
     def __init__(self, config):
         super(Trainer, self).__init__(config)
-        self.datamanager = DataManger(config['data'], data_name='pa100k')
+        self.datamanager = DataManger(config['data'])
 
         # model
         self.model = OSNet(num_classes=len(self.datamanager.datasource.get_attribute()))

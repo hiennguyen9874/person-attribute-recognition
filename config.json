@@ -3,6 +3,7 @@
     "model": {},
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
+        "name": "penta",
         "download": true,
         "extract": true,
         "batch_size": 32,

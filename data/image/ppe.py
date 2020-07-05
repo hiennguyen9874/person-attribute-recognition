@@ -7,6 +7,7 @@ import zipfile
 import tarfile
 import requests
 import os
+
 import sys
 sys.path.append('.')
 
@@ -16,6 +17,7 @@ from collections import defaultdict
 class PPE(object):
     dataset_dir = 'ppe'
     file_name = 'ppe.zip'
+    list_phases = ['train', 'val']
     
     def __init__(self, root_dir='datasets', download=True, extract=True, validation_split=0.1):
         self.root_dir = root_dir
@@ -43,7 +45,6 @@ class PPE(object):
         for _, _attribute_label in self.train:
             self.weight_train += _attribute_label
         self.weight_train = np.divide(self.weight_train, int(len(self.train)))
-        pass
 
     def _processes_dir(self, data_dir):
         all_attribute = set()
@@ -74,21 +75,24 @@ class PPE(object):
             data.append((_sampler[0], np.array(list(attribute_label.values())).astype(np.float32)))
         return data, all_attribute
 
-    def get_data(self, mode='train'):
-        if mode == 'train':
+    def get_data(self, phase='train'):
+        if phase == 'train':
             return self.train
-        elif mode == 'val':
+        elif phase == 'val':
             return self.val
         else:
-            raise ValueError('mode error')
+            raise ValueError('phase error, phase in [train, val]')
         
     def get_attribute(self):
         return self.attr_name
     
-    def get_weight(self, mode = 'train'):
-        if mode == 'train':
+    def get_weight(self, phase = 'train'):
+        if phase == 'train':
             return self.weight_train
-        raise ValueError('mode error, mode in [train]')
+        raise ValueError('phase error, phase in [train]')
+    
+    def get_list_phase(self):
+        return self.list_phases
 
     def _download(self):
         os.makedirs(os.path.join(self.root_dir, self.dataset_dir, 'raw'), exist_ok=True)
@@ -116,9 +120,9 @@ class PPE(object):
 
     def _exists(self, extract_dir):
         if os.path.exists(os.path.join(extract_dir, 'ppe', 'ppe')) \
-                and os.path.exists(os.path.join(extract_dir, 'ppe', 'ppe_200617')) \
-                and os.path.exists(os.path.join(extract_dir, 'ppe', 'ppe_test')) \
-                and os.path.exists(os.path.join(extract_dir, 'ppe', 'detection_ppe.txt')):
+            and os.path.exists(os.path.join(extract_dir, 'ppe', 'ppe_200617')) \
+            and os.path.exists(os.path.join(extract_dir, 'ppe', 'ppe_test')) \
+            and os.path.exists(os.path.join(extract_dir, 'ppe', 'detection_ppe.txt')):
             return True
         return False
 

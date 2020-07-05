@@ -11,7 +11,6 @@ from logger import setup_logging
 from utils import read_json, write_json
 from evaluators import top_k, mAP, compute_distance_matrix, cmc_rank, feature_extractor, plot_loss, show_image
 
-
 def main(config):
     setup_logging(os.getcwd())
     logger = logging.getLogger('test')
