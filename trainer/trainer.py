@@ -12,8 +12,6 @@ from torchsummary import summary
 
 from data import DataManger
 from base import BaseTrainer
-# from losses import Softmax_Triplet_loss, CenterLoss
-# from optimizers import WarmupMultiStepLR
 from models import OSNet
 from utils import MetricTracker
 

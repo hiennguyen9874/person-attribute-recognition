@@ -26,7 +26,8 @@ class BaseTrainer(object):
         setup_logging(self.logs_dir)
         self.logger = logging.getLogger('train')
 
-        self.logger.info('Tensorboard: tensorboard --logdir {}'.format(self.cfg_trainer['log_dir']))
+        self.logger.info('Run id: %s' % (self.run_id))
+        self.logger.info('Name dataset: %s' % (config['data']['name']))
 
         self.use_gpu = config['n_gpu'] > 0 and torch.cuda.is_available()
         if self.use_gpu:
