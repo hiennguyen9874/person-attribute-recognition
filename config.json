@@ -2,7 +2,7 @@
     "n_gpu": 1,
     "model": {},
     "data": {
-        "data_dir": "/home/hien/Documents/datasets",
+        "data_dir": "datasets",
         "download": true,
         "extract": true,
         "batch_size": 32,
@@ -26,16 +26,16 @@
         "gamma": 0.1
     },
     "trainer": {
-        "epochs": 120,
+        "epochs": 80,
         "checkpoint_dir": "saved/checkpoints",
         "log_dir": "saved/logs",
         "log_dir_saved": "saved/logs1"
     },
     "trainer_colab": {
-        "epochs": 120,
-        "checkpoint_dir": "/content/drive/Shared drives/REID/HIEN/Models/Bag_of_tricks/checkpoints",
+        "epochs": 80,
+        "checkpoint_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints",
         "log_dir": "saved/logs",
-        "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/Bag_of_tricks/logs"
+        "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs"
     },
     "testing": {
         "ouput_dir": "output"
