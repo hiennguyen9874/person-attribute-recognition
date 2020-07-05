@@ -1,19 +1,14 @@
 
 import numpy as np
 import scipy.io
-import glob
-import re
 import zipfile
 import tarfile
-import requests
 import os
 import sys
 sys.path.append('.')
 
-from tqdm import tqdm, tnrange
-from collections import defaultdict
-from utils import download_file_from_google_drive, download_with_url
-
+from tqdm import tqdm
+from utils import download_with_url
 
 class PA_100K(object):
     dataset_dir = 'pa_100k'

@@ -2,7 +2,6 @@ import argparse
 import os
 
 from trainer import Trainer
-from logger import setup_logging
 from utils import read_json, write_json
 
 def main(config):

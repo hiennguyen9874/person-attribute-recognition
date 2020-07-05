@@ -1,18 +1,12 @@
-
-import numpy as np
-import scipy.io
-import glob
-import re
 import zipfile
 import tarfile
-import requests
 import os
+import numpy as np
 
 import sys
 sys.path.append('.')
 
-from tqdm import tqdm, tnrange
-from collections import defaultdict
+from tqdm import tqdm
 
 class PPE(object):
     dataset_dir = 'ppe'
@@ -45,6 +39,7 @@ class PPE(object):
         for _, _attribute_label in self.train:
             self.weight_train += _attribute_label
         self.weight_train = np.divide(self.weight_train, int(len(self.train)))
+
 
     def _processes_dir(self, data_dir):
         all_attribute = set()

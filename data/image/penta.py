@@ -2,15 +2,11 @@ import sys
 sys.path.append('.')
 
 import os
-import requests
 import tarfile
 import zipfile
-import re
-import glob
 import scipy.io
 import numpy as np
-from tqdm import tqdm, tnrange  
-from collections import defaultdict
+from tqdm import tqdm
 
 from utils import download_with_url
 

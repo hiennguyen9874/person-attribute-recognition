@@ -1,5 +1,4 @@
 import torch
-import torchvision
 import random
 import copy
 import numpy as np

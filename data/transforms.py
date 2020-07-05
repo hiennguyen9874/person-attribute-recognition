@@ -1,10 +1,10 @@
-from torchvision.transforms import *
 
-from PIL import Image
+import torch
 import random
 import math
 import numpy as np
-import torch
+
+from torchvision.transforms import *
 
 class RandomErasing(object):
     """ Randomly selects a rectangle region in an image and erases its pixels.

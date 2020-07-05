@@ -76,8 +76,7 @@ def aggregate(dpath, list_dname, output_path, save=True):
     for i in range(len(list_dname)):
         list_data_frame.append({})
         for key, (steps, wall_times, values) in extracts_per_subpath[i].items():
-            df = pd.DataFrame(list(zip(wall_times, steps, np.asarray(
-                values).reshape(-1))), columns=['Wall time', 'Step', 'Value'])
+            df = pd.DataFrame(list(zip(wall_times, steps, np.array(values).reshape(-1))), columns=['Wall time', 'Step', 'Value'])
             list_data_frame[i][key] = df
             list_key.append(key)
 

@@ -35,9 +35,9 @@ def show_image(distances, queryset, testset, k=5, num_image=5, size_img=(2.5, 5)
         index = random.randint(0, len(distances)-1)
         query = queryset.get_img(index)
         topk = distances[index].topk(k, largest=False)
-        to_display = [np.asarray(query)]
+        to_display = [np.array(query)]
         for distance, index in zip(topk.values, topk.indices):
-            img = np.asarray(testset.get_img(int(index.data)))
+            img = np.array(testset.get_img(int(index.data)))
             to_display.append(img)
         to_display = np.concatenate(to_display, axis=1)
         to_show.append(to_display)

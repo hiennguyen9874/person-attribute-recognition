@@ -1,7 +1,6 @@
 import torch
 import os
 import shutil
-import json
 import sys
 sys.path.append('.')
 
@@ -27,7 +26,7 @@ class Trainer(BaseTrainer):
         summary(self.model, input_size=(3, 256, 128), batch_size=config['data']['batch_size'], device='cpu')
         
         # losses
-        bce_weights = torch.Tensor(self.datamanager.datasource.get_weight('train'))
+        bce_weights = torch.tensor(self.datamanager.datasource.get_weight('train'))
         bce_weights = torch.exp(-1 * bce_weights)
         bce_weights = bce_weights.expand(config['data']['batch_size'], len(self.datamanager.datasource.get_attribute()))
         self.criterion = nn.BCEWithLogitsLoss(weight=bce_weights)
