@@ -6,7 +6,7 @@ import numpy as np
 from tqdm import tqdm
 from collections import defaultdict
 
-class SubSetSampler(torch.utils.data.Sampler):
+class SubsetIdentitySampler(torch.utils.data.Sampler):
     def __init__(self, datasource, batch_size, shuffle = True, index_dict=None):
         self.datasource = datasource
         self.batch_size = batch_size
@@ -52,7 +52,7 @@ class SubSetSampler(torch.utils.data.Sampler):
             right_index = idx_full[0:validation_count]
             left_index_dict[person_id].extend(left_index)
             right_index_dict[person_id].extend(right_index)
-        return SubSetSampler(self.datasource, self.batch_size, self.shuffle, left_index_dict), SubSetSampler(self.datasource, self.batch_size,  self.shuffle, right_index_dict)
+        return SubsetIdentitySampler(self.datasource, self.batch_size, self.shuffle, left_index_dict), SubsetIdentitySampler(self.datasource, self.batch_size,  self.shuffle, right_index_dict)
 
 class RandomIdentitySampler(torch.utils.data.Sampler):
     def __init__(self, datasource, batch_size=1, num_instances=1, index_dict=None):

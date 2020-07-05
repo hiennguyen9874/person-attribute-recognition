@@ -12,15 +12,15 @@ from torchsummary import summary
 
 from data import DataManger
 from base import BaseTrainer
-from losses import Softmax_Triplet_loss, CenterLoss
-from optimizers import WarmupMultiStepLR
+# from losses import Softmax_Triplet_loss, CenterLoss
+# from optimizers import WarmupMultiStepLR
 from models import OSNet
 from utils import MetricTracker
 
 class Trainer(BaseTrainer):
     def __init__(self, config):
         super(Trainer, self).__init__(config)
-        self.datamanager = DataManger(config['data'])
+        self.datamanager = DataManger(config['data'], data_name='pa100k')
 
         # model
         self.model = OSNet(num_classes=len(self.datamanager.datasource.get_attribute()))
