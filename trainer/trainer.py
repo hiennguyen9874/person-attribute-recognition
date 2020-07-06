@@ -12,7 +12,7 @@ from torchsummary import summary
 
 from data import DataManger
 from base import BaseTrainer
-from models import OSNet
+from models import OSNet, Baseline
 from optimizers import WarmupMultiStepLR
 from utils import MetricTracker, rmdir
 
@@ -22,7 +22,7 @@ class Trainer(BaseTrainer):
         self.datamanager = DataManger(config['data'])
 
         # model
-        self.model = OSNet(num_classes=len(self.datamanager.datasource.get_attribute()))
+        self.model = Baseline(num_classes=len(self.datamanager.datasource.get_attribute()))
 
         # summary model
         summary(self.model, input_size=(3, 256, 128), batch_size=config['data']['batch_size'], device='cpu')

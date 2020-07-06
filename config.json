@@ -6,7 +6,7 @@
         "name": "ppe",
         "download": true,
         "extract": true,
-        "batch_size": 2,
+        "batch_size": 128,
         "shuffle": true,
         "num_workers": 4,
         "pin_memory": true,
@@ -41,6 +41,6 @@
         "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs"
     },
     "testing": {
-        "ouput_dir": "output"
+        "output_dir": "output"
     }
 }

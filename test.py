@@ -17,7 +17,8 @@ from utils import read_json, write_json
 from evaluators import plot_loss, show_image
 
 def main(config):
-    setup_logging(os.getcwd())
+    os.makedirs(config['testing']['output_dir'], exist_ok=True)
+    setup_logging(config['testing']['output_dir'])
     logger = logging.getLogger('test')
 
     use_gpu = config['n_gpu'] > 0 and torch.cuda.is_available()
