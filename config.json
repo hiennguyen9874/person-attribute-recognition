@@ -2,7 +2,7 @@
     "n_gpu": 1,
     "model": {},
     "data": {
-        "data_dir": "/home/hien/Documents/datasets",
+        "data_dir": "datasets",
         "name": "ppe",
         "download": true,
         "extract": true,

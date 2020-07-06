@@ -57,10 +57,10 @@ def main(config):
             accuracy_all += accuracy
             count += data.size(0)
             epoch_pbar.update(1)
+    
     accuracy_all /= count
-    # print('accuracy: %.4f', (accuracy_all))
     for i in range(len(attribute_name)):
-        print(list(attribute_name)[i], ': ', accuracy_all[i])
+        print('%s: %.4f' % (attribute_name[i], accuracy_all[0][i].cpu().numpy()))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')

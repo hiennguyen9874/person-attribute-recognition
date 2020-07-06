@@ -70,6 +70,10 @@ class PPE(object):
                     attribute_label[_attribute] = 1
                 else:
                     attribute_label[_attribute] = 0
+            if attribute_label['hard_hat'] == 0 and attribute_label['none_hard_hat'] == 0:
+                attribute_label['no_hat'] = 1
+            if attribute_label['safety_vest'] == 0 and attribute_label['none_safety_vest'] == 0:
+                attribute_label['no_vest'] = 1
             yield (_sampler[0], np.array(list(attribute_label.values())).astype(np.float32))
 
     def get_data(self, phase='train'):
