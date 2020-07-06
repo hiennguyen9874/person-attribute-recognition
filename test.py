@@ -23,6 +23,7 @@ def main(config):
     map_location = (lambda storage, loc: storage) if use_gpu else None
 
     datamanager = DataManger(config['data'])
+    attribute_name = datamanager.datasource.get_attribute()
     
     model = OSNet(num_classes=len(datamanager.datasource.get_attribute()))
     model = model.eval()
@@ -57,7 +58,9 @@ def main(config):
             count += data.size(0)
             epoch_pbar.update(1)
     accuracy_all /= count
-    print('accuracy: %.4f', (accuracy_all))
+    # print('accuracy: %.4f', (accuracy_all))
+    for i in range(len(attribute_name)):
+        print(list(attribute_name)[i], ': ', accuracy_all[i])
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')

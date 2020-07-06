@@ -1,3 +1,4 @@
+from shutil import Error
 import zipfile
 import tarfile
 import os
@@ -12,6 +13,7 @@ class PPE(object):
     dataset_dir = 'ppe'
     file_name = 'ppe.zip'
     list_phases = ['train', 'val']
+    attribute_name = ['hard_hat', 'none_hard_hat', 'safety_vest', 'none_safety_vest', 'no_hat', 'no_vest']
     
     def __init__(self, root_dir='datasets', download=True, extract=True, validation_split=0.1):
         self.root_dir = root_dir
@@ -25,7 +27,7 @@ class PPE(object):
             print("Extracted!")
 
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', 'ppe')
-        data, self.attr_name = self._processes_dir(data_dir)
+        data = list(self._processes_dir(data_dir))
 
         # split data
         idx_full = np.arange(len(data))
@@ -35,11 +37,10 @@ class PPE(object):
         train_idx = np.delete(idx_full, np.arange(0, len_valid))
         self.train = [data[idx] for idx in train_idx.tolist()]
         self.val = [data[idx] for idx in valid_idx.tolist()]
-        self.weight_train = np.zeros((len(self.attr_name)))
+        self.weight_train = np.zeros((len(self.attribute_name)))
         for _, _attribute_label in self.train:
             self.weight_train += _attribute_label
         self.weight_train = np.divide(self.weight_train, int(len(self.train)))
-
 
     def _processes_dir(self, data_dir):
         all_attribute = set()
@@ -57,18 +58,19 @@ class PPE(object):
                     dict_attribute[temp[j]] = list(map(float, temp[j+1:j+5]))
                     j+=5
                 all_data.append((file_path, list(dict_attribute.keys())))
-        # all_attribute.add('no_hat')
-        # all_attribute.add('no_vest')
-        data = []
+        all_attribute.add('no_hat')
+        all_attribute.add('no_vest')
+        if len(all_attribute.difference(set(self.attribute_name))) != 0:
+            raise Error('attribute wrong')
+        
         for _sampler in all_data:
             attribute_label = dict()
-            for _attribute in all_attribute:
+            for _attribute in self.attribute_name:
                 if _attribute in _sampler[1]:
                     attribute_label[_attribute] = 1
                 else:
                     attribute_label[_attribute] = 0
-            data.append((_sampler[0], np.array(list(attribute_label.values())).astype(np.float32)))
-        return data, all_attribute
+            yield (_sampler[0], np.array(list(attribute_label.values())).astype(np.float32))
 
     def get_data(self, phase='train'):
         if phase == 'train':
@@ -79,7 +81,7 @@ class PPE(object):
             raise ValueError('phase error, phase in [train, val]')
         
     def get_attribute(self):
-        return self.attr_name
+        return self.attribute_name
     
     def get_weight(self, phase = 'train'):
         if phase == 'train':

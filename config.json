@@ -6,7 +6,7 @@
         "name": "ppe",
         "download": true,
         "extract": true,
-        "batch_size": 2,
+        "batch_size": 32,
         "shuffle": true,
         "num_workers": 4,
         "pin_memory": true,
