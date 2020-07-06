@@ -1,4 +1,6 @@
 {
     "python.pythonPath": "/home/hien/anaconda3/envs/reid/bin/python",
-    "python.analysis.extraPaths": ["/home/hien/anaconda3/envs/reid/bin/python"]
+    "python.analysis.extraPaths": [
+        "/home/hien/anaconda3/envs/reid/bin/python"
+    ]
 }

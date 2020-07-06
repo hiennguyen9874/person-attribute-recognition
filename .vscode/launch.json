@@ -18,7 +18,9 @@
             "program": "${workspaceFolder}/train.py",
             "console": "integratedTerminal",
             "args": [
-                "--colab=false"
+                "--colab=false",
+                "--resume",
+                "saved/checkpoints/0705_065837/model_last.pth"
             ]
         },
         {
@@ -29,7 +31,7 @@
             "console": "integratedTerminal",
             "args": [
                 "--resume",
-                "saved/checkpoints/0617_091210/model_best.pth"
+                "saved/checkpoints/0705_065837/model_best.pth"
             ]
         }
     ]

@@ -8,12 +8,9 @@ import numpy as np
 
 from torchvision import transforms
 from torch.utils.data.dataloader import DataLoader
-from torch.utils.data.sampler import SubsetRandomSampler
 
 from .datasets import ImageDataset
-from .samplers import SubsetIdentitySampler, RandomIdentitySampler
 from .image import PA_100K, Penta, PPE
-from .transforms import RandomErasing
 
 class DataManger(object):
     __datasets = {'pa_100k': PA_100K, 'penta': Penta, 'ppe': PPE}

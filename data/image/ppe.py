@@ -57,8 +57,8 @@ class PPE(object):
                     dict_attribute[temp[j]] = list(map(float, temp[j+1:j+5]))
                     j+=5
                 all_data.append((file_path, list(dict_attribute.keys())))
-        all_attribute.add('no_hat')
-        all_attribute.add('no_vest')
+        # all_attribute.add('no_hat')
+        # all_attribute.add('no_vest')
         data = []
         for _sampler in all_data:
             attribute_label = dict()
