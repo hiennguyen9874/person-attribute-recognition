@@ -13,18 +13,20 @@
         "drop_last": true
     },
     "optimizer": {
-        "lr": 0.005,
-        "momentum": 0.9,
+        "lr": 0.00035,
         "weight_decay": 0.0005
     },
     "losses": {},
     "metrics": [],
     "lr_scheduler": {
-        "milestones": [
-            30,
-            40
+        "steps": [
+            40,
+            70
         ],
-        "gamma": 0.1
+        "gamma": 0.1,
+        "factor": 0.01,
+        "iters": 10,
+        "method": "linear"
     },
     "trainer": {
         "epochs": 120,

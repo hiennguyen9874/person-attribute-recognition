@@ -12,6 +12,7 @@ from torchsummary import summary
 from data import DataManger
 from base import BaseTrainer
 from models import OSNet
+from optimizers import WarmupMultiStepLR
 from utils import MetricTracker
 
 class Trainer(BaseTrainer):
@@ -33,19 +34,20 @@ class Trainer(BaseTrainer):
 
         # optimizer
         cfg_optimizer = config['optimizer']
-        self.optimizer = torch.optim.SGD(
+        self.optimizer = torch.optim.Adam(
             self.model.parameters(),
             lr=cfg_optimizer['lr'],
-            momentum=cfg_optimizer['momentum'],
-            weight_decay=cfg_optimizer['weight_decay'],
-            nesterov=False)
+            weight_decay=cfg_optimizer['weight_decay'])
 
         # learing rate scheduler
         cfg_lr_scheduler = config['lr_scheduler']
-        self.lr_scheduler = torch.optim.lr_scheduler.MultiStepLR(
+        self.lr_scheduler = WarmupMultiStepLR(
             self.optimizer,
-            milestones=cfg_lr_scheduler['milestones'],
-            gamma=cfg_lr_scheduler['gamma'])
+            milestones=cfg_lr_scheduler['steps'],
+            gamma=cfg_lr_scheduler['gamma'],
+            warmup_factor=cfg_lr_scheduler['factor'],
+            warmup_iters=cfg_lr_scheduler['iters'],
+            warmup_method=cfg_lr_scheduler['method'])
 
         # track metric
         self.train_metrics = MetricTracker('loss', 'accuracy')
