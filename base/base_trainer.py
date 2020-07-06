@@ -33,7 +33,7 @@ class BaseTrainer(object):
         if self.use_gpu:
             torch.backends.cudnn.benchmark = True
         self.device = torch.device('cuda:0' if self.use_gpu else 'cpu')
-        self.map_location = (lambda storage, loc: storage) if self.use_gpu else None
+        self.map_location = torch.device('cuda:0' if self.use_gpu else 'cpu')
 
         self.epochs = self.cfg_trainer['epochs']
         self.start_epoch = 1

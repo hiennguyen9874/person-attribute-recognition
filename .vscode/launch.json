@@ -31,7 +31,7 @@
             "console": "integratedTerminal",
             "args": [
                 "--resume",
-                "saved/checkpoints/0705_065837/model_best.pth"
+                "saved/checkpoints/0706_070115/model_last.pth"
             ]
         }
     ]

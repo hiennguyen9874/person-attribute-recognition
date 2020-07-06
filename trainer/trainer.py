@@ -1,6 +1,7 @@
 import torch
 import os
 import shutil
+
 import sys
 sys.path.append('.')
 
@@ -13,7 +14,7 @@ from data import DataManger
 from base import BaseTrainer
 from models import OSNet
 from optimizers import WarmupMultiStepLR
-from utils import MetricTracker
+from utils import MetricTracker, rmdir
 
 class Trainer(BaseTrainer):
     def __init__(self, config):
@@ -55,12 +56,11 @@ class Trainer(BaseTrainer):
 
         # save best accuracy for function _save_checkpoint
         self.best_accuracy = None
+        self.best_loss = None
         
         # send model to device
-        # self.model.to(self.device)
-        if self.use_gpu:
-            self.model = nn.DataParallel(self.model).cuda()
-            self.criterion = self.criterion.cuda()
+        self.model.to(self.device)
+        self.criterion.to(self.device)
 
         # resume model from last checkpoint
         if config['resume'] != '':
@@ -94,11 +94,17 @@ class Trainer(BaseTrainer):
                 self.logger.info('    {:15s}: {}'.format(str(key), value))
 
             # save model
+            save_best_accuracy = False
+            save_best_loss = False
             if self.best_accuracy == None or self.best_accuracy < self.valid_metrics.avg('accuracy'):
                 self.best_accuracy = self.valid_metrics.avg('accuracy')
-                self._save_checkpoint(epoch, save_best=True)
-            else:
-                self._save_checkpoint(epoch, save_best=False)
+                save_best_accuracy = True
+            
+            if self.best_loss == None or self.best_loss < self.valid_metrics.avg('loss'):
+                self.best_loss = self.valid_metrics.avg('loss')
+                save_best_loss = True
+
+            self._save_checkpoint(epoch, save_best_accuracy=save_best_accuracy, save_best_loss=save_best_loss)
 
             # save logs
             self._save_logs(epoch)
@@ -191,23 +197,28 @@ class Trainer(BaseTrainer):
                     epoch_pbar.update(1)
         return self.valid_metrics.result()
 
-    def _save_checkpoint(self, epoch, save_best=True):
+    def _save_checkpoint(self, epoch, save_best_accuracy=True, save_best_loss=True):
         """ Save model to file
         """
         state = {
             'epoch': epoch,
             'state_dict': self.model.state_dict(),
-            'loss': self.criterion.state_dict(),
+            # 'loss': self.criterion.state_dict(),
             'optimizer': self.optimizer.state_dict(),
             'lr_scheduler': self.lr_scheduler.state_dict(),
-            'best_accuracy': self.best_accuracy
+            'best_accuracy': self.best_accuracy,
+            'best_loss': self.best_loss
         }
         filename = os.path.join(self.checkpoint_dir, 'model_last.pth')
         self.logger.info("Saving last model: model_last.pth ...")
         torch.save(state, filename)
-        if save_best:
-            filename = os.path.join(self.checkpoint_dir, 'model_best.pth')
-            self.logger.info("Saving current best: model_best.pth ...")
+        if save_best_accuracy:
+            filename = os.path.join(self.checkpoint_dir, 'model_best_accuracy.pth')
+            self.logger.info("Saving current best: model_best_accuracy.pth ...")
+            torch.save(state, filename)
+        if save_best_loss:
+            filename = os.path.join(self.checkpoint_dir, 'model_best_loss.pth')
+            self.logger.info("Saving current best: model_best_loss.pth ...")
             torch.save(state, filename)
 
     def _resume_checkpoint(self, resume_path):
@@ -219,10 +230,11 @@ class Trainer(BaseTrainer):
         checkpoint = torch.load(resume_path, map_location=self.map_location)
         self.start_epoch = checkpoint['epoch'] + 1
         self.model.load_state_dict(checkpoint['state_dict'])
-        self.criterion.load_state_dict(checkpoint['loss'])
+        # self.criterion.load_state_dict(checkpoint['loss'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])
         self.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
         self.best_accuracy = checkpoint['best_accuracy']
+        self.best_loss = checkpoint['best_loss']
         self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))
 
     def _save_logs(self, epoch):
@@ -230,4 +242,4 @@ class Trainer(BaseTrainer):
         """
         if os.path.isdir(self.logs_dir_saved):
             shutil.rmtree(self.logs_dir_saved)
-        destination = shutil.copytree(self.logs_dir, self.logs_dir_saved)
+        shutil.copytree(self.logs_dir, self.logs_dir_saved)
