@@ -54,6 +54,8 @@ class SubsetIdentitySampler(torch.utils.data.Sampler):
         return SubsetIdentitySampler(self.datasource, self.batch_size, self.shuffle, left_index_dict), SubsetIdentitySampler(self.datasource, self.batch_size,  self.shuffle, right_index_dict)
 
 class RandomIdentitySampler(torch.utils.data.Sampler):
+    ''' https://github.com/KaiyangZhou/deep-person-reid/blob/master/torchreid/data/sampler.py
+    '''
     def __init__(self, datasource, batch_size=1, num_instances=1, index_dict=None):
         self.datasource = datasource
 

@@ -29,6 +29,8 @@ def weights_init_classifier(m):
             nn.init.constant_(m.bias, 0.0)
 
 class BaselineReid(nn.Module):
+    ''' Bag of tricks: https://arxiv.org/pdf/1903.07071.pdf
+    '''
     def __init__(self, num_classes, is_training=True):
         super(BaselineReid, self).__init__()
         self.num_classes = num_classes

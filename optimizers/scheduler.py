@@ -12,6 +12,8 @@ import torch
 # but the current LRScheduler design doesn't allow it
 
 class WarmupMultiStepLR(torch.optim.lr_scheduler._LRScheduler):
+    ''' Bag of tricks: https://arxiv.org/pdf/1903.07071.pdf
+    '''
     def __init__(
         self,
         optimizer,

@@ -196,6 +196,8 @@ class OSBlock(nn.Module):
         return F.relu(out)
 
 class OSNet(nn.Module):
+    ''' https://arxiv.org/pdf/1905.00953.pdf
+    '''
     def __init__(self, num_classes, channels=[64, 256, 384, 512], feature_dim=512, is_training=True):
         super(OSNet, self).__init__()
         self.is_training = is_training

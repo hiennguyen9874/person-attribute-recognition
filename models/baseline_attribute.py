@@ -29,6 +29,8 @@ def weights_init_classifier(m):
             nn.init.constant_(m.bias, 0.0)
 
 class BaselineAttribute(nn.Module):
+    ''' https://arxiv.org/pdf/2005.11909.pdf
+    '''
     def __init__(self, num_classes):
         super(BaselineAttribute, self).__init__()
         self.num_classes = num_classes
