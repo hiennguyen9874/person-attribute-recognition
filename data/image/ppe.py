@@ -15,9 +15,9 @@ class PPE(object):
     dataset_dir = 'ppe'
     file_name = 'ppe.zip'
     list_phases = ['train', 'val', 'test']
-    map_folder = {'train': 'ppe_200617', 'val': 'ppe', 'test': 'ppe_test'}
+    map_folder = {'ppe_200617': 'train', 'ppe': 'train', 'ppe_test': 'test'}
 
-    attribute_name = ['hard_hat', 'none_hard_hat', 'safety_vest', 'none_safety_vest', 'no_hat', 'no_vest']
+    attribute_name = ['hard_hat', 'none_hard_hat', 'safety_vest', 'none_safety_vest', 'no_hat']
     
     def __init__(self, root_dir='datasets', download=True, extract=True, validation_split=0.1):
         self.root_dir = root_dir
@@ -31,11 +31,25 @@ class PPE(object):
             print("Extracted!")
 
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', 'ppe')
-        self.data = self._processes_dir(data_dir)        
+        data = self._processes_dir(data_dir)
+        
+        # split data
+        idx_full = np.arange(len(data['train']))
+        np.random.shuffle(idx_full)
+        len_valid = int(len(data['train']) * validation_split)
+        valid_idx = idx_full[0:len_valid]
+        train_idx = np.delete(idx_full, np.arange(0, len_valid))
+        
+        self.data = dict()
+        self.data['train'] = [data['train'][idx] for idx in train_idx.tolist()]
+        self.data['val'] = [data['train'][idx] for idx in valid_idx.tolist()]
+        self.data['test'] = data['test']
+
+        # compute weight
         self.weight_train = np.zeros((len(self.attribute_name)))
-        for _, _attribute_label in self.data[self.map_folder['train']]:
+        for _, _attribute_label in self.data['train']:
             self.weight_train += _attribute_label
-        self.weight_train = np.divide(self.weight_train, int(len(self.data[self.map_folder['train']])))
+        self.weight_train = np.divide(self.weight_train, int(len(self.data['train'])))
 
     def _processes_dir(self, data_dir):
         all_attribute = set()
@@ -57,7 +71,7 @@ class PPE(object):
                     j+=5
                 all_data[file_folder].append((file_path, list(dict_attribute.keys())))
         all_attribute.add('no_hat')
-        all_attribute.add('no_vest')
+        # all_attribute.add('no_vest')
         if len(all_attribute.difference(set(self.attribute_name))) != 0:
             raise Error('attribute wrong')
         
@@ -73,17 +87,17 @@ class PPE(object):
                 if attribute_label['hard_hat'] == 0 and attribute_label['none_hard_hat'] == 0:
                     attribute_label['no_hat'] = 1
                 if attribute_label['safety_vest'] == 0 and attribute_label['none_safety_vest'] == 0:
-                    attribute_label['no_vest'] = 1
-                data[key].append((_sampler[0], np.array(list(attribute_label.values())).astype(np.float32)))
+                    attribute_label['none_safety_vest'] = 1
+                data[self.map_folder[key]].append((_sampler[0], np.array(list(attribute_label.values())).astype(np.float32)))
         return data
 
     def get_data(self, phase='train'):
         if phase == 'train':
-            return self.data[self.map_folder['train']]
+            return self.data['train']
         elif phase == 'val':
-            return self.data[self.map_folder['val']]
+            return self.data['val']
         elif phase == 'test':
-            return self.data[self.map_folder['test']]
+            return self.data['test']
         else:
             raise ValueError('phase error, phase in [train, val, test]')
         

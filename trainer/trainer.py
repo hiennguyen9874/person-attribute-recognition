@@ -12,8 +12,9 @@ from torchsummary import summary
 
 from data import DataManger
 from base import BaseTrainer
-from models import OSNet, Baseline
-from optimizers import WarmupMultiStepLR
+from losses import build_losses
+from models import build_model
+from optimizers import build_optimizers, build_lr_scheduler
 from utils import MetricTracker, rmdir
 
 class Trainer(BaseTrainer):
@@ -22,34 +23,26 @@ class Trainer(BaseTrainer):
         self.datamanager = DataManger(config['data'])
 
         # model
-        self.model = Baseline(num_classes=len(self.datamanager.datasource.get_attribute()))
-        self.logger.info('Model name: %s' % (self.model.__class__.__name__))
+        self.model = build_model(config['model'], num_classes=len(self.datamanager.datasource.get_attribute()))
+        self.logger.info('Model: %s' % (config['model']['name']))
 
         # summary model
-        summary(self.model, input_size=(3, 256, 128), batch_size=config['data']['batch_size'], device='cpu')
+        # summary(self.model, input_size=(3, 256, 128), batch_size=config['data']['batch_size'], device='cpu')
         
         # losses
         bce_weights = torch.tensor(self.datamanager.datasource.get_weight('train'))
         bce_weights = torch.exp(-1 * bce_weights)
         bce_weights = bce_weights.expand(config['data']['batch_size'], len(self.datamanager.datasource.get_attribute()))
-        self.criterion = nn.BCEWithLogitsLoss(weight=bce_weights)
+        self.criterion = build_losses(config, weight=bce_weights)
+        self.logger.info('Loss: %s' % (config['loss']['name']))
 
         # optimizer
-        cfg_optimizer = config['optimizer']
-        self.optimizer = torch.optim.Adam(
-            self.model.parameters(),
-            lr=cfg_optimizer['lr'],
-            weight_decay=cfg_optimizer['weight_decay'])
+        self.optimizer = build_optimizers(config, self.model.parameters())
+        self.logger.info('Optimizer: %s' % (config['optimizer']['name']))
 
         # learing rate scheduler
-        cfg_lr_scheduler = config['lr_scheduler']
-        self.lr_scheduler = WarmupMultiStepLR(
-            self.optimizer,
-            milestones=cfg_lr_scheduler['steps'],
-            gamma=cfg_lr_scheduler['gamma'],
-            warmup_factor=cfg_lr_scheduler['factor'],
-            warmup_iters=cfg_lr_scheduler['iters'],
-            warmup_method=cfg_lr_scheduler['method'])
+        self.lr_scheduler = build_lr_scheduler(config, self.optimizer)
+        self.logger.info('Lr scheduler: %s' % (config['lr_scheduler']['name']))
 
         # track metric
         self.train_metrics = MetricTracker('loss', 'accuracy')

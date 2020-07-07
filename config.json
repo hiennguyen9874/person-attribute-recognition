@@ -1,6 +1,8 @@
 {
     "n_gpu": 1,
-    "model": {},
+    "model": {
+        "name": "osnet"
+    },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
         "name": "ppe",
@@ -13,12 +15,20 @@
         "drop_last": true
     },
     "optimizer": {
+        "name": "adam",
         "lr": 0.00035,
-        "weight_decay": 0.0005
+        "weight_decay": 0.0005,
+        "adam_beta1": 0.9,
+        "adam_beta2": 0.99,
+        "momentum": 0.9,
+        "sgd_dampening": 0,
+        "sgd_nesterov": false
     },
-    "losses": {},
-    "metrics": [],
+    "loss": {
+        "name": "BCEWithLogitsLoss"
+    },
     "lr_scheduler": {
+        "name": "warmup",
         "steps": [
             40,
             70

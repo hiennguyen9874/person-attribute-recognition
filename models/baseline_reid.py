@@ -28,9 +28,9 @@ def weights_init_classifier(m):
         if m.bias:
             nn.init.constant_(m.bias, 0.0)
 
-class Baseline(nn.Module):
+class BaselineReid(nn.Module):
     def __init__(self, num_classes, is_training=True):
-        super(Baseline, self).__init__()
+        super(BaselineReid, self).__init__()
         self.num_classes = num_classes
         self.is_training = is_training
         self.base = torchvision.models.resnet50(pretrained=True)
