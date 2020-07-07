@@ -24,25 +24,19 @@ class Trainer(BaseTrainer):
 
         # model
         self.model = build_model(config['model'], num_classes=len(self.datamanager.datasource.get_attribute()))
-        self.logger.info('Model: %s' % (config['model']['name']))
 
         # summary model
         # summary(self.model, input_size=(3, 256, 128), batch_size=config['data']['batch_size'], device='cpu')
         
         # losses
-        bce_weights = torch.tensor(self.datamanager.datasource.get_weight('train'))
-        bce_weights = torch.exp(-1 * bce_weights)
-        bce_weights = bce_weights.expand(config['data']['batch_size'], len(self.datamanager.datasource.get_attribute()))
-        self.criterion = build_losses(config, weight=bce_weights)
-        self.logger.info('Loss: %s' % (config['loss']['name']))
+        pos_ratio = torch.tensor(self.datamanager.datasource.get_weight('train'))
+        self.criterion = build_losses(config, pos_ratio=pos_ratio)
 
         # optimizer
         self.optimizer = build_optimizers(config, self.model.parameters())
-        self.logger.info('Optimizer: %s' % (config['optimizer']['name']))
 
         # learing rate scheduler
         self.lr_scheduler = build_lr_scheduler(config, self.optimizer)
-        self.logger.info('Lr scheduler: %s' % (config['lr_scheduler']['name']))
 
         # track metric
         self.train_metrics = MetricTracker('loss', 'accuracy')

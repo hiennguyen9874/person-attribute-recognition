@@ -1,6 +1,3 @@
-from shutil import Error
-import zipfile
-import tarfile
 import os
 import numpy as np
 
@@ -9,18 +6,16 @@ from collections import defaultdict
 import sys
 sys.path.append('.')
 
-from tqdm import tqdm
+from base import BaseDataSource
 
-class PPE(object):
-    dataset_dir = 'ppe'
-    file_name = 'ppe.zip'
-    list_phases = ['train', 'val', 'test']
+class PPE(BaseDataSource):
     map_folder = {'ppe_200617': 'train', 'ppe': 'train', 'ppe_test': 'test'}
-
     attribute_name = ['hard_hat', 'none_hard_hat', 'safety_vest', 'none_safety_vest', 'no_hat']
     
     def __init__(self, root_dir='datasets', download=True, extract=True, validation_split=0.1):
-        self.root_dir = root_dir
+        dataset_dir = 'ppe'
+        file_name = 'ppe.zip'
+        super(PPE, self).__init__(root_dir, dataset_dir, file_name)
         if download:
             print("Downloading!")
             self._download()
@@ -73,7 +68,7 @@ class PPE(object):
         all_attribute.add('no_hat')
         # all_attribute.add('no_vest')
         if len(all_attribute.difference(set(self.attribute_name))) != 0:
-            raise Error('attribute wrong')
+            raise KeyError('attribute wrong')
         
         data = defaultdict(list)
         for key, value in all_data.items():
@@ -90,6 +85,9 @@ class PPE(object):
                     attribute_label['none_safety_vest'] = 1
                 data[self.map_folder[key]].append((_sampler[0], np.array(list(attribute_label.values())).astype(np.float32)))
         return data
+    
+    def get_attribute(self):
+        return self.attribute_name
 
     def get_data(self, phase='train'):
         if phase == 'train':
@@ -100,41 +98,11 @@ class PPE(object):
             return self.data['test']
         else:
             raise ValueError('phase error, phase in [train, val, test]')
-        
-    def get_attribute(self):
-        return self.attribute_name
     
     def get_weight(self, phase = 'train'):
         if phase == 'train':
             return self.weight_train
         raise ValueError('phase error, phase in [train]')
-    
-    def get_list_phase(self):
-        return self.list_phases
-
-    def _download(self):
-        os.makedirs(os.path.join(self.root_dir, self.dataset_dir, 'raw'), exist_ok=True)
-        if not os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'raw', self.file_name)):
-            raise FileExistsError('please download file into %s' % (os.path.join(self.root_dir, self.dataset_dir, 'raw')))
-
-    def _extract(self):
-        file_path = os.path.join(
-            self.root_dir, self.dataset_dir, 'raw', self.file_name)
-        extract_dir = os.path.join(
-            self.root_dir, self.dataset_dir, 'processed')
-        if self._exists(extract_dir):
-            return
-        try:
-            tar = tarfile.open(file_path)
-            os.makedirs(extract_dir, exist_ok=True)
-            for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers())):
-                tar.extract(member=member, path=extract_dir)
-            tar.close()
-        except:
-            zip_ref = zipfile.ZipFile(file_path, 'r')
-            for member in tqdm(iterable=zip_ref.infolist(), total=len(zip_ref.infolist())):
-                zip_ref.extract(member=member, path=extract_dir)
-            zip_ref.close()
 
     def _exists(self, extract_dir):
         if os.path.exists(os.path.join(extract_dir, 'ppe', 'ppe')) \

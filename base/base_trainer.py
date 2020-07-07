@@ -6,11 +6,12 @@ from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 
 from logger import setup_logging
+from utils import config_to_str
 
 class BaseTrainer(object):
     def __init__(self, config):
         self.config = config
-        
+
         self.cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
 
         self.run_id = datetime.now().strftime(r'%m%d_%H%M%S')
@@ -27,8 +28,12 @@ class BaseTrainer(object):
         self.logger = logging.getLogger('train')
 
         self.logger.info('Run id: %s' % (self.run_id))
-        self.logger.info('Name dataset: %s' % (config['data']['name']))
-
+        self.logger.info('Dataset: %s' % (config['data']['name']))
+        self.logger.info('Model: %s' % (config['model']['name']))
+        self.logger.info('Loss: %s' % (config['loss']['name']))
+        self.logger.info('Optimizer: %s' % (config['optimizer']['name']))
+        self.logger.info('Lr scheduler: %s' % (config['lr_scheduler']['name']))
+        
         self.use_gpu = config['n_gpu'] > 0 and torch.cuda.is_available()
         if self.use_gpu:
             torch.backends.cudnn.benchmark = True

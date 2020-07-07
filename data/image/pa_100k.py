@@ -1,52 +1,40 @@
 
 import numpy as np
 import scipy.io
-import zipfile
-import tarfile
 import os
 import sys
 sys.path.append('.')
 
-from tqdm import tqdm
-from utils import download_with_url
+from base import BaseDataSource
 
-class PA_100K(object):
-    dataset_dir = 'pa_100k'
+class PA_100K(BaseDataSource):
     dataset_id = '13UjvKJQlkNXAmvsPG6h5dwOlhJQA_TcT'
-    file_name = 'PA-100K.zip'
-    list_phases = ['train', 'val', 'test']
-    google_drive_api = 'AIzaSyAVfS-7Dy34a3WjWgR509o-u_3Of59zizo'
     group_order = [7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 9, 10, 11, 12, 1, 2, 3, 0, 4, 5, 6]
     
     def __init__(self, root_dir='datasets', download=True, extract=True):
-        self.root_dir = root_dir
+        file_name = 'PA-100K.zip'
+        dataset_dir = 'pa_100k'
+        super(PA_100K, self).__init__(root_dir, dataset_dir, file_name)
         if download:
             print("Downloading!")
-            self._download()
+            self._download(self.dataset_id)
             print("Downloaded!")
         if extract:
             print("Extracting!")
             self._extract()
             print("Extracted!")
-
-        data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
-
-        self.pid_container = dict()
-        self.camid_containter = dict()
-        self.frames_container = dict()
-        pid2label = dict()
-
-        f = scipy.io.loadmat(os.path.join(data_dir, 'annotation.mat'))
+            
+        f = scipy.io.loadmat(os.path.join(self.data_dir, 'annotation.mat'))
         image_name = dict()
         label = dict()
         
-        image_name['train'] = [os.path.join(data_dir, 'images', f['train_images_name'][i][0][0]) for i in range(80000)]
+        image_name['train'] = [os.path.join(self.data_dir, 'images', f['train_images_name'][i][0][0]) for i in range(80000)]
         label['train'] = f['train_label'][:, np.array(self.group_order)].astype(np.float32)
         
-        image_name['val'] = [os.path.join(data_dir, 'images',  f['val_images_name'][i][0][0]) for i in range(10000)]
+        image_name['val'] = [os.path.join(self.data_dir, 'images',  f['val_images_name'][i][0][0]) for i in range(10000)]
         label['val'] = f['val_label'][:, np.array(self.group_order)].astype(np.float32)
         
-        image_name['test'] = [os.path.join(data_dir, 'images', f['test_images_name'][i][0][0]) for i in range(10000)]
+        image_name['test'] = [os.path.join(self.data_dir, 'images', f['test_images_name'][i][0][0]) for i in range(10000)]
         label['test'] = f['test_label'][:, np.array(self.group_order)].astype(np.float32)
 
         self.attr_name = [f['attributes'][i][0][0] for i in range(26)]
@@ -73,33 +61,6 @@ class PA_100K(object):
             return self.weight_train
         raise ValueError('phase error, phase in [train]')
 
-    def get_list_phase(self):
-        return self.list_phases
-
-    def _download(self):
-        os.makedirs(os.path.join(self.root_dir,
-                                 self.dataset_dir, 'raw'), exist_ok=True)
-        download_with_url(self.google_drive_api, self.dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), self.file_name)
-
-    def _extract(self):
-        file_path = os.path.join(
-            self.root_dir, self.dataset_dir, 'raw', self.file_name)
-        extract_dir = os.path.join(
-            self.root_dir, self.dataset_dir, 'processed')
-        if self._exists(extract_dir):
-            return
-        try:
-            tar = tarfile.open(file_path)
-            os.makedirs(extract_dir, exist_ok=True)
-            for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers())):
-                tar.extract(member=member, path=extract_dir)
-            tar.close()
-        except:
-            zip_ref = zipfile.ZipFile(file_path, 'r')
-            for member in tqdm(iterable=zip_ref.infolist(), total=len(zip_ref.infolist())):
-                zip_ref.extract(member=member, path=extract_dir)
-            zip_ref.close()
-
     def _exists(self, extract_dir):
         if os.path.exists(os.path.join(extract_dir, 'images')) \
                 and os.path.exists(os.path.join(extract_dir, 'README_0.txt')) \
@@ -110,8 +71,6 @@ class PA_100K(object):
 
     def get_list_attribute_random(self):
         import itertools
-        import operator
-        import functools
         arr = list()
         arr.append([[0], [1]]) #1
         arr.append([[0, 0, 1], [0, 1, 0], [1,1, 0]]) #2

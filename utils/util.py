@@ -28,5 +28,8 @@ def rmdir(path, remove_parent=True):
     if remove_parent:
         os.rmdir(path)
 
+def config_to_str(config):
+    return "{" + "\n".join("{!r}: {!r},".format(k, v) for k, v in config.items()) + "}"
+
 if __name__ == "__main__":
     shutil.rmtree('/home/hien/Documents/Models_Attribute_Recognition/OSNet_Person_Attribute_Refactor/test')

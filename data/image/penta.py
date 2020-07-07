@@ -2,24 +2,20 @@ import sys
 sys.path.append('.')
 
 import os
-import tarfile
-import zipfile
 import scipy.io
 import numpy as np
-from tqdm import tqdm
 
-from utils import download_with_url
+from base import BaseDataSource
 
-class Penta(object):
-    dataset_dir = 'penta'
+class Penta(BaseDataSource):
     dataset_id = '13UvQ4N-sY67htGnK6qheb027XuMx9Jbr'
-    file_name = 'PETA-New.zip'
-    list_phases = ['train', 'val', 'test']
-    google_drive_api = 'AIzaSyAVfS-7Dy34a3WjWgR509o-u_3Of59zizo'
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]
   
     def __init__(self, root_dir='datasets', download=True, extract=True):
-        self.root_dir = root_dir
+        dataset_dir = 'penta'
+        file_name = 'PETA-New.zip'
+        list_phases = ['train', 'val', 'test']
+        super(Penta, self).__init__(root_dir, dataset_dir, file_name, list_phases)
         if download:
             print("Downloading!")
             self._download()
@@ -80,30 +76,6 @@ class Penta(object):
             return self.weight_trainval[0]
         raise ValueError('phase error, phase in [train, val]')
     
-    def get_list_phase(self):
-        return self.list_phases
-
-    def _download(self):
-        os.makedirs(os.path.join(self.root_dir, self.dataset_dir, 'raw'), exist_ok=True)
-        download_with_url(self.google_drive_api, self.dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), self.file_name)
-
-    def _extract(self):
-        file_path = os.path.join(self.root_dir, self.dataset_dir, 'raw', self.file_name)
-        extract_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
-        if self._exists(extract_dir):
-            return
-        try:
-            tar = tarfile.open(file_path)
-            os.makedirs(extract_dir, exist_ok=True)
-            for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers())):
-                tar.extract(member=member, path=extract_dir)
-            tar.close()
-        except:
-            zip_ref = zipfile.ZipFile(file_path, 'r')
-            for member in tqdm(iterable=zip_ref.infolist(), total=len(zip_ref.infolist())):
-                zip_ref.extract(member=member, path=extract_dir)
-            zip_ref.close()
-
     def _exists(self, extract_dir):
         if os.path.exists(os.path.join(extract_dir, 'images')) \
             and os.path.exists(os.path.join(extract_dir, 'README')) \
