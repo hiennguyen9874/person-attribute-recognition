@@ -23,6 +23,7 @@ class Trainer(BaseTrainer):
 
         # model
         self.model = Baseline(num_classes=len(self.datamanager.datasource.get_attribute()))
+        self.logger.info('Model name: %s' % (self.model.__class__.__name__))
 
         # summary model
         summary(self.model, input_size=(3, 256, 128), batch_size=config['data']['batch_size'], device='cpu')

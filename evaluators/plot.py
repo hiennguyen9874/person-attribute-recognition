@@ -11,7 +11,7 @@ def plot_loss(dpath, list_dname, output_path, low = .05, high = .95, com=10):
     Args:
         dpath (str): path to folder contain (eg: saved/logs)
         list_dname (list(str)): list of run_id to plot.
-        output_path (str): path to save csv file after concat logs from different times
+        output_path (str): path to save csv file after concat logs from different run time
     Return:
     """
     ax = plt.gca()
