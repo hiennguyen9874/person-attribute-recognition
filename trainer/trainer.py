@@ -22,7 +22,7 @@ class Trainer(BaseTrainer):
         self.datamanager = DataManger(config['data'])
 
         # model
-        self.model = Baseline(num_classes=len(self.datamanager.datasource.get_attribute()))
+        self.model = OSNet(num_classes=len(self.datamanager.datasource.get_attribute()))
         self.logger.info('Model name: %s' % (self.model.__class__.__name__))
 
         # summary model

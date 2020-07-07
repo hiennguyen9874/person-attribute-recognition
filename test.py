@@ -10,14 +10,14 @@ import numpy as np
 from torchsummary import summary
 from tqdm import tqdm
 
-from models import OSNet
+from models import OSNet, Baseline
 from data import DataManger
 from logger import setup_logging
-from utils import read_json, write_json
+from utils import read_json, write_json, rmdir
 from evaluators import plot_loss, show_image
 
 def main(config):
-    os.makedirs(config['testing']['output_dir'], exist_ok=True)
+    (os.path.exists(config['testing']['output_dir']) or os.makedirs(config['testing']['output_dir'], exist_ok=True)) and rmdir(config['testing']['output_dir'], remove_parent=False)
     setup_logging(config['testing']['output_dir'])
     logger = logging.getLogger('test')
 
@@ -27,7 +27,7 @@ def main(config):
 
     datamanager = DataManger(config['data'], phase='test')
     
-    model = OSNet(num_classes=len(datamanager.datasource.get_attribute()))
+    model = Baseline(num_classes=len(datamanager.datasource.get_attribute()))
 
     logger.info('Loading checkpoint: {} ...'.format(config['resume']))
     checkpoint = torch.load(config['resume'], map_location=map_location)
@@ -37,8 +37,6 @@ def main(config):
     model.to(device)
     
     # TODO: mean Accuracy (mA), four instance-based metrics, Accuracy (Acc), Precision (Prec), Recall (Rec) and F1-score (F1).
-    accuracy_all = torch.zeros(1, 6)
-    count = 0
     preds = []
     labels = []
 
@@ -74,11 +72,11 @@ def main(config):
     recall = tp /np.add(tp, fn)
     f1_score = 2 * np.multiply(precision, recall) / np.add(precision, recall)
 
-    print('           ', 'hard_hat   none_hard_hat    safety_vest    none_safety_vest    no_hat     no_vest')
-    print('accuracy:  ', '%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*accuracy,))
-    print('precision: ', '%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*precision,))
-    print('recall:    ', '%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*recall,))
-    print('f1 score:  ', '%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*f1_score,))
+    logger.info('           '+ ('hard_hat   none_hard_hat    safety_vest    none_safety_vest    no_hat     no_vest'))
+    logger.info('accuracy:  '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*accuracy,)))
+    logger.info('precision: '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*precision,)))
+    logger.info('recall:    '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*recall,)))
+    logger.info('f1 score:  '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*f1_score,)))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
