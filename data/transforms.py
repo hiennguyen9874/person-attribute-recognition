@@ -1,10 +1,19 @@
+import sys
+from typing import Iterator
+sys.path.append('.')
 
+import copy
 import torch
 import random
 import math
 import numpy as np
 
+from PIL import Image
 from torchvision.transforms import *
+import torchvision.transforms.functional as F
+
+from data.image.ppe import PPE
+from data.image.pa_100k import PA_100K
 
 class RandomErasing(object):
     """ Randomly selects a rectangle region in an image and erases its pixels.
@@ -51,3 +60,80 @@ class RandomErasing(object):
                 return img
 
         return img
+
+class RemoveZero(object):
+    def __init__(self, interpolation=Image.BILINEAR):
+        self.interpolation = interpolation
+
+    def __call__(self, img):
+        img_origin = copy.deepcopy(img)
+        img = np.array(F.to_grayscale(img))
+        y_sum = np.where(np.sum(img, axis=0) == 0)
+        x_sum = np.where(np.sum(img, axis=1) == 0)
+
+        temp1 = np.split(y_sum, np.where(np.diff(y_sum) != 1)[0]+1)
+        begin1 = temp1[0][0][1]
+        end1 = temp1[0][0][-1]
+
+
+        img = img.astype(bool)
+        return img
+
+class Resize(object):
+    def __init__(self, height: int, width: int, interpolation=Image.BILINEAR):
+        assert isinstance(width, int) and isinstance(height, int)
+        self.width = width
+        self.height = height
+        self.interpolation = interpolation
+    
+    def __call__(self, img):
+        w, h = img.size
+        if w <= h:
+            ow = self.width
+            oh = int(self.width * h / w)
+            img = img.resize((ow, oh), self.interpolation)
+        else:
+            oh = self.height
+            ow = int(self.height * w / h)
+            img = img.resize((ow, oh), self.interpolation)
+        return img
+
+class Fill(object):
+    def __init__(self, height: int, width: int, fill=0, interpolation=Image.BILINEAR):
+        assert isinstance(width, int) and isinstance(height, int)
+        self.width = width
+        self.height = height
+        self.fill = fill
+        self.interpolation = interpolation
+    
+    def __call__(self, img):
+        w, h = img.size
+        w_pad = ((self.width-w)//2, self.width - w - (self.width-w)//2)
+        h_pad = ((self.height-h)//2, self.height - h - (self.height-h)//2)
+        return F.pad(img, (w_pad[0], h_pad[0], w_pad[1], h_pad[1]), fill=self.fill)
+
+if __name__ == "__main__":
+    import matplotlib.pyplot as plt
+    datasource = PPE(root_dir='/home/hien/Documents/datasets', download=True, extract=True)
+    # img_path, label = datasource.get_data('train')[100]
+    # image = Image.open(img_path)
+    # print(image.size[0], image.size[1])
+    # plt.imshow(np.asarray(image))
+    # plt.show()
+    # image = RemoveZero()(image)
+    # print(image.size[0], image.size[1])
+    # plt.imshow(np.asarray(image))
+    # plt.show()
+    # image = Resize(256, 128, 0)(image)
+    # print(image.size[0], image.size[1])
+    # plt.imshow(np.asarray(image))
+    # plt.show()
+    # image = Fill(256, 128, 0)(image)
+    # print(image.size[0], image.size[1])
+    # plt.imshow(np.asarray(image))
+    # plt.show()
+    # pass
+
+    for img_path, label in datasource.get_data('train'):
+        if Image.open(img_path).size[0] != Image.open(img_path).size[1]:
+            print(Image.open(img_path).size[0], "-", Image.open(img_path).size[1], "-", img_path)
