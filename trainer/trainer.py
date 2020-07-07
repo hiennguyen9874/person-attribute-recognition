@@ -55,6 +55,9 @@ class Trainer(BaseTrainer):
         self.train_metrics = MetricTracker('loss', 'accuracy')
         self.valid_metrics = MetricTracker('loss', 'accuracy')
 
+        # step log loss and accuracy
+        self.log_step = len(self.datamanager.get_dataloader('train')) // 10
+
         # save best accuracy for function _save_checkpoint
         self.best_accuracy = None
         self.best_loss = None
@@ -115,27 +118,69 @@ class Trainer(BaseTrainer):
         """
         self.model.train()
         self.train_metrics.reset()
-        with tqdm(total=len(self.datamanager.get_dataloader('train'))) as epoch_pbar:
-            epoch_pbar.set_description(f'Epoch {epoch}')
-            for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('train')):
+        # with tqdm(total=len(self.datamanager.get_dataloader('train'))) as epoch_pbar:
+        # epoch_pbar.set_description(f'Epoch {epoch}')
+        for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('train')):
+            # push data to device
+            data, labels = data.to(self.device), labels.to(self.device)
+
+            # zero gradient
+            self.optimizer.zero_grad()
+
+            # forward batch
+            out = self.model(data)
+
+            # calculate loss and accuracy
+            loss =  self.criterion(out, labels)
+            
+            # backward parameters
+            loss.backward()
+
+            # optimize
+            self.optimizer.step()
+            
+            # caculate instabce-based accuracy
+            preds = torch.sigmoid(out)
+            preds[preds < 0.5] = 0
+            preds[preds >= 0.5] = 1
+            
+            labels = labels.type(torch.BoolTensor)
+            preds = preds.type(torch.BoolTensor)
+            intersect = (preds & labels).type(torch.FloatTensor)
+            union = (preds | labels).type(torch.FloatTensor)
+            accuracy = torch.mean((torch.sum(intersect, dim=1) / torch.sum(union, dim=1)))
+            
+            # update loss and accuracy in MetricTracker
+            self.train_metrics.update('loss', loss.item())
+            self.train_metrics.update('accuracy', accuracy.item())
+
+            # update process bar
+            # epoch_pbar.set_postfix({
+            #     'train_loss': self.train_metrics.avg('loss'),
+            #     'train_acc': self.train_metrics.avg('accuracy')})
+            # epoch_pbar.update(1)
+            if batch_idx % self.log_step == 0 or batch_idx == len(self.datamanager.get_dataloader('train'))-1:
+                self.logger.info('Train Epoch: {} {}/{} Loss: {:.6f} Acc: {:.6f}'.format(epoch, batch_idx+1, len(self.datamanager.get_dataloader('train')), self.train_metrics.avg('loss'), self.train_metrics.avg('accuracy')))
+        return self.train_metrics.result()
+
+    def _valid_epoch(self, epoch):
+        """ Validation step
+        """
+        self.model.eval()
+        self.valid_metrics.reset()
+        with torch.no_grad():
+            # with tqdm(total=len(self.datamanager.get_dataloader('val'))) as epoch_pbar:
+            # epoch_pbar.set_description(f'Epoch {epoch}')
+            for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('val')):
                 # push data to device
                 data, labels = data.to(self.device), labels.to(self.device)
-
-                # zero gradient
-                self.optimizer.zero_grad()
-
+                
                 # forward batch
                 out = self.model(data)
 
                 # calculate loss and accuracy
                 loss =  self.criterion(out, labels)
-                
-                # backward parameters
-                loss.backward()
 
-                # optimize
-                self.optimizer.step()
-                
                 # caculate instabce-based accuracy
                 preds = torch.sigmoid(out)
                 preds[preds < 0.5] = 0
@@ -146,56 +191,18 @@ class Trainer(BaseTrainer):
                 intersect = (preds & labels).type(torch.FloatTensor)
                 union = (preds | labels).type(torch.FloatTensor)
                 accuracy = torch.mean((torch.sum(intersect, dim=1) / torch.sum(union, dim=1)))
-                
+
                 # update loss and accuracy in MetricTracker
-                self.train_metrics.update('loss', loss.item())
-                self.train_metrics.update('accuracy', accuracy.item())
+                self.valid_metrics.update('loss', loss.item())
+                self.valid_metrics.update('accuracy', accuracy.item())
 
                 # update process bar
-                epoch_pbar.set_postfix({
-                    'train_loss': self.train_metrics.avg('loss'),
-                    'train_acc': self.train_metrics.avg('accuracy')})
-                epoch_pbar.update(1)
-        return self.train_metrics.result()
-
-    def _valid_epoch(self, epoch):
-        """ Validation step
-        """
-        self.model.eval()
-        self.valid_metrics.reset()
-        with torch.no_grad():
-            with tqdm(total=len(self.datamanager.get_dataloader('val'))) as epoch_pbar:
-                epoch_pbar.set_description(f'Epoch {epoch}')
-                for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('val')):
-                    # push data to device
-                    data, labels = data.to(self.device), labels.to(self.device)
-                    
-                    # forward batch
-                    out = self.model(data)
-
-                    # calculate loss and accuracy
-                    loss =  self.criterion(out, labels)
-
-                    # caculate instabce-based accuracy
-                    preds = torch.sigmoid(out)
-                    preds[preds < 0.5] = 0
-                    preds[preds >= 0.5] = 1
-                    
-                    labels = labels.type(torch.BoolTensor)
-                    preds = preds.type(torch.BoolTensor)
-                    intersect = (preds & labels).type(torch.FloatTensor)
-                    union = (preds | labels).type(torch.FloatTensor)
-                    accuracy = torch.mean((torch.sum(intersect, dim=1) / torch.sum(union, dim=1)))
-
-                    # update loss and accuracy in MetricTracker
-                    self.valid_metrics.update('loss', loss.item())
-                    self.valid_metrics.update('accuracy', accuracy.item())
-
-                    # update process bar
-                    epoch_pbar.set_postfix({
-                        'val_loss': self.valid_metrics.avg('loss'),
-                        'val_acc': self.valid_metrics.avg('accuracy')})
-                    epoch_pbar.update(1)
+                # epoch_pbar.set_postfix({
+                #     'val_loss': self.valid_metrics.avg('loss'),
+                #     'val_acc': self.valid_metrics.avg('accuracy')})
+                # epoch_pbar.update(1)
+                if batch_idx % self.log_step == 0 or batch_idx == len(self.datamanager.get_dataloader('val'))-1:
+                    self.logger.info('Valid Epoch: {} {}/{} Loss: {:.6f} Acc: {:.6f}'.format(epoch, batch_idx+1 , len(self.datamanager.get_dataloader('val')), self.valid_metrics.avg('loss'), self.valid_metrics.avg('accuracy')))
         return self.valid_metrics.result()
 
     def _save_checkpoint(self, epoch, save_best_accuracy=True, save_best_loss=True):

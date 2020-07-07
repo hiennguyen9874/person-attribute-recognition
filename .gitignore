@@ -14,3 +14,4 @@ saved/
 nhap.py
 info.log
 output/
+*.out
