@@ -11,12 +11,13 @@ class BaseDataSource(object):
     google_drive_api = 'AIzaSyAVfS-7Dy34a3WjWgR509o-u_3Of59zizo'
     list_phases = ['train', 'val', 'test']
     
-    def __init__(self, root_dir, dataset_dir, file_name, list_phases=['train', 'val', 'test']):
+    def __init__(self, root_dir, dataset_dir, file_name, image_size = (256, 128), list_phases=['train', 'val', 'test']):
         self.root_dir = root_dir
         self.dataset_dir = dataset_dir
         self.file_name = file_name
         self.list_phases = list_phases
         self.data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
+        self.image_size = image_size
         
     def _exists(self, extract_dir):
         raise NotImplementedError
@@ -49,3 +50,6 @@ class BaseDataSource(object):
     
     def get_data(self, phase='train'):
         raise NotImplementedError
+
+    def get_image_size(self):
+        return self.image_size

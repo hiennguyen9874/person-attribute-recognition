@@ -29,7 +29,7 @@
             "console": "integratedTerminal",
             "args": [
                 "--resume",
-                "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0707_041415/model_last.pth"
+                "saved/checkpoints/0707_131336/model_last.pth"
             ]
         }
     ]

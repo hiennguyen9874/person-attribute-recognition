@@ -6,18 +6,20 @@ import logging
 import torch
 import torch.nn as nn
 import numpy as np
+import matplotlib.pyplot as plt
 
 from torchsummary import summary
 from tqdm import tqdm
 
-from models import OSNet, Baseline
+from models import OSNet, BaselineReid, BaselineAttribute
 from data import DataManger
 from logger import setup_logging
 from utils import read_json, write_json, rmdir
-from evaluators import plot_loss, show_image
+from evaluators import plot_loss, show_image, recognition_metrics
 
 def main(config):
-    (os.path.exists(config['testing']['output_dir']) or os.makedirs(config['testing']['output_dir'], exist_ok=True)) and rmdir(config['testing']['output_dir'], remove_parent=False)
+    # (os.path.exists(config['testing']['output_dir']) or os.makedirs(config['testing']['output_dir'], exist_ok=True)) and rmdir(config['testing']['output_dir'], remove_parent=False)
+    os.path.exists(os.path.join(config['testing']['output_dir'], 'info.log')) and os.remove(os.path.join(config['testing']['output_dir'], 'info.log'))
     setup_logging(config['testing']['output_dir'])
     logger = logging.getLogger('test')
 
@@ -27,7 +29,7 @@ def main(config):
 
     datamanager = DataManger(config['data'], phase='test')
     
-    model = Baseline(num_classes=len(datamanager.datasource.get_attribute()))
+    model = OSNet(num_classes=len(datamanager.datasource.get_attribute()))
 
     logger.info('Loading checkpoint: {} ...'.format(config['resume']))
     checkpoint = torch.load(config['resume'], map_location=map_location)
@@ -36,7 +38,6 @@ def main(config):
     model.eval()
     model.to(device)
     
-    # TODO: mean Accuracy (mA), four instance-based metrics, Accuracy (Acc), Precision (Prec), Recall (Rec) and F1-score (F1).
     preds = []
     labels = []
 
@@ -50,33 +51,49 @@ def main(config):
                 _preds = torch.sigmoid(out)
                 preds.append(_preds)
                 labels.append(_labels)
-
                 epoch_pbar.update(1)
     preds = torch.cat(preds, dim=0)
     labels = torch.cat(labels, dim=0)
     preds = preds.cpu().numpy()
     labels = labels.cpu().numpy()
+    
+    result_label, result_instance = recognition_metrics(labels, preds)
+    
+    # with open(os.path.join(config['testing']['output_dir'], 'result.pth'), 'wb') as f:
+    #         torch.save({'result_label': result_label, 'result_instance': result_instance}, f)
+    
+    # result = torch.load(os.path.join(config['testing']['output_dir'], 'result.pth'), map_location=map_location)
+    # result_label = result['result_label']
+    # result_instance = result['result_instance']
+    
+    logger.info('instance-based metrics:')
+    logger.info('accuracy: %0.4f' % result_instance.accuracy)
+    logger.info('precision: %0.4f' % result_instance.precision)
+    logger.info('recall: %0.4f' % result_instance.recall)
+    logger.info('f1_score: %0.4f' % result_instance.f1_score)
+    
+    result = np.stack([result_label.accuracy, result_label.precision, result_label.recall, result_label.f1_score], axis=0)
+    fig, ax = plt.subplots(1, 1)
+    ax.xaxis.set_visible(False)
+    ax.yaxis.set_visible(False)
+    table = ax.table(
+        cellText=np.around(result*100, 2),
+        rowLabels=['accuracy', 'precision', 'recall', 'f1_score'],
+        colLabels=datamanager.datasource.get_attribute(),
+        loc='center')
+    table.auto_set_font_size(False)
+    table.set_fontsize(16)
+    # table.scale(1,4)
+    ax.axis('off')
+    # fig.tight_layout()
+    plt.show()
 
-    # accuracy
-    preds[preds > 0.5] = 1
-    preds[preds <= 0.5] = 0
-    accuracy = np.equal(preds, labels).astype(float)
-    accuracy = np.sum(accuracy, axis=0) / preds.shape[0]
-    preds = preds.astype(bool)
-    labels = labels.astype(bool)
-    tp = np.sum((preds & labels).astype(float), axis=0)
-    fp = np.sum((preds & (~labels)).astype(float), axis=0)
-    tn = np.sum(((~preds) & (~labels)).astype(float), axis=0)
-    fn = np.sum(((~preds) & labels).astype(float), axis=0)
-    precision = tp / np.add(tp, fp)
-    recall = tp /np.add(tp, fn)
-    f1_score = 2 * np.multiply(precision, recall) / np.add(precision, recall)
-
-    logger.info('           '+ ('hard_hat   none_hard_hat    safety_vest    none_safety_vest    no_hat     no_vest'))
-    logger.info('accuracy:  '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*accuracy,)))
-    logger.info('precision: '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*precision,)))
-    logger.info('recall:    '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*recall,)))
-    logger.info('f1 score:  '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f,    %0.4f' % (*f1_score,)))
+    # logger.info('label-based metrics:')
+    # logger.info('           '+ ('hard_hat   none_hard_hat    safety_vest    none_safety_vest    no_hat'))
+    # logger.info('accuracy:  '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f' % (*result_label.accuracy,)))
+    # logger.info('precision: '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f' % (*result_label.precision,)))
+    # logger.info('recall:    '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f' % (*result_label.recall,)))
+    # logger.info('f1 score:  '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f' % (*result_label.f1_score,)))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
