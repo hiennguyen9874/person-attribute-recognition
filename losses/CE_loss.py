@@ -20,7 +20,7 @@ def ratio2weight(targets, ratio):
 class CEL_Sigmoid(nn.Module):
     ''' https://arxiv.org/pdf/2005.11909.pdf
     '''
-    def __init__(self, pos_ratio=None, reduction='sum', use_gpu=True):
+    def __init__(self, pos_ratio=None, reduction='mean', use_gpu=True):
         super(CEL_Sigmoid, self).__init__()
         assert reduction in ['sum', 'mean']
         self.pos_ratio = pos_ratio

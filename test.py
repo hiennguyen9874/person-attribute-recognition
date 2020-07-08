@@ -18,7 +18,7 @@ from utils import read_json, write_json, rmdir
 from evaluators import plot_loss, show_image, recognition_metrics
 
 def main(config):
-    # (os.path.exists(config['testing']['output_dir']) or os.makedirs(config['testing']['output_dir'], exist_ok=True)) and rmdir(config['testing']['output_dir'], remove_parent=False)
+    (os.path.exists(config['testing']['output_dir']) or os.makedirs(config['testing']['output_dir'], exist_ok=True))
     os.path.exists(os.path.join(config['testing']['output_dir'], 'info.log')) and os.remove(os.path.join(config['testing']['output_dir'], 'info.log'))
     setup_logging(config['testing']['output_dir'])
     logger = logging.getLogger('test')
@@ -65,21 +65,14 @@ def main(config):
     logger.info('recall: %0.4f' % result_instance.recall)
     logger.info('f1_score: %0.4f' % result_instance.f1_score)
     
+    logger.info('label-based metrics:')
     result = np.stack([result_label.accuracy, result_label.precision, result_label.recall, result_label.f1_score], axis=0)
-    fig, ax = plt.subplots(1, 1)
-    ax.xaxis.set_visible(False)
-    ax.yaxis.set_visible(False)
-    table = ax.table(
-        cellText=np.around(result*100, 2),
-        rowLabels=['accuracy', 'precision', 'recall', 'f1_score'],
-        colLabels=datamanager.datasource.get_attribute(),
-        loc='center')
-    table.auto_set_font_size(False)
-    table.set_fontsize(16)
-    # table.scale(1,4)
-    ax.axis('off')
-    # fig.tight_layout()
-    plt.show()
+    result = np.around(result*100, 2)
+    result = result.transpose()
+    row_format ="{:>17}" * 5
+    logger.info(row_format.format('attribute', 'accuracy', 'precision', 'recall', 'f1_score'))
+    for i in range(len(datamanager.datasource.get_attribute())):
+        logger.info(row_format.format(datamanager.datasource.get_attribute()[i], *result[i].tolist()))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
