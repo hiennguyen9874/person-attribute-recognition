@@ -14,4 +14,5 @@ saved/
 nhap.py
 info.log
 output/
+.vscode/
 *.out

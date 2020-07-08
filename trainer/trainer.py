@@ -1,3 +1,4 @@
+from data import datamanager
 import torch
 import os
 import shutil
@@ -43,7 +44,7 @@ class Trainer(BaseTrainer):
         self.valid_metrics = MetricTracker('loss', 'accuracy')
 
         # step log loss and accuracy
-        self.log_step = len(self.datamanager.get_dataloader('train')) // 10
+        self.log_step = (len(self.datamanager.get_dataloader('train')) // 10, len(self.datamanager.get_dataloader('val'))//10)
 
         # save best accuracy for function _save_checkpoint
         self.best_accuracy = None
@@ -146,7 +147,7 @@ class Trainer(BaseTrainer):
             #     'train_loss': self.train_metrics.avg('loss'),
             #     'train_acc': self.train_metrics.avg('accuracy')})
             # epoch_pbar.update(1)
-            if batch_idx % self.log_step == 0 or batch_idx == len(self.datamanager.get_dataloader('train'))-1:
+            if batch_idx % self.log_step[0] == 0 or batch_idx == len(self.datamanager.get_dataloader('train'))-1:
                 self.logger.info('Train Epoch: {} {}/{} Loss: {:.6f} Acc: {:.6f}'.format(epoch, batch_idx+1, len(self.datamanager.get_dataloader('train')), self.train_metrics.avg('loss'), self.train_metrics.avg('accuracy')))
         return self.train_metrics.result()
 
@@ -188,7 +189,7 @@ class Trainer(BaseTrainer):
                 #     'val_loss': self.valid_metrics.avg('loss'),
                 #     'val_acc': self.valid_metrics.avg('accuracy')})
                 # epoch_pbar.update(1)
-                if batch_idx % self.log_step == 0 or batch_idx == len(self.datamanager.get_dataloader('val'))-1:
+                if batch_idx % self.log_step[1] == 0 or batch_idx == len(self.datamanager.get_dataloader('val'))-1:
                     self.logger.info('Valid Epoch: {} {}/{} Loss: {:.6f} Acc: {:.6f}'.format(epoch, batch_idx+1 , len(self.datamanager.get_dataloader('val')), self.valid_metrics.avg('loss'), self.valid_metrics.avg('accuracy')))
         return self.valid_metrics.result()
 
