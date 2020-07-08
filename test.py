@@ -18,9 +18,11 @@ from utils import read_json, write_json, rmdir
 from evaluators import plot_loss, show_image, recognition_metrics
 
 def main(config):
-    (os.path.exists(config['testing']['output_dir']) or os.makedirs(config['testing']['output_dir'], exist_ok=True))
-    os.path.exists(os.path.join(config['testing']['output_dir'], 'info.log')) and os.remove(os.path.join(config['testing']['output_dir'], 'info.log'))
-    setup_logging(config['testing']['output_dir'])
+    run_id = config['resume'].split('/')[-2]
+    file_name = config['resume'].split('/')[-1].split('.')[0]
+    output_dir = os.path.join(config['testing']['output_dir'], run_id, file_name)
+    (os.path.exists(output_dir) or os.makedirs(output_dir, exist_ok=True)) and rmdir(output_dir, remove_parent=False)
+    setup_logging(output_dir)
     logger = logging.getLogger('test')
 
     use_gpu = config['n_gpu'] > 0 and torch.cuda.is_available()
