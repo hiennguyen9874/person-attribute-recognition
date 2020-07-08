@@ -11,7 +11,7 @@ sys.path.append('.')
 
 from utils import aggregate
 
-def plot_loss(dpath, list_dname, list_part, output_path, path_figure ,title = None, low = .05, high = .95, com=0):
+def plot_loss(dpath, list_dname, list_part, path_figure ,title = None, low = .05, high = .95, com=0):
     """ Plot loss and accuracy from tensorboard file
     Args:
         dpath (str): path to folder contain (eg: saved/logs)
@@ -22,10 +22,8 @@ def plot_loss(dpath, list_dname, list_part, output_path, path_figure ,title = No
         low, high (float): 
     Return:
     """
-    # ax = plt.gca()
-    # ax2 = ax1.twinx()
     fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(25, 10))
-    dict_data_frame = aggregate(dpath, list_dname, list_part, output_path, False)
+    dict_data_frame = aggregate(dpath, list_dname, list_part)
     colors = ['red', 'green', 'blue', 'orange']
     for key, color in zip(dict_data_frame.keys(), colors):
         df = dict_data_frame[key]
@@ -57,7 +55,7 @@ def plot_loss(dpath, list_dname, list_part, output_path, path_figure ,title = No
 
     if title != None:
         fig.suptitle(title)
-    plt.show()
+    # plt.show()
     fig.savefig(path_figure, dpi=300)
 
 
@@ -82,4 +80,10 @@ def show_image(distances, queryset, testset, k=5, num_image=5, size_img=(2.5, 5)
 if __name__ == "__main__":
     path = os.path.join('saved', 'logs')
     part = ['Accuracy_Train', 'Accuracy_Val', 'Loss_Train', 'Loss_Val']
-    plot_loss(dpath=path, list_dname=['0707_151515'], list_part=part, output_path='output', path_figure=os.path.join(path, '0707_151515.png'), title='OSNet + CEL_Sigmoid, PPE dataset')
+    run_id = '0707_131336'
+    plot_loss(
+        dpath=path,
+        list_dname=[run_id],
+        list_part=part,
+        path_figure=os.path.join(path, run_id, '{}.png'.format(run_id)),
+        title='OSNet + BCEWithLogitsLoss, PPE dataset')

@@ -99,21 +99,20 @@ class Trainer(BaseTrainer):
 
             self._save_checkpoint(epoch, save_best_accuracy=save_best_accuracy, save_best_loss=save_best_loss)
 
-            # TODO:
-            # save loss, accuracy plot
-            if os.path.exists(os.path.join(self.logs_dir, self.run_id, 'plot.png')):
-                os.remove(os.path.join(self.logs_dir, self.run_id, 'plot.png'))
-            plot_loss(
-                dpath=self.logs_dir,
-                list_dname=[self.run_id],
-                list_part=['Accuracy_Train', 'Accuracy_Val', 'Loss_Train', 'Loss_Val'],
-                output_path=os.path.join(self.logs_dir, self.run_id),
-                path_figure=os.path.join(self.logs_dir, self.run_id, 'plot.png'),
-                title=self.run_id + ': ' + self.config['data']['name'] + ", " + self.config['loss']['name'] + ", " + self.config['data']['name'])
-
             # save logs
             self._save_logs(epoch)
-
+        self.writer.close()
+        
+        # plot loss, accuracy
+        if os.path.join(self.config['log_dir_saved'], self.run_id, 'plot.png'):
+            os.remove(os.path.join(self.config['log_dir_saved'], self.run_id, 'plot.png'))
+        plot_loss(
+            dpath=self.cfg_trainer['log_dir'],
+            list_dname=[self.run_id],
+            list_part=['Accuracy_Train', 'Accuracy_Val', 'Loss_Train', 'Loss_Val'],
+            path_figure=os.path.join(self.config['log_dir_saved'], self.run_id, 'plot.png'),
+            title=self.run_id + ': ' + self.config['data']['name'] + ", " + self.config['loss']['name'] + ", " + self.config['data']['name'])
+      
     def _train_epoch(self, epoch):
         """ Training step
         """

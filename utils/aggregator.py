@@ -58,7 +58,7 @@ def get_valid_filename(s):
     return re.sub(r'(?u)[^-\w.]', '', s)
 
 
-def aggregate(dpath, list_dname, list_part, output_path, save=True):
+def aggregate(dpath, list_dname, list_part, output_path=None):
     # extracts_per_subpath = [extract(dpath, dname, dpart) for dname in list_dname for dpart in list_part]
     extracts_per_subpath = []
     for i in range(len(list_dname)):
@@ -83,8 +83,8 @@ def aggregate(dpath, list_dname, list_part, output_path, save=True):
     ret = dict()
     for key in list_key:
         data_frame = pd.concat([list_data_frame[x][key] for x in list_dname])
-        file_name = os.path.join(output_path, get_valid_filename(key) + '.csv')
-        if save:
+        if output_path != None:
+            file_name = os.path.join(output_path, get_valid_filename(key) + '.csv')
             data_frame.to_csv(file_name)
         ret[key] = data_frame
     return ret
