@@ -80,7 +80,7 @@ def show_image(distances, queryset, testset, k=5, num_image=5, size_img=(2.5, 5)
 if __name__ == "__main__":
     path = os.path.join('saved', 'logs')
     part = ['Accuracy_Train', 'Accuracy_Val', 'Loss_Train', 'Loss_Val']
-    run_id = '0707_131336'
+    run_id = '0708_140143'
     plot_loss(
         dpath=path,
         list_dname=[run_id],

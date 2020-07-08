@@ -25,7 +25,7 @@
         "sgd_nesterov": false
     },
     "loss": {
-        "name": "CEL_Sigmoid"
+        "name": "BCEWithLogitsLoss"
     },
     "lr_scheduler": {
         "name": "warmup",
@@ -45,7 +45,7 @@
         "log_dir_saved": "saved/logs1"
     },
     "trainer_colab": {
-        "epochs": 120,
+        "epochs": 10,
         "checkpoint_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints",
         "log_dir": "saved/logs",
         "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs"
