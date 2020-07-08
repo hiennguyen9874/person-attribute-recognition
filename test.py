@@ -58,14 +58,7 @@ def main(config):
     labels = labels.cpu().numpy()
     
     result_label, result_instance = recognition_metrics(labels, preds)
-    
-    # with open(os.path.join(config['testing']['output_dir'], 'result.pth'), 'wb') as f:
-    #         torch.save({'result_label': result_label, 'result_instance': result_instance}, f)
-    
-    # result = torch.load(os.path.join(config['testing']['output_dir'], 'result.pth'), map_location=map_location)
-    # result_label = result['result_label']
-    # result_instance = result['result_instance']
-    
+        
     logger.info('instance-based metrics:')
     logger.info('accuracy: %0.4f' % result_instance.accuracy)
     logger.info('precision: %0.4f' % result_instance.precision)
@@ -87,13 +80,6 @@ def main(config):
     ax.axis('off')
     # fig.tight_layout()
     plt.show()
-
-    # logger.info('label-based metrics:')
-    # logger.info('           '+ ('hard_hat   none_hard_hat    safety_vest    none_safety_vest    no_hat'))
-    # logger.info('accuracy:  '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f' % (*result_label.accuracy,)))
-    # logger.info('precision: '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f' % (*result_label.precision,)))
-    # logger.info('recall:    '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f' % (*result_label.recall,)))
-    # logger.info('f1 score:  '+ ('%0.4f,     %0.4f,           %0.4f,         %0.4f,          %0.4f' % (*result_label.f1_score,)))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
