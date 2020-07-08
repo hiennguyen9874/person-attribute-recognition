@@ -2,7 +2,7 @@
 import requests
 import sys
 import os
-from tqdm import tqdm
+# from tqdm import tqdm
 
 def download_file_from_google_drive(id, destination=None):
     URL = "https://docs.google.com/uc?export=download"
@@ -59,13 +59,13 @@ def download_file_from_google_drive(id, destination=None):
         initial = stat.st_size 
         range = response.headers.get('Content-Range', None)
 
-    with tqdm(desc=destination, total=total_size, initial=initial, unit="B", unit_scale=True) as pbar:
-        with open(partfile, "ab") as f:
-            f.seek(initial)
-            for chunk in response.iter_content(CHUNK_SIZE):
-                if chunk:
-                    pbar.update(CHUNK_SIZE)
-                    f.write(chunk)
+    # with tqdm(desc=destination, total=total_size, initial=initial, unit="B", unit_scale=True) as pbar:
+    with open(partfile, "ab") as f:
+        f.seek(initial)
+        for chunk in response.iter_content(CHUNK_SIZE):
+            if chunk:
+                # pbar.update(CHUNK_SIZE)
+                f.write(chunk)
         os.rename(partfile, destination)
     return filename
 
@@ -99,12 +99,12 @@ def download_with_url(api, file_id, destination, name_file):
         initial = stat.st_size 
         range = response.headers.get('Content-Range', None)
 
-    with tqdm(desc=destination, total=total_size, initial=initial, unit="B", unit_scale=True) as pbar:
-        with open(partfile, "ab") as f:
-            f.seek(initial)
-            for chunk in response.iter_content(CHUNK_SIZE):
-                if chunk:
-                    pbar.update(CHUNK_SIZE)
-                    f.write(chunk)
+    # with tqdm(desc=destination, total=total_size, initial=initial, unit="B", unit_scale=True) as pbar:
+    with open(partfile, "ab") as f:
+        f.seek(initial)
+        for chunk in response.iter_content(CHUNK_SIZE):
+            if chunk:
+                # pbar.update(CHUNK_SIZE)
+                f.write(chunk)
         os.rename(partfile, destination)
     return filename

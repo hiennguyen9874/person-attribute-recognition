@@ -7,7 +7,7 @@ sys.path.append('.')
 
 import torch.nn as nn
 
-from tqdm import tqdm
+# from tqdm import tqdm
 from torchsummary import summary
 
 from data import DataManger
