@@ -8,7 +8,7 @@
         "name": "ppe",
         "download": true,
         "extract": true,
-        "batch_size": 64,
+        "batch_size": 4,
         "shuffle": true,
         "num_workers": 4,
         "pin_memory": true,
@@ -42,15 +42,20 @@
         "epochs": 120,
         "checkpoint_dir": "saved/checkpoints",
         "log_dir": "saved/logs",
-        "log_dir_saved": "saved/logs1"
+        "log_dir_saved": "saved/logs1",
+        "tqdm": true
     },
     "trainer_colab": {
-        "epochs": 10,
+        "epochs": 120,
         "checkpoint_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints",
         "log_dir": "saved/logs",
-        "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs"
+        "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs",
+        "tqdm": false
     },
     "testing": {
+        "model": {
+            "name": "baseline_reid"
+        },
         "output_dir": "output"
     }
 }

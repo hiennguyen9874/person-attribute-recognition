@@ -1,6 +1,6 @@
 {
-    "python.pythonPath": "/usr/bin/python3",
+    "python.pythonPath": "/home/hien/anaconda3/envs/reid/bin/python",
     "python.analysis.extraPaths": [
-        "/usr/bin/python3"
+        "/home/hien/anaconda3/envs/reid/bin/python"
     ]
 }

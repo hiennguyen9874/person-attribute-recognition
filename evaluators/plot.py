@@ -11,7 +11,7 @@ sys.path.append('.')
 
 from utils import aggregate
 
-def plot_loss(dpath, list_dname, list_part, path_figure ,title = None, low = .05, high = .95, com=0):
+def plot_loss_accuracy(dpath, list_dname, list_part, path_figure ,title = None, low = .05, high = .95, com=0):
     """ Plot loss and accuracy from tensorboard file
     Args:
         dpath (str): path to folder contain (eg: saved/logs)
@@ -22,7 +22,7 @@ def plot_loss(dpath, list_dname, list_part, path_figure ,title = None, low = .05
         low, high (float): 
     Return:
     """
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(25, 10))
+    fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(25, 10))
     dict_data_frame = aggregate(dpath, list_dname, list_part)
     colors = ['red', 'green', 'blue', 'orange']
     for key, color in zip(dict_data_frame.keys(), colors):
@@ -58,6 +58,13 @@ def plot_loss(dpath, list_dname, list_part, path_figure ,title = None, low = .05
     # plt.show()
     fig.savefig(path_figure, dpi=300)
 
+def plot(path, run_id, title, list_part = ['Accuracy_Train', 'Accuracy_Val', 'Loss_Train', 'Loss_Val']):
+    return plot_loss_accuracy(
+        dpath=path,
+        list_dname=[run_id],
+        list_part=list_part,
+        path_figure=os.path.join(path, run_id, 'plot.png'),
+        title=title)
 
 def show_image(distances, queryset, testset, k=5, num_image=5, size_img=(2.5, 5)):
     plt.figure(figsize=((k+1)*size_img[0], num_image*size_img[1]))
@@ -78,12 +85,4 @@ def show_image(distances, queryset, testset, k=5, num_image=5, size_img=(2.5, 5)
     plt.show()
 
 if __name__ == "__main__":
-    path = os.path.join('saved', 'logs')
-    part = ['Accuracy_Train', 'Accuracy_Val', 'Loss_Train', 'Loss_Val']
-    run_id = '0708_140143'
-    plot_loss(
-        dpath=path,
-        list_dname=[run_id],
-        list_part=part,
-        path_figure=os.path.join(path, run_id, '{}.png'.format(run_id)),
-        title='OSNet + BCEWithLogitsLoss, PPE dataset')
+    plot(os.path.join('saved', 'logs'), '0708_043423', '0708_043423: osnet, CEL_Sigmoid, ppe')

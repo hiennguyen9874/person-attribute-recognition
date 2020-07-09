@@ -11,16 +11,17 @@ import matplotlib.pyplot as plt
 from torchsummary import summary
 from tqdm import tqdm
 
-from models import OSNet, BaselineReid, BaselineAttribute
+from models import OSNet, BaselineReid, BaselineAttribute, build_model
 from data import DataManger
 from logger import setup_logging
 from utils import read_json, write_json, rmdir
 from evaluators import plot_loss, show_image, recognition_metrics
 
 def main(config):
+    cfg_testing = config['testing']
     run_id = config['resume'].split('/')[-2]
     file_name = config['resume'].split('/')[-1].split('.')[0]
-    output_dir = os.path.join(config['testing']['output_dir'], run_id, file_name)
+    output_dir = os.path.join(cfg_testing['output_dir'], run_id, file_name)
     (os.path.exists(output_dir) or os.makedirs(output_dir, exist_ok=True)) and rmdir(output_dir, remove_parent=False)
     setup_logging(output_dir)
     logger = logging.getLogger('test')
@@ -31,7 +32,7 @@ def main(config):
 
     datamanager = DataManger(config['data'], phase='test')
     
-    model = OSNet(num_classes=len(datamanager.datasource.get_attribute()))
+    model = build_model(cfg_testing['model'], num_classes=len(datamanager.datasource.get_attribute()))
 
     logger.info('Loading checkpoint: {} ...'.format(config['resume']))
     checkpoint = torch.load(config['resume'], map_location=map_location)

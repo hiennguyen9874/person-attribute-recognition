@@ -12,8 +12,9 @@ import torch.nn as nn
 from torchsummary import summary
 
 from base import BaseTrainer
+from callbacks import Tqdm
 from data import DataManger
-from evaluators import plot_loss
+from evaluators import plot_loss_accuracy, plot
 from losses import build_losses
 from models import build_model
 from optimizers import build_optimizers, build_lr_scheduler
@@ -47,7 +48,7 @@ class Trainer(BaseTrainer):
         # step log loss and accuracy
         self.log_step = (len(self.datamanager.get_dataloader('train')) // 10, len(self.datamanager.get_dataloader('val'))//10)
 
-        # save best accuracy for function _save_checkpoint
+        # best accuracy and loss
         self.best_accuracy = None
         self.best_loss = None
         
@@ -101,10 +102,11 @@ class Trainer(BaseTrainer):
 
             # save logs
             self._save_logs(epoch)
+        # wait for tensorboard flush all metrics to file
         self.writer.flush()
         time.sleep(1*60)
         self.writer.close()
-        # plot loss, accuracy
+        # plot loss, accuracy and save them to plot.png in saved/logs/<run_id>/plot.png
         if os.path.exists(os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id, 'plot.png')):
             os.remove(os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id, 'plot.png'))
         plot_loss(
@@ -119,9 +121,12 @@ class Trainer(BaseTrainer):
         """
         self.model.train()
         self.train_metrics.reset()
-        # with tqdm(total=len(self.datamanager.get_dataloader('train'))) as epoch_pbar:
-        # epoch_pbar.set_description(f'Epoch {epoch}')
+        if self.cfg_trainer['tqdm']:
+            tqdm_callback = Tqdm(epoch, len(self.datamanager.get_dataloader('train')), phase='train')
         for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('train')):
+            # get time for log num iter per seconds
+            if not self.cfg_trainer['tqdm']:
+                start_time = time.time()
             # push data to device
             data, labels = data.to(self.device), labels.to(self.device)
 
@@ -155,13 +160,22 @@ class Trainer(BaseTrainer):
             self.train_metrics.update('loss', loss.item())
             self.train_metrics.update('accuracy', accuracy.item())
 
-            # update process bar
-            # epoch_pbar.set_postfix({
-            #     'train_loss': self.train_metrics.avg('loss'),
-            #     'train_acc': self.train_metrics.avg('accuracy')})
-            # epoch_pbar.update(1)
-            if batch_idx % self.log_step[0] == 0 or batch_idx == len(self.datamanager.get_dataloader('train'))-1:
-                self.logger.info('Train Epoch: {} {}/{} Loss: {:.6f} Acc: {:.6f}'.format(epoch, batch_idx+1, len(self.datamanager.get_dataloader('train')), self.train_metrics.avg('loss'), self.train_metrics.avg('accuracy')))
+            # update process
+            if self.cfg_trainer['tqdm']:
+                tqdm_callback.on_batch_end(self.train_metrics.avg('loss'), self.train_metrics.avg('accuracy'))
+            else:
+                end_time = time.time()
+                if batch_idx % self.log_step[0] == 0 or batch_idx == len(self.datamanager.get_dataloader('train'))-1:
+                    self.logger.info('Train Epoch: {} {}/{} {:.1f}it/s Loss: {:.6f} Acc: {:.6f}'.format(
+                        epoch,
+                        batch_idx+1,
+                        len(self.datamanager.get_dataloader('train')),
+                        1/(end_time-start_time),
+                        self.train_metrics.avg('loss'),
+                        self.train_metrics.avg('accuracy')))
+        
+        if self.cfg_trainer['tqdm']:
+            tqdm_callback.on_epoch_end()
         return self.train_metrics.result()
 
     def _valid_epoch(self, epoch):
@@ -170,9 +184,11 @@ class Trainer(BaseTrainer):
         self.model.eval()
         self.valid_metrics.reset()
         with torch.no_grad():
-            # with tqdm(total=len(self.datamanager.get_dataloader('val'))) as epoch_pbar:
-            # epoch_pbar.set_description(f'Epoch {epoch}')
+            if self.cfg_trainer['tqdm']:
+                tqdm_callback = Tqdm(epoch, len(self.datamanager.get_dataloader('val')), phase='val')
             for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('val')):
+                if not self.cfg_trainer['tqdm']:
+                    start_time = time.time()
                 # push data to device
                 data, labels = data.to(self.device), labels.to(self.device)
                 
@@ -197,13 +213,21 @@ class Trainer(BaseTrainer):
                 self.valid_metrics.update('loss', loss.item())
                 self.valid_metrics.update('accuracy', accuracy.item())
 
-                # update process bar
-                # epoch_pbar.set_postfix({
-                #     'val_loss': self.valid_metrics.avg('loss'),
-                #     'val_acc': self.valid_metrics.avg('accuracy')})
-                # epoch_pbar.update(1)
-                if batch_idx % self.log_step[1] == 0 or batch_idx == len(self.datamanager.get_dataloader('val'))-1:
-                    self.logger.info('Valid Epoch: {} {}/{} Loss: {:.6f} Acc: {:.6f}'.format(epoch, batch_idx+1 , len(self.datamanager.get_dataloader('val')), self.valid_metrics.avg('loss'), self.valid_metrics.avg('accuracy')))
+                # update process
+                if self.cfg_trainer['tqdm']:
+                    tqdm_callback.on_batch_end(self.valid_metrics.avg('loss'), self.valid_metrics.avg('accuracy'))
+                else:
+                    end_time = time.time()
+                    if batch_idx % self.log_step[1] == 0 or batch_idx == len(self.datamanager.get_dataloader('val'))-1:
+                        self.logger.info('Valid Epoch: {} {}/{} {:.1f}it/s Loss: {:.6f} Acc: {:.6f}'.format(
+                            epoch,
+                            batch_idx+1,
+                            len(self.datamanager.get_dataloader('val')),
+                            1/(end_time-start_time),
+                            self.valid_metrics.avg('loss'),
+                            self.valid_metrics.avg('accuracy')))
+        if self.cfg_trainer['tqdm']:
+            tqdm_callback.on_epoch_end()
         return self.valid_metrics.result()
 
     def _save_checkpoint(self, epoch, save_best_accuracy=True, save_best_loss=True):
@@ -212,7 +236,7 @@ class Trainer(BaseTrainer):
         state = {
             'epoch': epoch,
             'state_dict': self.model.state_dict(),
-            # 'loss': self.criterion.state_dict(),
+            'loss': self.criterion.state_dict(),
             'optimizer': self.optimizer.state_dict(),
             'lr_scheduler': self.lr_scheduler.state_dict(),
             'best_accuracy': self.best_accuracy,
@@ -239,7 +263,7 @@ class Trainer(BaseTrainer):
         checkpoint = torch.load(resume_path, map_location=self.map_location)
         self.start_epoch = checkpoint['epoch'] + 1
         self.model.load_state_dict(checkpoint['state_dict'])
-        # self.criterion.load_state_dict(checkpoint['loss'])
+        self.criterion.load_state_dict(checkpoint['loss'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])
         self.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
         self.best_accuracy = checkpoint['best_accuracy']
