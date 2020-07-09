@@ -109,10 +109,9 @@ class Trainer(BaseTrainer):
         # plot loss, accuracy and save them to plot.png in saved/logs/<run_id>/plot.png
         if os.path.exists(os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id, 'plot.png')):
             os.remove(os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id, 'plot.png'))
-        plot_loss(
+        plot_loss_accuracy(
             dpath=self.cfg_trainer['log_dir'],
             list_dname=[self.run_id],
-            list_part=['Accuracy_Train', 'Accuracy_Val', 'Loss_Train', 'Loss_Val'],
             path_figure=os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id, 'plot.png'),
             title=self.run_id + ': ' + self.config['model']['name'] + ", " + self.config['loss']['name'] + ", " + self.config['data']['name'])
       
@@ -166,7 +165,7 @@ class Trainer(BaseTrainer):
             else:
                 end_time = time.time()
                 if batch_idx % self.log_step[0] == 0 or batch_idx == len(self.datamanager.get_dataloader('train'))-1:
-                    self.logger.info('Train Epoch: {} {}/{} {:.1f}it/s Loss: {:.6f} Acc: {:.6f}'.format(
+                    self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f}'.format(
                         epoch,
                         batch_idx+1,
                         len(self.datamanager.get_dataloader('train')),
@@ -219,7 +218,7 @@ class Trainer(BaseTrainer):
                 else:
                     end_time = time.time()
                     if batch_idx % self.log_step[1] == 0 or batch_idx == len(self.datamanager.get_dataloader('val'))-1:
-                        self.logger.info('Valid Epoch: {} {}/{} {:.1f}it/s Loss: {:.6f} Acc: {:.6f}'.format(
+                        self.logger.info('Valid Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f}'.format(
                             epoch,
                             batch_idx+1,
                             len(self.datamanager.get_dataloader('val')),

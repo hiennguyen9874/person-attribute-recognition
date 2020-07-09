@@ -58,39 +58,61 @@ def get_valid_filename(s):
     return re.sub(r'(?u)[^-\w.]', '', s)
 
 
-def aggregate(dpath, list_dname, list_part, output_path=None):
-    # extracts_per_subpath = [extract(dpath, dname, dpart) for dname in list_dname for dpart in list_part]
-    extracts_per_subpath = []
-    for i in range(len(list_dname)):
-        extracts_per_subpath.append(dict())
+def aggregate(dpath, list_dname, output_path=None):
+    extracts_per_subpath = dict()
+    for dname in list_dname:
+        extracts_per_subpath[dname] = dict()
+        list_part = [f.name for f in os.scandir(os.path.join(dpath, dname)) if f.is_dir()]
+        list_part.sort()
+        extracts_per_subpath[dname]['list_part'] = list_part
+        set_part1 = set()
+        set_part2 = set()
         for dpart in list_part:
-            extracts_per_subpath[i][dpart] = extract(dpath, list_dname[i], dpart)
-    pass
-
-    list_key = []
-    # list_data_frame = []
-    # list_key = dict()
-    list_data_frame = dict()
-    for i in range(len(list_dname)):
-        # list_key[list_dname[i]] = dict()
-        list_data_frame[list_dname[i]] = dict()
-        for part in list_part:
-            for key, (steps, wall_times, values) in extracts_per_subpath[i][part].items():
-                df = pd.DataFrame(list(zip(wall_times, steps, np.array(values).reshape(-1))), columns=['Wall time', 'Step', 'Value'])
-                list_data_frame[list_dname[i]][part] = df
-                list_key.append(part)
+            x, y = dpart.split('_')
+            set_part1.add(x)
+            set_part2.add(y)
+        for part1 in set_part1:
+            extracts_per_subpath[dname][part1] = dict()
+            for part2 in set_part2:
+                extracts_per_subpath[dname][part1][part2] = extract(dpath, dname, part1 + '_' + part2)
     
-    ret = dict()
-    for key in list_key:
-        data_frame = pd.concat([list_data_frame[x][key] for x in list_dname])
-        if output_path != None:
-            file_name = os.path.join(output_path, get_valid_filename(key) + '.csv')
-            data_frame.to_csv(file_name)
-        ret[key] = data_frame
-    return ret
+    if len(list_dname) > 1:
+        for i in range(0, len(list_dname)-1):
+            for j in range(i+1, len(list_dname)):
+                if len(set(extracts_per_subpath[list_dname[i]]['list_part']).difference(set(extracts_per_subpath[list_dname[j]]['list_part']))) != 0:
+                    raise KeyError
 
+
+    list_part = [set(), set()]
+    list_data_frame = dict()
+    for key1, value1 in extracts_per_subpath.items():
+        list_data_frame[key1] = dict()
+        for key2, value2 in extracts_per_subpath[key1].items():
+            if key2 == 'list_part':
+                continue
+            list_data_frame[key1][key2] = dict()
+            for key3, value3 in extracts_per_subpath[key1][key2].items():
+                for key, (steps, wall_times, values) in extracts_per_subpath[key1][key2][key3].items():
+                    df = pd.DataFrame(list(zip(wall_times, steps, np.array(values).reshape(-1))), columns=['Wall time', 'Step', 'Value'])
+                    list_data_frame[key1][key2][key3] = df
+                    list_part[0].add(key2)
+                    list_part[1].add(key3)
+    list_part[0] = list(list_part[0])
+    list_part[1] = list(list_part[1])
+
+    ret = dict()
+    for part1 in list_part[0]:
+        ret[part1] = dict()
+        for part2 in list_part[1]:
+            data_frame = pd.concat([list_data_frame[x][part1][part2] for x in list_dname])
+            if output_path != None:
+                file_name = os.path.join(output_path, get_valid_filename(part1 + '_' + part2) + '.csv')
+                data_frame.to_csv(file_name)
+            ret[part1][part2] = data_frame
+
+    return ret, list_part
 
 if __name__ == '__main__':
     path = os.path.join('saved', 'logs')
-    part = ['Accuracy_Train', 'Accuracy_Val', 'Loss_Train', 'Loss_Val']
-    aggregate(path, ['0707_131336'], part, 'output')
+    # part = ['Accuracy_Train', 'Accuracy_Val', 'Loss_Train', 'Loss_Val']
+    aggregate(path, ['0707_131336'], 'output')
