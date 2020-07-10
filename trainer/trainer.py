@@ -70,12 +70,14 @@ class Trainer(BaseTrainer):
     def train(self):
         for epoch in range(self.start_epoch, self.epochs + 1):
             result = self._train_epoch(epoch)
-
-            if self.lr_scheduler is not None:
-                self.lr_scheduler.step()
-
             result = self._valid_epoch(epoch)
 
+            if self.lr_scheduler is not None:
+                if isinstance(self.lr_scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                    self.lr_scheduler.step(self.valid_metrics.avg('loss'))
+                else:
+                    self.lr_scheduler.step()
+            
             # add scalars to tensorboard
             self.writer.add_scalars('Loss',
                 {
