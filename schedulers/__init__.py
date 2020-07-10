@@ -3,7 +3,7 @@ from .scheduler import WarmupMultiStepLR
 
 def build_lr_scheduler(config, optimizer):
     cfg_lr_scheduler = config['lr_scheduler']
-    if cfg_lr_scheduler['name'] == "warmup":
+    if cfg_lr_scheduler['name'] == "WarmupMultiStepLR":
         dict_paramsters = {
             'milestones': cfg_lr_scheduler['steps'],
             'gamma': cfg_lr_scheduler['gamma'],

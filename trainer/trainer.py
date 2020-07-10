@@ -8,8 +8,6 @@ sys.path.append('.')
 
 import torch.nn as nn
 
-from torchsummary import summary
-
 from base import BaseTrainer
 from callbacks import Tqdm
 from data import DataManger
@@ -18,7 +16,7 @@ from losses import build_losses
 from models import build_model
 from optimizers import build_optimizers
 from schedulers import build_lr_scheduler
-from utils import MetricTracker, rmdir
+from utils import MetricTracker, rmdir, summary
 
 class Trainer(BaseTrainer):
     def __init__(self, config):
@@ -29,7 +27,12 @@ class Trainer(BaseTrainer):
         self.model = build_model(config['model'], num_classes=len(self.datamanager.datasource.get_attribute()))
 
         # summary model
-        # summary(self.model, input_size=(3, 256, 128), batch_size=config['data']['batch_size'], device='cpu')
+        summary(
+            self.model,
+            input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
+            batch_size=config['data']['batch_size'],
+            device='cpu',
+            print_step=False)
         
         # losses
         pos_ratio = torch.tensor(self.datamanager.datasource.get_weight('train'))
@@ -89,6 +92,8 @@ class Trainer(BaseTrainer):
                     'Train': self.train_metrics.avg('accuracy'),
                     'Val': self.valid_metrics.avg('accuracy')
                 }, global_step=epoch)
+            self.writer.add_scalar('lr', self.optimizer.param_groups[0]['lr'], global_step=epoch)
+
 
             # logging result to console
             log = {'epoch': epoch}
