@@ -54,7 +54,7 @@
     },
     "testing": {
         "model": {
-            "name": "baseline_reid"
+            "name": "osnet"
         },
         "output_dir": "output"
     }

@@ -18,11 +18,8 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 # tf.disable_v2_behavior()
 
-FOLDER_NAME = 'aggregates'
-
-
-def extract(dpath, dname, dpart):
-    scalar_accumulators = [EventAccumulator(os.path.join(dpath, dname, dpart)).Reload().scalars]
+def extract(path_to_folder):
+    scalar_accumulators = [EventAccumulator(path_to_folder).Reload().scalars]
 
     # Filter non event files
     scalar_accumulators = [scalar_accumulator for scalar_accumulator in scalar_accumulators if scalar_accumulator.Keys()]
@@ -74,7 +71,7 @@ def aggregate(dpath, list_dname, output_path=None):
         for part1 in set_part1:
             extracts_per_subpath[dname][part1] = dict()
             for part2 in set_part2:
-                extracts_per_subpath[dname][part1][part2] = extract(dpath, dname, part1 + '_' + part2)
+                extracts_per_subpath[dname][part1][part2] = extract(os.path.join(dpath, dname, part1 + '_' + part2))
     
     if len(list_dname) > 1:
         for i in range(0, len(list_dname)-1):
@@ -114,5 +111,4 @@ def aggregate(dpath, list_dname, output_path=None):
 
 if __name__ == '__main__':
     path = os.path.join('saved', 'logs')
-    # part = ['Accuracy_Train', 'Accuracy_Val', 'Loss_Train', 'Loss_Val']
     aggregate(path, ['0707_131336'], 'output')

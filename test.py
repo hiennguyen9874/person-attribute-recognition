@@ -15,7 +15,7 @@ from models import OSNet, BaselineReid, BaselineAttribute, build_model
 from data import DataManger
 from logger import setup_logging
 from utils import read_json, write_json, rmdir
-from evaluators import plot_loss, show_image, recognition_metrics
+from evaluators import plot_loss_accuracy, show_image, recognition_metrics
 
 def main(config):
     cfg_testing = config['testing']
@@ -69,6 +69,7 @@ def main(config):
     logger.info('f1_score: %0.4f' % result_instance.f1_score)
     
     logger.info('label-based metrics:')
+    logger.info('mean-accuracy or balanced-accuracy: %0.4f' % (np.mean(result_label.mean_accuracy)))
     result = np.stack([result_label.accuracy, result_label.precision, result_label.recall, result_label.f1_score], axis=0)
     result = np.around(result*100, 2)
     result = result.transpose()

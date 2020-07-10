@@ -27,16 +27,20 @@ def plot_loss_accuracy(dpath, list_dname, path_figure, title = None, low_ratio =
     
     for i in range(len(list_part[0])):
         colors = ['red', 'green']
+        # get outlier from phase train and valid
         list_quant_df = []
         for j in range(len(list_part[1])):
             df = dict_data_frame[list_part[0][i]][list_part[1][j]]
             list_quant_df.append(df.quantile([low_ratio, high_ratio]))
         low = min(*[x.loc[low_ratio, 'Value'] for x in list_quant_df])
         high = max(*[x.loc[high_ratio, 'Value'] for x in list_quant_df])
+        # 
         for j in range(len(list_part[1])):
             df = dict_data_frame[list_part[0][i]][list_part[1][j]]
             # remove outlier
             df = df[(df['Value'] >= low) & (df['Value'] <= high)]
+            # df.loc[df['Value'] < low, 'Value'] = low
+            # df.loc[df['Value'] > high, 'Value'] = high
             # smoothing
             df['Value'] = df['Value'].ewm(com=com).mean()
             # plot
@@ -46,7 +50,9 @@ def plot_loss_accuracy(dpath, list_dname, path_figure, title = None, low_ratio =
                 label=list_part[1][j],
                 color=colors[j],
                 ax=ax[i])
-            
+        # set limit for y-axis
+        # ax[i].set_ylim([low, high])
+        # set label
         ax[i].set_title(list_part[0][i])
         ax[i].set_xlabel('Epoch')
         # Hide the right and top spines
@@ -60,7 +66,7 @@ def plot_loss_accuracy(dpath, list_dname, path_figure, title = None, low_ratio =
 
     if title != None:
         fig.suptitle(title)
-    # plt.show()
+    plt.show()
     fig.savefig(path_figure, dpi=300)
 
 def plot(path, run_id, title):
@@ -92,7 +98,6 @@ def show_image(distances, queryset, testset, k=5, num_image=5, size_img=(2.5, 5)
     plt.show()
 
 if __name__ == "__main__":
-    plot(os.path.join('saved', 'logs'), '0708_043423', '0708_043423: osnet, CEL_Sigmoid, ppe')
+    plot(os.path.join('saved', 'logs'), '0708_143938', '0708_143938: osnet, BCEWithLogitsLoss, ppe')
 
 
-    
