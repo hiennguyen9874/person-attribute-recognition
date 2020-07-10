@@ -5,7 +5,7 @@
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
-        "name": "pa_100k",
+        "name": "penta",
         "download": true,
         "extract": true,
         "batch_size": 64,
@@ -16,7 +16,7 @@
     },
     "optimizer": {
         "name": "adam",
-        "lr": 0.065,
+        "lr": 0.00035,
         "weight_decay": 0.0005,
         "adam_beta1": 0.9,
         "adam_beta2": 0.99,

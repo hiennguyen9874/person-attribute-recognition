@@ -10,18 +10,15 @@ from torchvision import transforms
 from torch.utils.data.dataloader import DataLoader
 
 from .datasets import ImageDataset
-from .image import PA_100K, Penta, PPE
+from .image import build_datasource
 
 class DataManger(object):
-    __datasets = {'pa_100k': PA_100K, 'penta': Penta, 'ppe': PPE}
-
     def __init__(self, config, phase='train'):
         super().__init__()
-
-        assert config['name'] in list(self.__datasets.keys())
         self.data_name = config['name']
 
-        self.datasource = self.__datasets[self.data_name](
+        self.datasource = build_datasource(
+            name=self.data_name,
             root_dir=config['data_dir'],
             download=config['download'],
             extract=config['extract'])
