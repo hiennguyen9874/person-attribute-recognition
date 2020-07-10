@@ -46,7 +46,8 @@ class Trainer(BaseTrainer):
         self.valid_metrics = MetricTracker('loss', 'accuracy')
 
         # step log loss and accuracy
-        self.log_step = (len(self.datamanager.get_dataloader('train')) // 10, len(self.datamanager.get_dataloader('val'))//10)
+        self.log_step = (len(self.datamanager.get_dataloader('train')) // 10,
+                        len(self.datamanager.get_dataloader('val')) // 10)
 
         # best accuracy and loss
         self.best_accuracy = None
@@ -57,7 +58,10 @@ class Trainer(BaseTrainer):
         self.criterion.to(self.device)
 
         # print config
-        self._print_config(params_loss=params_loss, params_optimizers=params_optimizers, params_lr_scheduler=params_lr_scheduler)
+        self._print_config(
+            params_loss=params_loss,
+            params_optimizers=params_optimizers,
+            params_lr_scheduler=params_lr_scheduler)
 
         # resume model from last checkpoint
         if config['resume'] != '':
