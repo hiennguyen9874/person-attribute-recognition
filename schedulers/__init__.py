@@ -18,8 +18,7 @@ def build_lr_scheduler(config, optimizer):
             warmup_factor=cfg_lr_scheduler['factor'],
             warmup_iters=cfg_lr_scheduler['iters'],
             warmup_method=cfg_lr_scheduler['method']), dict_paramsters
-        
-        
+            
     elif cfg_lr_scheduler['name'] == 'ReduceLROnPlateau':
         dict_paramsters = {
             'factor': cfg_lr_scheduler['factor'],
@@ -29,6 +28,15 @@ def build_lr_scheduler(config, optimizer):
             optimizer,
             factor=cfg_lr_scheduler['factor'],
             patience=cfg_lr_scheduler['patience']), dict_paramsters
-        
+    
+    elif cfg_lr_scheduler['name'] == 'MultiStepLR':
+        dict_paramsters = {
+            'milestones': cfg_lr_scheduler['steps'],
+            'gamma': cfg_lr_scheduler['gamma']
+        }
+        return lr_scheduler.ReduceLROnPlateau(
+            optimizer,
+            milestones=cfg_lr_scheduler['steps'],
+            gamma=cfg_lr_scheduler['gamma']), dict_paramsters
     else:
         raise KeyError('config[lr_scheduler][name] error')

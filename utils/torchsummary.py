@@ -6,7 +6,7 @@ from collections import OrderedDict
 import numpy as np
 
 
-def summary(model, input_size, batch_size=-1, device="cuda", print_step=True):
+def summary(func, model, input_size, batch_size=-1, device="cuda", print_step=True):
     def register_hook(module):
 
         def hook(module, input, output):
@@ -57,7 +57,7 @@ def summary(model, input_size, batch_size=-1, device="cuda", print_step=True):
 
     # batch_size of 2 for batchnorm
     x = [torch.rand(2, *in_size).type(dtype) for in_size in input_size]
-    # print(type(x[0]))
+    # func(type(x[0]))
 
     # create properties
     summary = OrderedDict()
@@ -67,7 +67,7 @@ def summary(model, input_size, batch_size=-1, device="cuda", print_step=True):
     model.apply(register_hook)
 
     # make a forward pass
-    # print(x.shape)
+    # func(x.shape)
     model(*x)
 
     # remove these hooks
@@ -75,10 +75,10 @@ def summary(model, input_size, batch_size=-1, device="cuda", print_step=True):
         h.remove()
 
     if print_step:
-        print("----------------------------------------------------------------")
+        func("----------------------------------------------------------------")
         line_new = "{:>20}  {:>25} {:>15}".format("Layer (type)", "Output Shape", "Param #")
-        print(line_new)
-        print("================================================================")
+        func(line_new)
+        func("================================================================")
     total_params = 0
     total_output = 0
     trainable_params = 0
@@ -95,7 +95,7 @@ def summary(model, input_size, batch_size=-1, device="cuda", print_step=True):
             if summary[layer]["trainable"] == True:
                 trainable_params += summary[layer]["nb_params"]
         if print_step:
-            print(line_new)
+            func(line_new)
 
     # assume 4 bytes/number (float on cuda).
     total_input_size = abs(np.prod(input_size) * batch_size * 4. / (1024 ** 2.))
@@ -103,16 +103,16 @@ def summary(model, input_size, batch_size=-1, device="cuda", print_step=True):
     total_params_size = abs(total_params.numpy() * 4. / (1024 ** 2.))
     total_size = total_params_size + total_output_size + total_input_size
 
-    print("================================================================")
-    print("Total params: {0:,}".format(total_params))
-    print("Trainable params: {0:,}".format(trainable_params))
-    print("Non-trainable params: {0:,}".format(total_params - trainable_params))
-    print("----------------------------------------------------------------")
-    print("Input size (MB): %0.2f" % total_input_size)
-    print("Forward/backward pass size (MB): %0.2f" % total_output_size)
-    print("Params size (MB): %0.2f" % total_params_size)
-    print("Estimated Total Size (MB): %0.2f" % total_size)
-    print("================================================================")
+    func("================================================================")
+    func("Total params: {0:,}".format(total_params))
+    func("Trainable params: {0:,}".format(trainable_params))
+    func("Non-trainable params: {0:,}".format(total_params - trainable_params))
+    func("----------------------------------------------------------------")
+    func("Input size (MB): %0.2f" % total_input_size)
+    func("Forward/backward pass size (MB): %0.2f" % total_output_size)
+    func("Params size (MB): %0.2f" % total_params_size)
+    func("Estimated Total Size (MB): %0.2f" % total_size)
+    func("================================================================")
     # return summary
 
 if __name__ == "__main__":
@@ -120,4 +120,4 @@ if __name__ == "__main__":
     from torchvision import models
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     vgg = models.vgg16().to(device)
-    summary(vgg, (3, 224, 224), print_step=False)
+    summary(print, vgg, (3, 224, 224), print_step=False)

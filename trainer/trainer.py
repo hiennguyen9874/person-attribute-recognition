@@ -26,14 +26,6 @@ class Trainer(BaseTrainer):
         # model
         self.model = build_model(config['model'], num_classes=len(self.datamanager.datasource.get_attribute()))
 
-        # summary model
-        summary(
-            self.model,
-            input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
-            batch_size=config['data']['batch_size'],
-            device='cpu',
-            print_step=False)
-        
         # losses
         pos_ratio = torch.tensor(self.datamanager.datasource.get_weight('train'))
         self.criterion, params_loss = build_losses(config, pos_ratio=pos_ratio)
@@ -56,15 +48,24 @@ class Trainer(BaseTrainer):
         self.best_accuracy = None
         self.best_loss = None
         
-        # send model to device
-        self.model.to(self.device)
-        self.criterion.to(self.device)
-
         # print config
         self._print_config(
             params_loss=params_loss,
             params_optimizers=params_optimizers,
             params_lr_scheduler=params_lr_scheduler)
+
+        # summary model
+        summary(
+            func=self.logger.info,
+            model=self.model,
+            input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
+            batch_size=config['data']['batch_size'],
+            device='cpu',
+            print_step=False)
+        
+        # send model to device
+        self.model.to(self.device)
+        self.criterion.to(self.device)
 
         # resume model from last checkpoint
         if config['resume'] != '':
