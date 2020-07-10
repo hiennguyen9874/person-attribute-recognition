@@ -7,6 +7,7 @@ import sys
 sys.path.append('.')
 
 import torch.nn as nn
+from torch.nn.utils import clip_grad_norm_
 
 from base import BaseTrainer
 from callbacks import Tqdm
@@ -155,6 +156,12 @@ class Trainer(BaseTrainer):
             
             # backward parameters
             loss.backward()
+
+            # Clips gradient norm of an iterable of parameters.
+            if self.config['clip_grad_norm_']['active']:
+                clip_grad_norm_(
+                    parameters=self.model.parameters(),
+                    max_norm=self.config['clip_grad_norm_']['max_norm'])
 
             # optimize
             self.optimizer.step()

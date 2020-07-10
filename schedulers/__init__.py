@@ -22,12 +22,14 @@ def build_lr_scheduler(config, optimizer):
     elif cfg_lr_scheduler['name'] == 'ReduceLROnPlateau':
         dict_paramsters = {
             'factor': cfg_lr_scheduler['factor'],
-            'patience': cfg_lr_scheduler['patience']
+            'patience': cfg_lr_scheduler['patience'],
+            'min_lr': cfg_lr_scheduler['min_lr']
         }
         return lr_scheduler.ReduceLROnPlateau(
             optimizer,
             factor=cfg_lr_scheduler['factor'],
-            patience=cfg_lr_scheduler['patience']), dict_paramsters
+            patience=cfg_lr_scheduler['patience'],
+            min_lr=cfg_lr_scheduler['min_lr']), dict_paramsters
     
     elif cfg_lr_scheduler['name'] == 'MultiStepLR':
         dict_paramsters = {
