@@ -9,7 +9,7 @@ import sys
 sys.path.append('.')
 
 
-from utils import aggregate
+from utils import aggregate, aggregate1
 
 def plot_loss_accuracy(dpath, list_dname, path_figure, title = None, low_ratio = .05, high_ratio = .95, com=0):
     """ Plot loss and accuracy from tensorboard file
@@ -69,7 +69,27 @@ def plot_loss_accuracy(dpath, list_dname, path_figure, title = None, low_ratio =
     plt.show()
     fig.savefig(path_figure, dpi=300)
 
-def plot(path, run_id, title):
+    dict_data_frame = aggregate1(dpath, list_dname)
+    for key, value in dict_data_frame.items():
+        fig, ax = plt.subplots()
+        df = dict_data_frame[key]
+        df.plot.line(x='Step', y ='Value', label=key, ax=ax)
+        # set label
+        ax.set_title(key)
+        ax.set_xlabel('Epoch')
+        # Hide the right and top spines
+        ax.spines['right'].set_visible(False)
+        ax.spines['top'].set_visible(False)
+        # Only show ticks on the left and bottom spines
+        ax.yaxis.set_ticks_position('left')
+        ax.xaxis.set_ticks_position('bottom')
+        # show grid
+        ax.grid()
+        plt.show()
+        fig.savefig(os.path.join(*path_figure.split('/')[:-1], '{}.png'.format(key)), dpi=300)
+
+
+def plot(path, run_id, title=None):
     return plot_loss_accuracy(
         dpath=path,
         list_dname=[run_id],
@@ -98,6 +118,6 @@ def show_image(distances, queryset, testset, k=5, num_image=5, size_img=(2.5, 5)
     plt.show()
 
 if __name__ == "__main__":
-    plot(os.path.join('saved', 'logs'), '0708_143938', '0708_143938: osnet, BCEWithLogitsLoss, ppe')
+    plot(os.path.join('saved', 'logs'), '0710_120633')
 
 

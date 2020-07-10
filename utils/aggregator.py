@@ -109,6 +109,27 @@ def aggregate(dpath, list_dname, output_path=None):
 
     return ret, list_part
 
+def aggregate1(dpath, list_dname, output_path=None):
+    extracts_per_subpath = {dname: extract(os.path.join(dpath, dname)) for dname in list_dname}
+
+    list_data_frame = dict()
+    list_key = set()
+    for dname, value in extracts_per_subpath.items():
+        list_data_frame[dname] = dict()
+        for key, (steps, wall_times, values) in extracts_per_subpath[dname].items():
+            df = pd.DataFrame(list(zip(wall_times, steps, np.array(values).reshape(-1))), columns=['Wall time', 'Step', 'Value'])
+            list_data_frame[dname][key] = df
+            list_key.add(key)
+
+    ret = dict()
+    for key in iter(list_key):
+        data_frame = pd.concat([list_data_frame[dname][key] for i in list_dname])
+        if output_path != None:
+            file_name = os.path.join(output_path, get_valid_filename(key) + '.csv')
+            data_frame.to_csv(file_name)
+        ret[key] = data_frame
+    return ret
+
 if __name__ == '__main__':
     path = os.path.join('saved', 'logs')
-    aggregate(path, ['0707_131336'], 'output')
+    aggregate1(path, ['0710_120633'])
