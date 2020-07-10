@@ -26,13 +26,6 @@ class BaseTrainer(object):
 
         setup_logging(self.logs_dir)
         self.logger = logging.getLogger('train')
-
-        self.logger.info('Run id: %s' % (self.run_id))
-        self.logger.info('Dataset: %s' % (config['data']['name']))
-        self.logger.info('Model: %s' % (config['model']['name']))
-        self.logger.info('Loss: %s' % (config['loss']['name']))
-        self.logger.info('Optimizer: %s' % (config['optimizer']['name']))
-        self.logger.info('Lr scheduler: %s' % (config['lr_scheduler']['name']))
         
         self.use_gpu = config['n_gpu'] > 0 and torch.cuda.is_available()
         if self.use_gpu:
@@ -43,3 +36,18 @@ class BaseTrainer(object):
         self.epochs = self.cfg_trainer['epochs']
         self.start_epoch = 1
         self.writer = SummaryWriter(self.logs_dir)
+    
+    def _print_config(self, params_model=None, params_loss=None, params_optimizers=None, params_lr_scheduler=None):
+        def __prams_to_str(params: dict):
+            if params == None:
+                return ''
+            row_format ="{:>4}  " * len(params)
+            return row_format.format(*[key + ': ' + str(value) for key, value in params.items()])
+
+        self.logger.info('Run id: %s' % (self.run_id))
+        self.logger.info('Dataset: %s, batch_size: %d ' % (self.config['data']['name'], self.config['data']['batch_size']))
+        self.logger.info('Model: %s ' % (self.config['model']['name']) + __prams_to_str(params_model))
+        self.logger.info('Loss: %s ' % (self.config['loss']['name']) + __prams_to_str(params_loss))
+        self.logger.info('Optimizer: %s ' % (self.config['optimizer']['name']) + __prams_to_str(params_optimizers))
+        self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
+

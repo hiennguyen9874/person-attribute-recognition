@@ -8,7 +8,6 @@ sys.path.append('.')
 
 import torch.nn as nn
 
-# from tqdm import tqdm
 from torchsummary import summary
 
 from base import BaseTrainer
@@ -17,7 +16,8 @@ from data import DataManger
 from evaluators import plot_loss_accuracy, plot
 from losses import build_losses
 from models import build_model
-from optimizers import build_optimizers, build_lr_scheduler
+from optimizers import build_optimizers
+from schedulers import build_lr_scheduler
 from utils import MetricTracker, rmdir
 
 class Trainer(BaseTrainer):
@@ -33,13 +33,13 @@ class Trainer(BaseTrainer):
         
         # losses
         pos_ratio = torch.tensor(self.datamanager.datasource.get_weight('train'))
-        self.criterion = build_losses(config, pos_ratio=pos_ratio)
+        self.criterion, params_loss = build_losses(config, pos_ratio=pos_ratio)
 
         # optimizer
-        self.optimizer = build_optimizers(config, self.model.parameters())
+        self.optimizer, params_optimizers = build_optimizers(config, self.model.parameters())
 
         # learing rate scheduler
-        self.lr_scheduler = build_lr_scheduler(config, self.optimizer)
+        self.lr_scheduler, params_lr_scheduler = build_lr_scheduler(config, self.optimizer)
 
         # track metric
         self.train_metrics = MetricTracker('loss', 'accuracy')
@@ -55,6 +55,9 @@ class Trainer(BaseTrainer):
         # send model to device
         self.model.to(self.device)
         self.criterion.to(self.device)
+
+        # print config
+        self._print_config(params_loss=params_loss, params_optimizers=params_optimizers, params_lr_scheduler=params_lr_scheduler)
 
         # resume model from last checkpoint
         if config['resume'] != '':
