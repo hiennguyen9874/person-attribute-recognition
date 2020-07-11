@@ -32,6 +32,12 @@ class Trainer(BaseTrainer):
         self.criterion, params_loss = build_losses(config, pos_ratio=pos_ratio)
 
         # optimizer
+        # ignored_params = list(map(id, self.model.classifier.parameters()))
+        # base_params = filter(lambda p: id(p) not in ignored_params, self.model.parameters())
+        # param_groups = [
+        #     {'params': base_params},
+        #     {'params': self.model.classifier.parameters(), 'lr': self.config['optimizer']['lr']*10}
+        # ]
         self.optimizer, params_optimizers = build_optimizers(config, self.model.parameters())
 
         # learing rate scheduler
@@ -96,7 +102,6 @@ class Trainer(BaseTrainer):
                 }, global_step=epoch)
             self.writer.add_scalar('lr', self.optimizer.param_groups[0]['lr'], global_step=epoch)
 
-
             # logging result to console
             log = {'epoch': epoch}
             log.update(result)
@@ -110,7 +115,7 @@ class Trainer(BaseTrainer):
                 self.best_accuracy = self.valid_metrics.avg('accuracy')
                 save_best_accuracy = True
             
-            if self.best_loss == None or self.best_loss < self.valid_metrics.avg('loss'):
+            if self.best_loss == None or self.best_loss > self.valid_metrics.avg('loss'):
                 self.best_loss = self.valid_metrics.avg('loss')
                 save_best_loss = True
 
@@ -123,12 +128,10 @@ class Trainer(BaseTrainer):
         time.sleep(1*60)
         self.writer.close()
         # plot loss, accuracy and save them to plot.png in saved/logs/<run_id>/plot.png
-        if os.path.exists(os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id, 'plot.png')):
-            os.remove(os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id, 'plot.png'))
         plot_loss_accuracy(
             dpath=self.cfg_trainer['log_dir'],
             list_dname=[self.run_id],
-            path_figure=os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id, 'plot.png'),
+            path_folder=os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id),
             title=self.run_id + ': ' + self.config['model']['name'] + ", " + self.config['loss']['name'] + ", " + self.config['data']['name'])
       
     def _train_epoch(self, epoch):
@@ -268,11 +271,11 @@ class Trainer(BaseTrainer):
         torch.save(state, filename)
         if save_best_accuracy:
             filename = os.path.join(self.checkpoint_dir, 'model_best_accuracy.pth')
-            self.logger.info("Saving current best: model_best_accuracy.pth ...")
+            self.logger.info("Saving current best accuracy: model_best_accuracy.pth ...")
             torch.save(state, filename)
         if save_best_loss:
             filename = os.path.join(self.checkpoint_dir, 'model_best_loss.pth')
-            self.logger.info("Saving current best: model_best_loss.pth ...")
+            self.logger.info("Saving current best loss: model_best_loss.pth ...")
             torch.save(state, filename)
 
     def _resume_checkpoint(self, resume_path):

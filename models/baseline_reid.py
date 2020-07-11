@@ -2,10 +2,12 @@ import torch
 import torchvision
 import torch.nn as nn
 from torch.nn import init
-from torchsummary import summary
 
 import sys
 sys.path.append('.')
+
+from utils import summary
+
 
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
@@ -69,3 +71,6 @@ class BaselineReid(nn.Module):
         x = self.classifier(x)
         return x
 
+if __name__ == "__main__":
+    model = BaselineReid(26)
+    summary(print, model, (3, 256, 128), 64, 'cpu', True)

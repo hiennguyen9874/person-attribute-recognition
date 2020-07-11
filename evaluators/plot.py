@@ -11,7 +11,7 @@ sys.path.append('.')
 
 from utils import aggregate, aggregate1
 
-def plot_loss_accuracy(dpath, list_dname, path_figure, title = None, low_ratio = .05, high_ratio = .95, com=0):
+def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, low_ratio = .05, high_ratio = .95, com=0):
     """ Plot loss and accuracy from tensorboard file
     Args:
         dpath (str): path to folder contain (eg: saved/logs)
@@ -67,6 +67,11 @@ def plot_loss_accuracy(dpath, list_dname, path_figure, title = None, low_ratio =
     if title != None:
         fig.suptitle(title)
     plt.show()
+    if not os.path.exists(path_folder):
+        os.makedirs(path_folder)
+    path_figure = os.path.join(path_folder, 'plot.png')
+    if os.path.exists(path_figure):
+        os.remove(path_figure)
     fig.savefig(path_figure, dpi=300)
 
     dict_data_frame = aggregate1(dpath, list_dname)
@@ -86,7 +91,10 @@ def plot_loss_accuracy(dpath, list_dname, path_figure, title = None, low_ratio =
         # show grid
         ax.grid()
         plt.show()
-        fig.savefig(os.path.join(*path_figure.split('/')[:-1], '{}.png'.format(key)), dpi=300)
+        path_figure = os.path.join(path_folder, '{}.png'.format(key))
+        if os.path.exists(path_figure):
+            os.remove(path_figure)
+        fig.savefig(path_figure, dpi=300)
 
 
 def plot(path, run_id, title=None):
