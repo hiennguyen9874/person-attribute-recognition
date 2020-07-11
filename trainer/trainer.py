@@ -42,8 +42,7 @@ class Trainer(BaseTrainer):
         self.valid_metrics = MetricTracker('loss', 'accuracy')
 
         # step log loss and accuracy
-        self.log_step = (len(self.datamanager.get_dataloader('train')) // 10,
-                        len(self.datamanager.get_dataloader('val')) // 10)
+        self.log_step = (10, 10)
 
         # best accuracy and loss
         self.best_accuracy = None

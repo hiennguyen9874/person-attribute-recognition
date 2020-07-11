@@ -16,7 +16,7 @@ class Penta(BaseDataSource):
     def __init__(self, root_dir='datasets', download=True, extract=True, validation_split=0.1):
         dataset_dir = 'penta'
         file_name = 'PETA-New.zip'
-        image_size = (356, 128)
+        image_size = (256, 192)
         list_phases = ['train', 'val', 'test']
         super(Penta, self).__init__(root_dir, dataset_dir, file_name, image_size, list_phases)
         if download:
