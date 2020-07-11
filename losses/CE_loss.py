@@ -12,8 +12,8 @@ def ratio2weight(targets, ratio):
     neg_weights = (1 - targets) * ratio
     weights = torch.exp(neg_weights + pos_weights)
 
-    # for RAP dataloader, targets element may be 2, with or without smooth, some element must great than 1
-    weights[targets > 1] = 0.0
+    # # for RAP dataloader, targets element may be 2, with or without smooth, some element must great than 1
+    # weights[targets > 1] = 0.0
 
     return weights
 

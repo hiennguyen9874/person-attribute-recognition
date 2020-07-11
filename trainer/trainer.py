@@ -42,7 +42,7 @@ class Trainer(BaseTrainer):
         self.valid_metrics = MetricTracker('loss', 'accuracy')
 
         # step log loss and accuracy
-        self.log_step = (10, 10)
+        self.log_step = (10, 1)
 
         # best accuracy and loss
         self.best_accuracy = None
@@ -213,7 +213,7 @@ class Trainer(BaseTrainer):
                 out = self.model(data)
 
                 # calculate loss and accuracy
-                loss =  self.criterion(out, labels)
+                loss = self.criterion(out, labels)
 
                 # caculate instabce-based accuracy
                 preds = torch.sigmoid(out)
@@ -232,7 +232,9 @@ class Trainer(BaseTrainer):
 
                 # update process
                 if self.cfg_trainer['tqdm']:
-                    tqdm_callback.on_batch_end(self.valid_metrics.avg('loss'), self.valid_metrics.avg('accuracy'))
+                    tqdm_callback.on_batch_end(
+                        self.valid_metrics.avg('loss'),
+                        self.valid_metrics.avg('accuracy'))
                 else:
                     end_time = time.time()
                     if batch_idx % self.log_step[1] == 0 or batch_idx == len(self.datamanager.get_dataloader('val'))-1:

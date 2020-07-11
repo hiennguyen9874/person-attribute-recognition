@@ -16,7 +16,7 @@ class PA_100K(BaseDataSource):
     def __init__(self, root_dir='datasets', download=True, extract=True):
         file_name = 'PA-100K.zip'
         dataset_dir = 'pa_100k'
-        super(PA_100K, self).__init__(root_dir, dataset_dir, file_name, image_size=(256, 256))
+        super(PA_100K, self).__init__(root_dir, dataset_dir, file_name, image_size=(256, 128))
         if download:
             print("Downloading!")
             self._download(self.dataset_id)

@@ -14,11 +14,7 @@ class Penta(BaseDataSource):
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]
   
     def __init__(self, root_dir='datasets', download=True, extract=True, validation_split=0.1):
-        dataset_dir = 'penta'
-        file_name = 'PETA-New.zip'
-        image_size = (256, 192)
-        list_phases = ['train', 'val', 'test']
-        super(Penta, self).__init__(root_dir, dataset_dir, file_name, image_size, list_phases)
+        super(Penta, self).__init__(root_dir, dataset_dir = 'penta', file_name = 'PETA-New.zip', image_size = (256, 192))
         if download:
             print("Downloading!")
             self._download(dataset_id=self.dataset_id)
