@@ -38,8 +38,8 @@ class BaselineAttribute(nn.Module):
         self.avgpool = nn.AdaptiveAvgPool2d(1)
 
         # remove the final downsample of resnet
-        # self.base.layer4[0].downsample[0].stride = (1, 1)
-        # self.base.layer4[0].conv2.stride=(1,1)
+        self.base.layer4[0].downsample[0].stride = (1, 1)
+        self.base.layer4[0].conv2.stride=(1,1)
 
         self.classifier = nn.Sequential(
             nn.Linear(2048, self.num_classes),

@@ -8,7 +8,7 @@
         "name": "penta",
         "download": true,
         "extract": true,
-        "batch_size": 64,
+        "batch_size": 128,
         "shuffle": true,
         "num_workers": 4,
         "pin_memory": true,
@@ -16,9 +16,8 @@
     },
     "optimizer": {
         "name": "sgd",
-        "lr": 0.1,
+        "lr": 0.01,
         "specified_lr": {
-            "classifier": 0.01
         },
         "weight_decay": 0.0005,
         "adam_beta1": 0.9,
