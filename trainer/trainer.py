@@ -32,13 +32,7 @@ class Trainer(BaseTrainer):
         self.criterion, params_loss = build_losses(config, pos_ratio=pos_ratio)
 
         # optimizer
-        ignored_params = list(map(id, self.model.classifier.parameters()))
-        base_params = filter(lambda p: id(p) not in ignored_params, self.model.parameters())
-        param_groups = [
-            {'params': base_params},
-            {'params': self.model.classifier.parameters(), 'lr': self.config['optimizer']['lr']*10}
-        ]
-        self.optimizer, params_optimizers = build_optimizers(config, param_groups)
+        self.optimizer, params_optimizers = build_optimizers(config, self.model)
 
         # learing rate scheduler
         self.lr_scheduler, params_lr_scheduler = build_lr_scheduler(config, self.optimizer)

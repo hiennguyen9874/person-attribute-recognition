@@ -17,6 +17,9 @@
     "optimizer": {
         "name": "adam",
         "lr": 0.035,
+        "specified_lr": {
+            "classifier": 0.01
+        },
         "weight_decay": 0.0005,
         "adam_beta1": 0.9,
         "adam_beta2": 0.99,

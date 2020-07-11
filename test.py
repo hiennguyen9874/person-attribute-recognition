@@ -1,6 +1,4 @@
 import argparse
-from os import pread
-import data
 import os
 import logging
 import torch

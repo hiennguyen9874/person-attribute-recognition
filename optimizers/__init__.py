@@ -1,7 +1,18 @@
 import torch.optim as optim
 
-def build_optimizers(config, param_groups):
+def build_optimizers(config, model):
     cfg_optimizer = config['optimizer']
+    if 'specified_lr' in cfg_optimizer and len(cfg_optimizer['specified_lr']) > 0:
+        base_params = []
+        for name, module in model.named_children():
+            if name not in cfg_optimizer['specified_lr']:
+                base_params += [p for p in module.parameters()]
+        param_groups = [{'params': base_params}]
+        for key, value in cfg_optimizer['specified_lr'].items():
+            param_groups.append({'params': getattr(model, key).parameters(), 'lr': value})
+    else:
+        param_groups = model.parameters()
+        
     if cfg_optimizer['name'] == 'adam':
         dict_paramsters = {
             'lr': cfg_optimizer['lr'],
