@@ -36,7 +36,7 @@ def build_lr_scheduler(config, optimizer):
             'milestones': cfg_lr_scheduler['steps'],
             'gamma': cfg_lr_scheduler['gamma']
         }
-        return lr_scheduler.ReduceLROnPlateau(
+        return lr_scheduler.MultiStepLR(
             optimizer,
             milestones=cfg_lr_scheduler['steps'],
             gamma=cfg_lr_scheduler['gamma']), dict_paramsters
