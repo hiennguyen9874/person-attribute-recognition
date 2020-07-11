@@ -23,7 +23,7 @@ def build_optimizers(config, model):
             'beta2': cfg_optimizer['adam_beta2']
         }
         if specified_lr:
-            dict_paramsters.update(cfg_optimizer['specified_lr'])
+            dict_paramsters.update(dict(cfg_optimizer['specified_lr']))
         return optim.Adam(
             param_groups,
             lr=cfg_optimizer['lr'],
