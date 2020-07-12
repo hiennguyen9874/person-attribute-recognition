@@ -5,7 +5,7 @@
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
-        "name": "penta",
+        "name": "peta",
         "download": true,
         "extract": true,
         "batch_size": 64,

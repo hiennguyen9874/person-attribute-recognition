@@ -7,14 +7,14 @@ import numpy as np
 
 from base import BaseDataSource
 
-class Penta(BaseDataSource):
+class Peta(BaseDataSource):
     ''' http://mmlab.ie.cuhk.edu.hk/projects/PETA.html
     '''
     dataset_id = '13UvQ4N-sY67htGnK6qheb027XuMx9Jbr'
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]
   
     def __init__(self, root_dir='datasets', download=True, extract=True, validation_split=0.1):
-        super(Penta, self).__init__(root_dir, dataset_dir = 'penta', file_name = 'PETA-New.zip', image_size = (256, 192))
+        super(Peta, self).__init__(root_dir, dataset_dir = 'peta', file_name = 'PETA-New.zip', image_size = (256, 192))
         if download:
             print("Downloading!")
             self._download(dataset_id=self.dataset_id)
@@ -25,10 +25,11 @@ class Penta(BaseDataSource):
             print("Extracted!")
         
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
-        peta_data = scipy.io.loadmat(os.path.join(data_dir, 'PETA.mat'))
+        f = scipy.io.loadmat(os.path.join(data_dir, 'PETA.mat'))
         
-        raw_attr_name = [i[0][0] for i in peta_data['peta'][0][0][1]]
-        raw_label = peta_data['peta'][0][0][0][:, 4:]
+        raw_attr_name = [i[0][0] for i in f['peta'][0][0][1]]
+        # raw_img_name = f['peta'][0][0][0][:, 0]
+        raw_label = f['peta'][0][0][0][:, 4:]
         
         label = raw_label[:, :35][:, np.array(self.group_order)].astype(np.float32)
         self.attribute_name = [raw_attr_name[:35][i] for i in self.group_order]
@@ -41,15 +42,15 @@ class Penta(BaseDataSource):
         # self.weight_trainval = []
 
         for idx in range(5):
-            _train = peta_data['peta'][0][0][3][idx][0][0][0][0][:, 0] - 1
-            _val = peta_data['peta'][0][0][3][idx][0][0][0][1][:, 0] - 1
-            _test = peta_data['peta'][0][0][3][idx][0][0][0][2][:, 0] - 1
+            _train = f['peta'][0][0][3][idx][0][0][0][0][:, 0] - 1
+            _val = f['peta'][0][0][3][idx][0][0][0][1][:, 0] - 1
+            _test = f['peta'][0][0][3][idx][0][0][0][2][:, 0] - 1
             _trainval = np.concatenate((_train, _val), axis=0)
 
             # self.train.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _train])
             # self.val.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _val])
-            trainval.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _trainval])
-            test.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _test])
+            trainval.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _trainval])
+            test.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _test])
 
             # self.weight_train.append(np.mean(label[_train], axis=0))
             # weight_trainval.append(np.mean(label[_trainval], axis=0))
@@ -99,5 +100,5 @@ class Penta(BaseDataSource):
         return False
 
 if __name__ == "__main__":
-    datasource = Penta(root_dir='/home/hien/Documents/datasets')
+    datasource = Peta(root_dir='/home/hien/Documents/datasets')
     path = datasource.get_data()[0]

@@ -1,11 +1,11 @@
 {
     "n_gpu": 1,
     "model": {
-        "name": "baseline_attribute"
+        "name": "osnet"
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
-        "name": "penta",
+        "name": "peta",
         "download": true,
         "extract": true,
         "batch_size": 64,
@@ -17,9 +17,6 @@
     "optimizer": {
         "name": "sgd",
         "lr": 0.01,
-        "specified_lr": [
-            "classifier"
-        ],
         "weight_decay": 0.0005,
         "adam_beta1": 0.9,
         "adam_beta2": 0.99,
@@ -40,10 +37,10 @@
         "factor": 0.1,
         "iters": 10,
         "method": "linear",
-        "patience": 7,
-        "min_lr": 0
+        "patience": 4,
+        "min_lr": 0.00001
     },
-    "clip_grad_norm_": {
+    "clip_grad_norm_":{
         "active": true,
         "max_norm": 10.0
     },
@@ -63,7 +60,7 @@
     },
     "testing": {
         "model": {
-            "name": "baseline_attribute"
+            "name": "osnet"
         },
         "output_dir": "output"
     }
