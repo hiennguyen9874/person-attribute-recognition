@@ -1,8 +1,7 @@
 import argparse
-import os
 
 from trainer import Trainer
-from utils import read_json, write_json
+from utils import read_json
 
 def main(config):
     trainer = Trainer(config)

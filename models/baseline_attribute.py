@@ -2,7 +2,6 @@ import torch
 import torchvision
 import torch.nn as nn
 from torch.nn import init
-from torchsummary import summary
 
 import sys
 sys.path.append('.')

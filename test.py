@@ -6,14 +6,13 @@ import torch.nn as nn
 import numpy as np
 import matplotlib.pyplot as plt
 
-from torchsummary import summary
 from tqdm import tqdm
 
-from models import OSNet, BaselineReid, BaselineAttribute, build_model
+from models import build_model
 from data import DataManger
 from logger import setup_logging
-from utils import read_json, write_json, rmdir
-from evaluators import plot_loss_accuracy, show_image, recognition_metrics
+from utils import read_json, rmdir, summary
+from evaluators import recognition_metrics
 
 def main(config):
     cfg_testing = config['testing']

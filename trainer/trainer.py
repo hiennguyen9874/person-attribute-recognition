@@ -6,18 +6,17 @@ import shutil
 import sys
 sys.path.append('.')
 
-import torch.nn as nn
 from torch.nn.utils import clip_grad_norm_
 
 from base import BaseTrainer
 from callbacks import Tqdm
 from data import DataManger
-from evaluators import plot_loss_accuracy, plot
+from evaluators import plot_loss_accuracy
 from losses import build_losses
 from models import build_model
 from optimizers import build_optimizers
 from schedulers import build_lr_scheduler
-from utils import MetricTracker, rmdir, summary
+from utils import MetricTracker, summary
 
 class Trainer(BaseTrainer):
     def __init__(self, config):
