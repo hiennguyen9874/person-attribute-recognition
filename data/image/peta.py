@@ -47,8 +47,8 @@ class Peta(BaseDataSource):
             _test = f['peta'][0][0][3][idx][0][0][0][2][:, 0] - 1
             # _trainval = np.concatenate((_train, _val), axis=0)
 
-            self.data['train'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _train])
-            self.data['val'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _val])
+            self.data['train'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _train])
+            self.data['val'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _val])
             # self.data['trainval'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _trainval])
             self.data['test'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _test])
 
