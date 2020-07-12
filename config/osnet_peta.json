@@ -16,7 +16,7 @@
     },
     "optimizer": {
         "name": "sgd",
-        "lr": 0.01,
+        "lr": 0.1,
         "weight_decay": 0.0005,
         "adam_beta1": 0.9,
         "adam_beta2": 0.99,
@@ -37,8 +37,8 @@
         "factor": 0.1,
         "iters": 10,
         "method": "linear",
-        "patience": 4,
-        "min_lr": 0.00001
+        "patience": 5,
+        "min_lr": 0.000001
     },
     "clip_grad_norm_":{
         "active": true,
@@ -62,6 +62,6 @@
         "model": {
             "name": "osnet"
         },
-        "output_dir": "output"
+        "output_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs"
     }
 }

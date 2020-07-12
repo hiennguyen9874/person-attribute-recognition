@@ -6,27 +6,6 @@ from torch.nn import init
 import sys
 sys.path.append('.')
 
-def weights_init_kaiming(m):
-    classname = m.__class__.__name__
-    if classname.find('Linear') != -1:
-        nn.init.kaiming_normal_(m.weight, a=0, mode='fan_out')
-        nn.init.constant_(m.bias, 0.0)
-    elif classname.find('Conv') != -1:
-        nn.init.kaiming_normal_(m.weight, a=0, mode='fan_in')
-        if m.bias is not None:
-            nn.init.constant_(m.bias, 0.0)
-    elif classname.find('BatchNorm') != -1:
-        if m.affine:
-            nn.init.constant_(m.weight, 1.0)
-            nn.init.constant_(m.bias, 0.0)
-
-def weights_init_classifier(m):
-    classname = m.__class__.__name__
-    if classname.find('Linear') != -1:
-        nn.init.normal_(m.weight, std=0.001)
-        if m.bias:
-            nn.init.constant_(m.bias, 0.0)
-
 class BaselineAttribute(nn.Module):
     ''' https://arxiv.org/pdf/2005.11909.pdf
     '''
@@ -36,15 +15,10 @@ class BaselineAttribute(nn.Module):
         self.base = torchvision.models.resnet50(pretrained=True)
         self.avgpool = nn.AdaptiveAvgPool2d(1)
 
-        # remove the final downsample of resnet
-        self.base.layer4[0].downsample[0].stride = (1, 1)
-        self.base.layer4[0].conv2.stride=(1,1)
-
         self.classifier = nn.Sequential(
             nn.Linear(2048, self.num_classes),
             nn.BatchNorm1d(self.num_classes)
         )
-        # self.classifier.apply(weights_init_classifier)
 
     def forward(self, x):
         x = self.base.conv1(x)

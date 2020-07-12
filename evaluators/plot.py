@@ -126,6 +126,22 @@ def show_image(distances, queryset, testset, k=5, num_image=5, size_img=(2.5, 5)
     plt.show()
 
 if __name__ == "__main__":
-    plot(os.path.join('saved', 'logs'), '0710_120633')
+    import argparse
+    from utils import read_json
 
-
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('--config', default='config.json', type=str, help='config file path (default: ./config.json)')
+    parser.add_argument('--colab', default=False, type=lambda x: (str(x).lower() == 'true'), help='train on colab (default: false)')
+    parser.add_argument('--run_id', default='', type=str)
+    args = parser.parse_args()
+    config = read_json(args.config)
+    config.update({'colab': args.colab, 'run_id': args.run_id})
+    
+    cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
+    run_id = args.run_id
+    
+    plot_loss_accuracy(
+        dpath=cfg_trainer['log_dir_saved'],
+        list_dname=[run_id],
+        path_folder=os.path.join(cfg_trainer['log_dir_saved'], run_id),
+        title=run_id + ': ' + config['model']['name'] + ", " + config['loss']['name'] + ", " + config['data']['name'])

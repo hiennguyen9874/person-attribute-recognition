@@ -16,7 +16,7 @@
     },
     "optimizer": {
         "name": "sgd",
-        "lr": 0.01,
+        "lr": 0.1,
         "specified_lr": [
             "classifier"
         ],
@@ -41,21 +41,21 @@
         "iters": 10,
         "method": "linear",
         "patience": 5,
-        "min_lr": 0
+        "min_lr": 0.000001
     },
     "clip_grad_norm_": {
         "active": true,
         "max_norm": 10.0
     },
     "trainer": {
-        "epochs": 40,
+        "epochs": 60,
         "checkpoint_dir": "saved/checkpoints",
         "log_dir": "saved/logs",
         "log_dir_saved": "saved/logs1",
         "tqdm": true
     },
     "trainer_colab": {
-        "epochs": 40,
+        "epochs": 60,
         "checkpoint_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints",
         "log_dir": "saved/logs",
         "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs",
@@ -65,6 +65,6 @@
         "model": {
             "name": "baseline_attribute"
         },
-        "output_dir": "output"
+        "output_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs"
     }
 }
