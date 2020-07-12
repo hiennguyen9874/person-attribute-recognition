@@ -1,5 +1,5 @@
 from .pa_100k import PA_100K
-from .Peta import Peta
+from .peta import Peta
 from .ppe import PPE
 
 __datasets = {'pa_100k': PA_100K, 'peta': Peta, 'ppe': PPE}

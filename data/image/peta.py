@@ -1,9 +1,12 @@
+import os
+from numpy.core.fromnumeric import partition
+import scipy.io
+import numpy as np
+
 import sys
 sys.path.append('.')
 
-import os
-import scipy.io
-import numpy as np
+from collections import defaultdict
 
 from base import BaseDataSource
 
@@ -34,62 +37,40 @@ class Peta(BaseDataSource):
         label = raw_label[:, :35][:, np.array(self.group_order)].astype(np.float32)
         self.attribute_name = [raw_attr_name[:35][i] for i in self.group_order]
 
-        # self.train = []
-        # self.val = []
-        trainval = []
-        test = []
-        # self.weight_train = []
+        self.data = defaultdict(list)
+        self.weight_train = []
         # self.weight_trainval = []
 
         for idx in range(5):
             _train = f['peta'][0][0][3][idx][0][0][0][0][:, 0] - 1
             _val = f['peta'][0][0][3][idx][0][0][0][1][:, 0] - 1
             _test = f['peta'][0][0][3][idx][0][0][0][2][:, 0] - 1
-            _trainval = np.concatenate((_train, _val), axis=0)
+            # _trainval = np.concatenate((_train, _val), axis=0)
 
-            # self.train.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _train])
-            # self.val.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _val])
-            trainval.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _trainval])
-            test.append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _test])
+            self.data['train'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _train])
+            self.data['val'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx)), label[idx]) for idx in _val])
+            # self.data['trainval'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _trainval])
+            self.data['test'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _test])
 
-            # self.weight_train.append(np.mean(label[_train], axis=0))
-            # weight_trainval.append(np.mean(label[_trainval], axis=0))
-        trainval = trainval[0]
-        test = test[0]
-        
-        idx_full = np.arange(len(trainval))
-        np.random.shuffle(idx_full)
-        len_valid = int(len(trainval) * validation_split)
-        valid_idx = idx_full[0:len_valid]
-        train_idx = np.delete(idx_full, np.arange(0, len_valid))
+            self.weight_train.append(np.mean(label[_train], axis=0))
+            # self.weight_trainval.append(np.mean(label[_trainval], axis=0))
 
-        self.data = dict()
-        self.data['train'] = [trainval[idx] for idx in train_idx.tolist()]
-        self.data['val'] = [trainval[idx] for idx in valid_idx.tolist()]
-        self.data['test'] = test
-
-        # compute weight
-        self.weight_train = np.zeros((len(self.attribute_name)))
-        for _, _attribute_label in self.data['train']:
-            self.weight_train += _attribute_label
-        self.weight_train = np.divide(self.weight_train, int(len(self.data['train'])))
-
-    def get_data(self, phase='train'):
+    def get_data(self, phase='train', partition=0):
         if phase == 'train':
-            return self.data['train']
+            return self.data['train'][partition]
         elif phase == 'val':
-            return self.data['val']
+            return self.data['val'][partition]
         elif phase == 'test':
-            return self.data['test']
+            return self.data['test'][partition]
         else:
             raise ValueError('phase error, phase in [train, val, test]')
 
     def get_attribute(self, phase = 'train'):
         return self.attribute_name
     
-    def get_weight(self, phase = 'train'):
+    def get_weight(self, phase = 'train', partition=0):
         if phase == 'train':
-            return self.weight_train
+            return self.weight_train[partition]
         raise ValueError('phase error, phase in [train]')
     
     def _exists(self, extract_dir):

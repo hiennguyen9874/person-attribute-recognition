@@ -42,8 +42,10 @@ class Trainer(BaseTrainer):
         self.valid_metrics = MetricTracker('loss', 'accuracy')
 
         # step log loss and accuracy
-        self.log_step = (10, 1)
-
+        self.log_step = (len(self.datamanager.get_dataloader('train')) // 10,
+                        len(self.datamanager.get_dataloader('val')) // 10)
+        self.log_step = (self.log_step[0] if self.log_step[0] > 0 else 1, self.log_step[1] if self.log_step[1] > 0 else 1)
+        
         # best accuracy and loss
         self.best_accuracy = None
         self.best_loss = None
@@ -182,7 +184,7 @@ class Trainer(BaseTrainer):
                 tqdm_callback.on_batch_end(self.train_metrics.avg('loss'), self.train_metrics.avg('accuracy'))
             else:
                 end_time = time.time()
-                if batch_idx % self.log_step[0] == 0 or batch_idx == len(self.datamanager.get_dataloader('train'))-1:
+                if (batch_idx+1) % self.log_step[0] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('train'))-1:
                     self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f}'.format(
                         epoch,
                         batch_idx+1,
@@ -237,7 +239,7 @@ class Trainer(BaseTrainer):
                         self.valid_metrics.avg('accuracy'))
                 else:
                     end_time = time.time()
-                    if batch_idx % self.log_step[1] == 0 or batch_idx == len(self.datamanager.get_dataloader('val'))-1:
+                    if (batch_idx+1) % self.log_step[1] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('val'))-1:
                         self.logger.info('Valid Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f}'.format(
                             epoch,
                             batch_idx+1,
