@@ -65,15 +65,24 @@ def main(config):
     logger.info('recall: %0.4f' % result_instance.recall)
     logger.info('f1_score: %0.4f' % result_instance.f1_score)
     
-    logger.info('label-based metrics:')
-    logger.info('mean-accuracy or balanced-accuracy: %0.4f' % (np.mean(result_label.mean_accuracy)))
-    result = np.stack([result_label.accuracy, result_label.precision, result_label.recall, result_label.f1_score], axis=0)
+    logger.info('class-based metrics:')
+    result = np.stack([result_label.accuracy, result_label.mean_accuracy, result_label.precision, result_label.recall, result_label.f1_score], axis=0)
     result = np.around(result*100, 2)
     result = result.transpose()
-    row_format ="{:>17}" * 5
-    logger.info(row_format.format('attribute', 'accuracy', 'precision', 'recall', 'f1_score'))
+    row_format ="{:>17}" * 6
+    logger.info(row_format.format('attribute', 'accuracy', 'mA', 'precision', 'recall', 'f1_score'))
+    logger.info(row_format.format(*['-']*6))
     for i in range(len(datamanager.datasource.get_attribute())):
         logger.info(row_format.format(datamanager.datasource.get_attribute()[i], *result[i].tolist()))
+    
+    logger.info(row_format.format(*['-']*6))
+    logger.info(row_format.format(
+        'mean',
+        round(np.mean(result_label.accuracy)*100, 2),
+        round(np.mean(result_label.mean_accuracy)*100, 2),
+        round(np.mean(result_label.precision)*100, 2),
+        round(np.mean(result_label.recall)*100, 2),
+        round(np.mean(result_label.f1_score)*100, 2)))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
