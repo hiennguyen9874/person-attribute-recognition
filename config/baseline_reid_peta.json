@@ -8,15 +8,19 @@
         "name": "peta",
         "download": true,
         "extract": true,
-        "batch_size": 128,
+        "batch_size": 64,
         "shuffle": true,
         "num_workers": 4,
         "pin_memory": true,
         "drop_last": false
     },
     "optimizer": {
-        "name": "adam",
+        "name": "sgd",
         "lr": 0.01,
+        "specified_lr": [
+            "bottleneck",
+            "classifier"
+        ],
         "weight_decay": 0.0005,
         "adam_beta1": 0.9,
         "adam_beta2": 0.99,
@@ -38,7 +42,7 @@
         "iters": 10,
         "method": "linear",
         "patience": 5,
-        "min_lr": 0.00001
+        "min_lr": 0
     },
     "clip_grad_norm_": {
         "active": true,

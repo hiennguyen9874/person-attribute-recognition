@@ -5,10 +5,10 @@
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
-        "name": "ppe",
+        "name": "pa_100k",
         "download": true,
         "extract": true,
-        "batch_size": 64,
+        "batch_size": 128,
         "shuffle": true,
         "num_workers": 4,
         "pin_memory": true,
@@ -40,7 +40,7 @@
         "factor": 0.1,
         "iters": 10,
         "method": "linear",
-        "patience": 4,
+        "patience": 5,
         "min_lr": 0
     },
     "clip_grad_norm_": {
@@ -48,14 +48,14 @@
         "max_norm": 10.0
     },
     "trainer": {
-        "epochs": 40,
+        "epochs": 120,
         "checkpoint_dir": "saved/checkpoints",
         "log_dir": "saved/logs",
         "log_dir_saved": "saved/logs1",
         "tqdm": true
     },
     "trainer_colab": {
-        "epochs": 40,
+        "epochs": 120,
         "checkpoint_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints",
         "log_dir": "saved/logs",
         "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs",
