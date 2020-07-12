@@ -11,7 +11,7 @@ from torch.nn.utils import clip_grad_norm_
 from base import BaseTrainer
 from callbacks import Tqdm
 from data import DataManger
-from evaluators import plot_loss_accuracy
+from evaluators import plot_loss_accuracy, compute_accuracy_cuda
 from losses import build_losses
 from models import build_model
 from optimizers import build_optimizers
@@ -149,7 +149,7 @@ class Trainer(BaseTrainer):
             out = self.model(data)
 
             # calculate loss and accuracy
-            loss =  self.criterion(out, labels)
+            loss = self.criterion(out, labels)
             
             # backward parameters
             loss.backward()
@@ -163,16 +163,12 @@ class Trainer(BaseTrainer):
             # optimize
             self.optimizer.step()
             
-            # caculate instabce-based accuracy
+            # calculate instance-based accuracy
             preds = torch.sigmoid(out)
             preds[preds < 0.5] = 0
             preds[preds >= 0.5] = 1
             
-            labels = labels.type(torch.BoolTensor)
-            preds = preds.type(torch.BoolTensor)
-            intersect = (preds & labels).type(torch.FloatTensor)
-            union = (preds | labels).type(torch.FloatTensor)
-            accuracy = torch.mean((torch.sum(intersect, dim=1) / torch.sum(union, dim=1)))
+            accuracy = compute_accuracy_cuda(labels, preds)
             
             # update loss and accuracy in MetricTracker
             self.train_metrics.update('loss', loss.item())
@@ -216,16 +212,12 @@ class Trainer(BaseTrainer):
                 # calculate loss and accuracy
                 loss = self.criterion(out, labels)
 
-                # caculate instabce-based accuracy
+                # calculate instance-based accuracy
                 preds = torch.sigmoid(out)
                 preds[preds < 0.5] = 0
                 preds[preds >= 0.5] = 1
                 
-                labels = labels.type(torch.BoolTensor)
-                preds = preds.type(torch.BoolTensor)
-                intersect = (preds & labels).type(torch.FloatTensor)
-                union = (preds | labels).type(torch.FloatTensor)
-                accuracy = torch.mean((torch.sum(intersect, dim=1) / torch.sum(union, dim=1)))
+                accuracy = compute_accuracy_cuda(labels, preds)
 
                 # update loss and accuracy in MetricTracker
                 self.valid_metrics.update('loss', loss.item())

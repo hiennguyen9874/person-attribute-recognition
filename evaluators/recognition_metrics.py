@@ -1,3 +1,4 @@
+import torch
 import numpy as np
 from easydict import EasyDict
 
@@ -50,3 +51,11 @@ def recognition_metrics(labels, preds, threshold=0.5, eps = 1e-20):
     result_instance.f1_score = np.mean(_f1_score)
     
     return result_label, result_instance
+
+
+def compute_accuracy_cuda(labels, preds, eps=1e-20):
+    labels = labels.type(torch.BoolTensor)
+    preds = preds.type(torch.BoolTensor)
+    intersect = (preds & labels).type(torch.FloatTensor)
+    union = (preds | labels).type(torch.FloatTensor)
+    return torch.mean((torch.sum(intersect, dim=1) / (torch.sum(union, dim=1) + eps)))
