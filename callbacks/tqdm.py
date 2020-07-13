@@ -10,10 +10,11 @@ class Tqdm(object):
         self.progbar.set_description(f'Epoch {epoch}')
         self.phase = phase
     
-    def on_batch_end(self, loss, accuracy):
+    def on_batch_end(self, loss, accuracy, f1_score):
         self.progbar.set_postfix({
             '{}_loss'.format(self.phase): loss,
-            '{}_acc'.format(self.phase): accuracy})
+            '{}_acc'.format(self.phase): accuracy,
+            '{}_f1-score'.format(self.phase): f1_score})
         self.progbar.update(1)
 
     def on_epoch_end(self):

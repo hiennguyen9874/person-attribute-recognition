@@ -145,3 +145,4 @@ if __name__ == "__main__":
         list_dname=[run_id],
         path_folder=os.path.join(cfg_trainer['log_dir_saved'], run_id),
         title=run_id + ': ' + config['model']['name'] + ", " + config['loss']['name'] + ", " + config['data']['name'])
+

@@ -37,8 +37,8 @@ class Trainer(BaseTrainer):
         self.lr_scheduler, params_lr_scheduler = build_lr_scheduler(config, self.optimizer)
 
         # track metric
-        self.train_metrics = MetricTracker('loss', 'accuracy')
-        self.valid_metrics = MetricTracker('loss', 'accuracy')
+        self.train_metrics = MetricTracker('loss', 'accuracy', 'f1_score')
+        self.valid_metrics = MetricTracker('loss', 'accuracy', 'f1_score')
 
         # step log loss and accuracy
         self.log_step = (len(self.datamanager.get_dataloader('train')) // 10,
@@ -48,6 +48,7 @@ class Trainer(BaseTrainer):
         # best accuracy and loss
         self.best_accuracy = None
         self.best_loss = None
+        self.best_f1_score = None
         
         # print config
         self._print_config(
@@ -94,6 +95,11 @@ class Trainer(BaseTrainer):
                     'Train': self.train_metrics.avg('accuracy'),
                     'Val': self.valid_metrics.avg('accuracy')
                 }, global_step=epoch)
+            self.writer.add_scalars('F1-Score',
+                {
+                    'Train': self.train_metrics.avg('f1_score'),
+                    'Val': self.valid_metrics.avg('f1_score')
+                }, global_step=epoch)
             self.writer.add_scalar('lr', self.optimizer.param_groups[0]['lr'], global_step=epoch)
 
             # logging result to console
@@ -105,15 +111,20 @@ class Trainer(BaseTrainer):
             # save model
             save_best_accuracy = False
             save_best_loss = False
+            save_best_f1_score = False
             if self.best_accuracy == None or self.best_accuracy < self.valid_metrics.avg('accuracy'):
                 self.best_accuracy = self.valid_metrics.avg('accuracy')
                 save_best_accuracy = True
+
+            if self.best_f1_score == None or self.best_f1_score < self.valid_metrics.avg('f1_score'):
+                self.best_f1_score = self.valid_metrics.avg('f1_score')
+                save_best_f1_score = True
             
             if self.best_loss == None or self.best_loss > self.valid_metrics.avg('loss'):
                 self.best_loss = self.valid_metrics.avg('loss')
                 save_best_loss = True
 
-            self._save_checkpoint(epoch, save_best_accuracy=save_best_accuracy, save_best_loss=save_best_loss)
+            self._save_checkpoint(epoch, save_best_accuracy=save_best_accuracy, save_best_loss=save_best_loss, save_best_f1_score=save_best_f1_score)
 
             # save logs
             self._save_logs(epoch)
@@ -168,25 +179,30 @@ class Trainer(BaseTrainer):
             preds[preds < 0.5] = 0
             preds[preds >= 0.5] = 1
             
-            accuracy = compute_accuracy_cuda(labels, preds)
-            
+            result = compute_accuracy_cuda(labels, preds)
+
             # update loss and accuracy in MetricTracker
             self.train_metrics.update('loss', loss.item())
-            self.train_metrics.update('accuracy', accuracy.item())
+            self.train_metrics.update('accuracy', result.accuracy.item())
+            self.train_metrics.update('f1_score', result.f1_score.item())
 
             # update process
             if self.cfg_trainer['tqdm']:
-                tqdm_callback.on_batch_end(self.train_metrics.avg('loss'), self.train_metrics.avg('accuracy'))
+                tqdm_callback.on_batch_end(
+                    self.train_metrics.avg('loss'),
+                    self.train_metrics.avg('accuracy'),
+                    self.train_metrics.avg('f1_score'))
             else:
                 end_time = time.time()
                 if (batch_idx+1) % self.log_step[0] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('train'))-1:
-                    self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f}'.format(
+                    self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f} F1-score: {:.6f}'.format(
                         epoch,
                         batch_idx+1,
                         len(self.datamanager.get_dataloader('train')),
                         1/(end_time-start_time),
                         self.train_metrics.avg('loss'),
-                        self.train_metrics.avg('accuracy')))
+                        self.train_metrics.avg('accuracy'),
+                        self.train_metrics.avg('f1_score')))
         
         if self.cfg_trainer['tqdm']:
             tqdm_callback.on_epoch_end()
@@ -217,32 +233,35 @@ class Trainer(BaseTrainer):
                 preds[preds < 0.5] = 0
                 preds[preds >= 0.5] = 1
                 
-                accuracy = compute_accuracy_cuda(labels, preds)
+                result = compute_accuracy_cuda(labels, preds)
 
                 # update loss and accuracy in MetricTracker
                 self.valid_metrics.update('loss', loss.item())
-                self.valid_metrics.update('accuracy', accuracy.item())
+                self.valid_metrics.update('accuracy', result.accuracy.item())
+                self.valid_metrics.update('f1_score', result.f1_score.item())
 
                 # update process
                 if self.cfg_trainer['tqdm']:
                     tqdm_callback.on_batch_end(
                         self.valid_metrics.avg('loss'),
-                        self.valid_metrics.avg('accuracy'))
+                        self.valid_metrics.avg('accuracy'),
+                        self.valid_metrics.avg('f1_score'))
                 else:
                     end_time = time.time()
                     if (batch_idx+1) % self.log_step[1] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('val'))-1:
-                        self.logger.info('Valid Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f}'.format(
+                        self.logger.info('Valid Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f} F1-score: {:.6f}'.format(
                             epoch,
                             batch_idx+1,
                             len(self.datamanager.get_dataloader('val')),
                             1/(end_time-start_time),
                             self.valid_metrics.avg('loss'),
-                            self.valid_metrics.avg('accuracy')))
+                            self.valid_metrics.avg('accuracy'),
+                            self.valid_metrics.avg('f1_score')))
         if self.cfg_trainer['tqdm']:
             tqdm_callback.on_epoch_end()
         return self.valid_metrics.result()
 
-    def _save_checkpoint(self, epoch, save_best_accuracy=True, save_best_loss=True):
+    def _save_checkpoint(self, epoch, save_best_accuracy=False, save_best_loss=False, save_best_f1_score=False):
         """ Save model to file
         """
         state = {
@@ -252,18 +271,26 @@ class Trainer(BaseTrainer):
             'optimizer': self.optimizer.state_dict(),
             'lr_scheduler': self.lr_scheduler.state_dict(),
             'best_accuracy': self.best_accuracy,
-            'best_loss': self.best_loss
+            'best_loss': self.best_loss,
+            'best_f1_score': self.best_f1_score
         }
         filename = os.path.join(self.checkpoint_dir, 'model_last.pth')
         self.logger.info("Saving last model: model_last.pth ...")
         torch.save(state, filename)
+        
         if save_best_accuracy:
             filename = os.path.join(self.checkpoint_dir, 'model_best_accuracy.pth')
             self.logger.info("Saving current best accuracy: model_best_accuracy.pth ...")
             torch.save(state, filename)
+        
         if save_best_loss:
             filename = os.path.join(self.checkpoint_dir, 'model_best_loss.pth')
             self.logger.info("Saving current best loss: model_best_loss.pth ...")
+            torch.save(state, filename)
+        
+        if save_best_f1_score:
+            filename = os.path.join(self.checkpoint_dir, 'model_best_f1_score.pth')
+            self.logger.info("Saving current best f1-score: model_best_f1_score.pth ...")
             torch.save(state, filename)
 
     def _resume_checkpoint(self, resume_path):
@@ -280,6 +307,7 @@ class Trainer(BaseTrainer):
         self.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
         self.best_accuracy = checkpoint['best_accuracy']
         self.best_loss = checkpoint['best_loss']
+        self.best_f1_score = checkpoint['best_f1_score']
         self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))
 
     def _save_logs(self, epoch):
