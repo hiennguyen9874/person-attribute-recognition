@@ -2,16 +2,16 @@
     "n_gpu": 1,
     "model": {
         "name": "baseline_attribute",
-        "backbone": "resnet50"
+        "backbone": "resnet101"
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
         "name": "ppe",
         "download": true,
         "extract": true,
-        "batch_size": 2,
+        "batch_size": 64,
         "shuffle": true,
-        "num_workers": 64,
+        "num_workers": 4,
         "pin_memory": true,
         "drop_last": false
     },
@@ -63,9 +63,6 @@
         "tqdm": false
     },
     "testing": {
-        "model": {
-            "name": "baseline_attribute"
-        },
         "output_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs"
     }
 }

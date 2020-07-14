@@ -29,7 +29,7 @@ def main(config):
 
     datamanager = DataManger(config['data'], phase='test')
     
-    model = build_model(cfg_testing['model'], num_classes=len(datamanager.datasource.get_attribute()))
+    model, _ = build_model(config['model'], num_classes=len(datamanager.datasource.get_attribute()))
 
     logger.info('Loading checkpoint: {} ...'.format(config['resume']))
     checkpoint = torch.load(config['resume'], map_location=map_location)

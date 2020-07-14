@@ -59,9 +59,6 @@
         "tqdm": false
     },
     "testing": {
-        "model": {
-            "name": "osnet"
-        },
         "output_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs"
     }
 }
