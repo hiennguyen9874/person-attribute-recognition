@@ -24,7 +24,7 @@ class Trainer(BaseTrainer):
         self.datamanager = DataManger(config['data'])
 
         # model
-        self.model = build_model(config['model'], num_classes=len(self.datamanager.datasource.get_attribute()))
+        self.model, params_model = build_model(config['model'], num_classes=len(self.datamanager.datasource.get_attribute()))
 
         # losses
         pos_ratio = torch.tensor(self.datamanager.datasource.get_weight('train'))
@@ -52,6 +52,7 @@ class Trainer(BaseTrainer):
         
         # print config
         self._print_config(
+            params_model=params_model,
             params_loss=params_loss,
             params_optimizers=params_optimizers,
             params_lr_scheduler=params_lr_scheduler)
@@ -179,12 +180,12 @@ class Trainer(BaseTrainer):
             preds[preds < 0.5] = 0
             preds[preds >= 0.5] = 1
             
-            result = compute_accuracy_cuda(labels, preds)
+            accuracy, f1_score = compute_accuracy_cuda(labels, preds)
 
             # update loss and accuracy in MetricTracker
             self.train_metrics.update('loss', loss.item())
-            self.train_metrics.update('accuracy', result.accuracy.item())
-            self.train_metrics.update('f1_score', result.f1_score.item())
+            self.train_metrics.update('accuracy', accuracy.item())
+            self.train_metrics.update('f1_score', f1_score.item())
 
             # update process
             if self.cfg_trainer['tqdm']:
@@ -233,12 +234,12 @@ class Trainer(BaseTrainer):
                 preds[preds < 0.5] = 0
                 preds[preds >= 0.5] = 1
                 
-                result = compute_accuracy_cuda(labels, preds)
+                accuracy, f1_score = compute_accuracy_cuda(labels, preds)
 
                 # update loss and accuracy in MetricTracker
                 self.valid_metrics.update('loss', loss.item())
-                self.valid_metrics.update('accuracy', result.accuracy.item())
-                self.valid_metrics.update('f1_score', result.f1_score.item())
+                self.valid_metrics.update('accuracy', accuracy.item())
+                self.valid_metrics.update('f1_score', f1_score.item())
 
                 # update process
                 if self.cfg_trainer['tqdm']:

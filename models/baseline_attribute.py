@@ -9,10 +9,14 @@ sys.path.append('.')
 class BaselineAttribute(nn.Module):
     ''' https://arxiv.org/pdf/2005.11909.pdf
     '''
-    def __init__(self, num_classes):
+    __model_factory = {
+        'resnet50': torchvision.models.resnet50,
+        'resnet101': torchvision.models.resnet101
+    }
+    def __init__(self, num_classes, baskbone='resnet50'):
         super(BaselineAttribute, self).__init__()
         self.num_classes = num_classes
-        self.base = torchvision.models.resnet50(pretrained=True)
+        self.base = self.__model_factory[baskbone](pretrained=True)
         self.avgpool = nn.AdaptiveAvgPool2d(1)
 
         self.classifier = nn.Sequential(

@@ -1,7 +1,8 @@
 {
     "n_gpu": 1,
     "model": {
-        "name": "baseline_attribute"
+        "name": "baseline_attribute",
+        "backbone": "resnet50"
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",

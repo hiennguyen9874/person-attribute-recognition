@@ -8,7 +8,6 @@ sys.path.append('.')
 
 from utils import summary
 
-
 def weights_init_kaiming(m):
     classname = m.__class__.__name__
     if classname.find('Linear') != -1:
@@ -33,11 +32,14 @@ def weights_init_classifier(m):
 class BaselineReid(nn.Module):
     ''' Bag of tricks: https://arxiv.org/pdf/1903.07071.pdf
     '''
-    def __init__(self, num_classes, is_training=True):
+    __model_factory = {
+        'resnet50': torchvision.models.resnet50,
+        'resnet101': torchvision.models.resnet101
+    }
+    def __init__(self, num_classes, baskbone='resnet50'):
         super(BaselineReid, self).__init__()
         self.num_classes = num_classes
-        self.is_training = is_training
-        self.base = torchvision.models.resnet50(pretrained=True)
+        self.base = self.__model_factory[baskbone](pretrained=True)
         self.avgpool = nn.AdaptiveAvgPool2d(1)
         
         # remove the final downsample of resnet

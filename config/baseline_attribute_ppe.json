@@ -1,16 +1,17 @@
 {
     "n_gpu": 1,
     "model": {
-        "name": "baseline_attribute"
+        "name": "baseline_attribute",
+        "backbone": "resnet50"
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
         "name": "ppe",
         "download": true,
         "extract": true,
-        "batch_size": 64,
+        "batch_size": 2,
         "shuffle": true,
-        "num_workers": 4,
+        "num_workers": 64,
         "pin_memory": true,
         "drop_last": false
     },
