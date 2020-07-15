@@ -2,7 +2,7 @@
     "n_gpu": 1,
     "model": {
         "name": "baseline_attribute",
-        "backbone": "resnet50"
+        "backbone": "resnet101"
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
@@ -42,7 +42,7 @@
         "factor": 0.1,
         "iters": 10,
         "method": "linear",
-        "patience": 5,
+        "patience": 4,
         "min_lr": 0.000001
     },
     "clip_grad_norm_": {
@@ -63,9 +63,6 @@
         "tqdm": false
     },
     "testing": {
-        "model": {
-            "name": "baseline_attribute"
-        },
         "output_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs"
     }
 }

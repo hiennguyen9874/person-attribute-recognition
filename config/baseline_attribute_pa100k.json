@@ -63,9 +63,6 @@
         "tqdm": false
     },
     "testing": {
-        "model": {
-            "name": "baseline_attribute"
-        },
         "output_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs"
     }
 }
