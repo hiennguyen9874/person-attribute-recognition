@@ -39,7 +39,7 @@ def build_optimizers(config, model):
     elif cfg_optimizer['name'] == 'sgd':
         dict_paramsters.update({
             'momentum': cfg_optimizer['momentum'],
-            'weight_decay': cfg_optimizer['momentum'],
+            'weight_decay': cfg_optimizer['weight_decay'],
             'dampening': cfg_optimizer['sgd_dampening'],
             'nesterov': cfg_optimizer['sgd_nesterov']
         })
