@@ -1,7 +1,6 @@
 import torch
 import os
 import time
-import shutil
 
 import sys
 sys.path.append('.')
@@ -127,8 +126,10 @@ class Trainer(BaseTrainer):
 
             self._save_checkpoint(epoch, save_best_accuracy=save_best_accuracy, save_best_loss=save_best_loss, save_best_f1_score=save_best_f1_score)
 
-            # save logs
-            self._save_logs(epoch)
+            # save logs to drive if using colab
+            if self.config['colab']:
+                self._save_logs(epoch)
+
         # wait for tensorboard flush all metrics to file
         self.writer.flush()
         time.sleep(1*60)
@@ -137,7 +138,7 @@ class Trainer(BaseTrainer):
         plot_loss_accuracy(
             dpath=self.cfg_trainer['log_dir'],
             list_dname=[self.run_id],
-            path_folder=os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id),
+            path_folder=self.logs_dir_saved if self.config['colab'] == True else self.logs_dir,
             title=self.run_id + ': ' + self.config['model']['name'] + ", " + self.config['loss']['name'] + ", " + self.config['data']['name'])
       
     def _train_epoch(self, epoch):
@@ -310,10 +311,3 @@ class Trainer(BaseTrainer):
         self.best_loss = checkpoint['best_loss']
         self.best_f1_score = checkpoint['best_f1_score']
         self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))
-
-    def _save_logs(self, epoch):
-        """ Save logs from google colab to google drive
-        """
-        if os.path.isdir(self.logs_dir_saved):
-            shutil.rmtree(self.logs_dir_saved)
-        shutil.copytree(self.logs_dir, self.logs_dir_saved)

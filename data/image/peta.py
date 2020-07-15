@@ -16,16 +16,12 @@ class Peta(BaseDataSource):
     dataset_id = '13UvQ4N-sY67htGnK6qheb027XuMx9Jbr'
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]
   
-    def __init__(self, root_dir='datasets', download=True, extract=True, validation_split=0.1):
+    def __init__(self, root_dir='datasets', download=True, extract=True, use_tqdm=True, validation_split=0.1):
         super(Peta, self).__init__(root_dir, dataset_dir = 'peta', file_name = 'PETA-New.zip', image_size = (256, 192))
         if download:
-            print("Downloading!")
-            self._download(dataset_id=self.dataset_id)
-            print("Downloaded!")
+            self._download(dataset_id=self.dataset_id, use_tqdm=use_tqdm)
         if extract:
-            print("Extracting!")
-            self._extract()
-            print("Extracted!")
+            self._extract(use_tqdm=use_tqdm)
         
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
         f = scipy.io.loadmat(os.path.join(data_dir, 'PETA.mat'))

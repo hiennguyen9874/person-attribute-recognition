@@ -12,18 +12,14 @@ class PPE(BaseDataSource):
     map_folder = {'ppe_200617': 'train', 'ppe': 'train', 'ppe_test': 'test'}
     attribute_name = ['hard_hat', 'none_hard_hat', 'safety_vest', 'none_safety_vest', 'no_hat']
     
-    def __init__(self, root_dir='datasets', download=True, extract=True, validation_split=0.1):
+    def __init__(self, root_dir='datasets', download=True, extract=True, use_tqdm=True, validation_split=0.1):
         dataset_dir = 'ppe'
         file_name = 'ppe.zip'
         super(PPE, self).__init__(root_dir, dataset_dir, file_name, image_size = (256, 256))
         if download:
-            print("Downloading!")
-            self._download()
-            print("Downloaded!")
+            self._download(use_tqdm=use_tqdm)
         if extract:
-            print("Extracting!")
-            self._extract()
-            print("Extracted!")
+            self._extract(use_tqdm=use_tqdm)
 
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', 'ppe')
         data = self._processes_dir(data_dir)

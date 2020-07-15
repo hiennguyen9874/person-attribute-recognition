@@ -9,7 +9,8 @@
         "name": "ppe",
         "download": true,
         "extract": true,
-        "batch_size": 2,
+        "tqdm": false,
+        "batch_size": 64,
         "shuffle": true,
         "num_workers": 64,
         "pin_memory": true,
@@ -52,7 +53,6 @@
         "epochs": 40,
         "checkpoint_dir": "saved/checkpoints",
         "log_dir": "saved/logs",
-        "log_dir_saved": "saved/logs1",
         "tqdm": true
     },
     "trainer_colab": {

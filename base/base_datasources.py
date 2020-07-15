@@ -22,28 +22,40 @@ class BaseDataSource(object):
     def _exists(self, extract_dir):
         raise NotImplementedError
     
-    def _extract(self):
+    def _extract(self, use_tqdm=True):
         file_path = os.path.join(self.root_dir, self.dataset_dir, 'raw', self.file_name)
         extract_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
         if self._exists(extract_dir):
             return
+        print("Extracting...")
         try:
             tar = tarfile.open(file_path)
             os.makedirs(extract_dir, exist_ok=True)
-            tar.extractall(path=extract_dir)
+            if use_tqdm:
+                for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers())):
+                    tar.extract(member=member, path=extract_dir)
+            else:
+                tar.extractall(path=extract_dir)
             tar.close()
         except:
             zip_ref = zipfile.ZipFile(file_path, 'r')
-            zip_ref.extractall(path=extract_dir)
+            if use_tqdm:
+                for member in tqdm(iterable=zip_ref.infolist(), total=len(zip_ref.infolist())):
+                    zip_ref.extract(member=member, path=extract_dir)
+            else:
+                zip_ref.extractall(path=extract_dir)
             zip_ref.close()
+        print("Extracted!")
     
-    def _download(self, dataset_id=None):
+    def _download(self, dataset_id=None, use_tqdm=True):
         os.makedirs(os.path.join(self.root_dir, self.dataset_dir, 'raw'), exist_ok=True)
         if dataset_id == None:
             if not os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'raw', self.file_name)):
-                raise FileExistsError('please download file into %s' % (os.path.join(self.root_dir, self.dataset_dir, 'raw')))
+                raise FileExistsError('please download file %s into %s' % (self.file_name, os.path.join(self.root_dir, self.dataset_dir, 'raw')))
         else:
-            download_with_url(self.google_drive_api, dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), self.file_name)
+            print("Downloading...")
+            download_with_url(self.google_drive_api, dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), self.file_name, use_tqdm)
+            print("Downloaded!")
 
     def get_list_phase(self):
         return self.list_phases

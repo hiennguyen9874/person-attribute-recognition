@@ -8,6 +8,7 @@
         "name": "peta",
         "download": true,
         "extract": true,
+        "tqdm": false,
         "batch_size": 64,
         "shuffle": true,
         "num_workers": 4,
@@ -48,7 +49,6 @@
         "epochs": 120,
         "checkpoint_dir": "saved/checkpoints",
         "log_dir": "saved/logs",
-        "log_dir_saved": "saved/logs1",
         "tqdm": true
     },
     "trainer_colab": {

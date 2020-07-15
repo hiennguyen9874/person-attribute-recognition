@@ -1,6 +1,7 @@
 import torch
 import os
 import logging
+import shutil
 from datetime import datetime
 
 from torch.utils.tensorboard import SummaryWriter
@@ -22,7 +23,8 @@ class BaseTrainer(object):
         self.logs_dir = os.path.join(self.cfg_trainer['log_dir'], self.run_id)
         os.makedirs(self.logs_dir, exist_ok=True)
 
-        self.logs_dir_saved = os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id)
+        if self.config['colab']:
+            self.logs_dir_saved = os.path.join(self.cfg_trainer['log_dir_saved'], self.run_id)
 
         setup_logging(self.logs_dir)
         self.logger = logging.getLogger('train')
@@ -51,3 +53,9 @@ class BaseTrainer(object):
         self.logger.info('Optimizer: %s ' % (self.config['optimizer']['name']) + __prams_to_str(params_optimizers))
         self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
 
+    def _save_logs(self, epoch):
+        """ Save logs from google colab to google drive
+        """
+        if os.path.isdir(self.logs_dir_saved):
+            shutil.rmtree(self.logs_dir_saved)
+        shutil.copytree(self.logs_dir, self.logs_dir_saved)

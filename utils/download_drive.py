@@ -69,7 +69,7 @@ def download_file_from_google_drive(id, destination=None):
         os.rename(partfile, destination)
     return filename
 
-def download_with_url(api, file_id, destination, name_file):
+def download_with_url(api, file_id, destination, name_file, use_tqdm=True):
     session = requests.Session()
     url = "https://www.googleapis.com/drive/v3/files/" + file_id + "?alt=media&key=" + api
     response = session.get(url, stream=True, headers={'Range': 'bytes=0-'})
@@ -99,12 +99,14 @@ def download_with_url(api, file_id, destination, name_file):
         initial = stat.st_size 
         range = response.headers.get('Content-Range', None)
 
-    # with tqdm(desc=destination, total=total_size, initial=initial, unit="B", unit_scale=True) as pbar:
-    with open(partfile, "ab") as f:
-        f.seek(initial)
-        for chunk in response.iter_content(CHUNK_SIZE):
-            if chunk:
-                # pbar.update(CHUNK_SIZE)
-                f.write(chunk)
-        os.rename(partfile, destination)
+    if use_tqdm:
+        pbar = tqdm(desc=destination, total=total_size, initial=initial, unit="B", unit_scale=True)
+        with open(partfile, "ab") as f:
+            f.seek(initial)
+            for chunk in response.iter_content(CHUNK_SIZE):
+                if chunk:
+                    if use_tqdm:
+                        pbar.update(CHUNK_SIZE)
+                    f.write(chunk)
+            os.rename(partfile, destination)
     return filename
