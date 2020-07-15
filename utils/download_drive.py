@@ -70,6 +70,15 @@ def download_file_from_google_drive(id, destination=None):
     return filename
 
 def download_with_url(api, file_id, destination, name_file, use_tqdm=True):
+    """ download file from google drive
+    Args:
+        api: google drive api. (https://www.wonderplugin.com/wordpress-tutorials/how-to-apply-for-a-google-drive-api-key/)
+        file_id: id of file on google drive
+        destination: folder will contain file
+        name_file: name of file on google drive
+        use_tqdm: enable process bar
+    Returns:
+    """
     session = requests.Session()
     url = "https://www.googleapis.com/drive/v3/files/" + file_id + "?alt=media&key=" + api
     response = session.get(url, stream=True, headers={'Range': 'bytes=0-'})
