@@ -1,5 +1,4 @@
 import os
-from numpy.core.fromnumeric import partition
 import scipy.io
 import numpy as np
 

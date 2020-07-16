@@ -110,12 +110,12 @@ def download_with_url(api, file_id, destination, name_file, use_tqdm=True):
 
     if use_tqdm:
         pbar = tqdm(desc=destination, total=total_size, initial=initial, unit="B", unit_scale=True)
-        with open(partfile, "ab") as f:
-            f.seek(initial)
-            for chunk in response.iter_content(CHUNK_SIZE):
-                if chunk:
-                    if use_tqdm:
-                        pbar.update(CHUNK_SIZE)
-                    f.write(chunk)
-            os.rename(partfile, destination)
+    with open(partfile, "ab") as f:
+        f.seek(initial)
+        for chunk in response.iter_content(CHUNK_SIZE):
+            if chunk:
+                if use_tqdm:
+                    pbar.update(CHUNK_SIZE)
+                f.write(chunk)
+        os.rename(partfile, destination)
     return filename
