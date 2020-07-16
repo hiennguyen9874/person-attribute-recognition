@@ -23,7 +23,10 @@ class Trainer(BaseTrainer):
         self.datamanager = DataManger(config['data'])
 
         # model
-        self.model, params_model = build_model(config['model'], num_classes=len(self.datamanager.datasource.get_attribute()))
+        self.model, params_model = build_model(
+            config['model'],
+            num_classes=len(self.datamanager.datasource.get_attribute()),
+            device=self.device)
 
         # losses
         pos_ratio = torch.tensor(self.datamanager.datasource.get_weight('train'))
