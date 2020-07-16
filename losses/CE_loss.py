@@ -8,9 +8,7 @@ from torch.nn.functional import margin_ranking_loss
 
 def ratio2weight(targets, ratio):
     ratio = ratio.type_as(targets)
-    pos_weights = targets * (1 - ratio)
-    neg_weights = (1 - targets) * ratio
-    weights = torch.exp(neg_weights + pos_weights)
+    weights = torch.exp(targets * (1 - ratio) + (1 - targets) * ratio)
 
     # # for RAP dataloader, targets element may be 2, with or without smooth, some element must great than 1
     # weights[targets > 1] = 0.0

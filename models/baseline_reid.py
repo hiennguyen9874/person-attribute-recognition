@@ -36,11 +36,11 @@ class BaselineReid(nn.Module):
         'resnet50': torchvision.models.resnet50,
         'resnet101': torchvision.models.resnet101
     }
-    def __init__(self, num_classes, baskbone='resnet50', pretrained=True):
+    def __init__(self, num_classes, backbone='resnet50', pretrained=True):
         super(BaselineReid, self).__init__()
         self.num_classes = num_classes
         
-        resnet = self.__model_factory[baskbone](pretrained=pretrained)
+        resnet = self.__model_factory[backbone](pretrained=pretrained)
         self.base = nn.Sequential(
             resnet.conv1,
             resnet.bn1,
