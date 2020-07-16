@@ -60,13 +60,13 @@ class Trainer(BaseTrainer):
             params_lr_scheduler=params_lr_scheduler)
 
         # summary model
-        summary(
-            func=self.logger.info,
-            model=self.model,
-            input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
-            batch_size=config['data']['batch_size'],
-            device='cpu',
-            print_step=False)
+        # summary(
+        #     func=self.logger.info,
+        #     model=self.model,
+        #     input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
+        #     batch_size=config['data']['batch_size'],
+        #     device='cpu',
+        #     print_step=False)
         
         # send model to device
         self.model.to(self.device)

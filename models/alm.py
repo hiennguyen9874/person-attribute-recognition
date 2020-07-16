@@ -25,7 +25,7 @@ class ChannelAttr(nn.Module):
         return x
 
 class ALM(nn.Module):
-    """ https://arxiv.org/pdf/1910.04562.pdf
+    """ Attribute Localization Module (https://arxiv.org/pdf/1910.04562.pdf)
     """ 
     def __init__(self, in_channels, device):
         super(ALM, self).__init__()
@@ -37,12 +37,11 @@ class ALM(nn.Module):
         self.fc2 = nn.Linear(in_channels, 1)
 
     def transform_theta(self, in_theta):
-        theta = torch.zeros(in_theta.size(0), 2, 3)
+        theta = torch.zeros(in_theta.size(0), 2, 3, device=self.device)
         theta[:,0,0] = torch.sigmoid(in_theta[:,0])
         theta[:,1,1] = torch.sigmoid(in_theta[:,1])
         theta[:,0,2] = torch.tanh(in_theta[:,2])
         theta[:,1,2] = torch.tanh(in_theta[:,3])
-        theta = theta.to(self.device)
         return theta
 
     def forward(self, x):
@@ -96,4 +95,3 @@ if __name__ == "__main__":
     batch = torch.rand((4, 3, 256, 128)).to(torch.device('cuda'))
     out = model(batch)
     pass
-
