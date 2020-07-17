@@ -16,3 +16,5 @@
 - [Reduction head](https://github.com/JDAI-CV/fast-reid/blob/46228ce946/fastreid/modeling/heads/reduction_head.py)
 
 - ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0)
+
+- Non-Local Resnet
