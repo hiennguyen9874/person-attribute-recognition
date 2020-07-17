@@ -20,7 +20,8 @@
         "name": "sgd",
         "lr": 0.1,
         "specified_lr": [
-            "classifier"
+            "classifier",
+            "bn"
         ],
         "weight_decay": 0.0005,
         "adam_beta1": 0.9,

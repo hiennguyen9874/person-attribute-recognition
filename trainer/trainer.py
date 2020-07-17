@@ -103,7 +103,7 @@ class Trainer(BaseTrainer):
                     'Train': self.train_metrics.avg('f1_score'),
                     'Val': self.valid_metrics.avg('f1_score')
                 }, global_step=epoch)
-            self.writer.add_scalar('lr', self.optimizer.param_groups[0]['lr'], global_step=epoch)
+            self.writer.add_scalar('lr', self.optimizer.param_groups[-1]['lr'], global_step=epoch)
 
             # logging result to console
             log = {'epoch': epoch}
