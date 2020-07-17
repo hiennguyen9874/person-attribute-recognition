@@ -11,6 +11,7 @@ from torch.utils.data.dataloader import DataLoader
 
 from .datasets import ImageDataset
 from .image import build_datasource
+from .transforms import RandomErasing
 
 class DataManger(object):
     def __init__(self, config, phase='train'):
@@ -31,7 +32,8 @@ class DataManger(object):
             transforms.RandomCrop(size=self.datasource.get_image_size(), padding=None),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225],
+            RandomErasing(probability=0.5, mean=[0.0, 0.0, 0.0]))
         ])
         
         transform['val'] = transforms.Compose([

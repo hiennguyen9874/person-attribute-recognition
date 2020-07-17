@@ -1,5 +1,4 @@
 import sys
-from typing import Iterator
 sys.path.append('.')
 
 import copy
