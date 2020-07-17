@@ -6,6 +6,8 @@ from torch.nn import init
 import sys
 sys.path.append('.')
 
+from utils import summary
+
 class BaselineAttribute(nn.Module):
     ''' https://arxiv.org/pdf/2005.11909.pdf
     '''
@@ -70,8 +72,4 @@ class BaselineAttribute(nn.Module):
 
 if __name__ == "__main__":
     model = BaselineAttribute(26)
-    model.eval()
-    img = torch.rand((1, 3, 256, 128))
-    out = model.get_heat_maps(img)
-    out = torch.squeeze(out).cpu().detach().numpy()
-    pass
+    summary(print, model, (3, 256, 128), 64, 'cpu', True)

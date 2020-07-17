@@ -52,13 +52,13 @@
         "max_norm": 10.0
     },
     "trainer": {
-        "epochs": 60,
+        "epochs": 40,
         "checkpoint_dir": "saved/checkpoints",
         "log_dir": "saved/logs",
         "tqdm": true
     },
     "trainer_colab": {
-        "epochs": 60,
+        "epochs": 40,
         "checkpoint_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints",
         "log_dir": "saved/logs",
         "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs",

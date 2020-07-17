@@ -1,0 +1,6 @@
+- weight_decay: 0.0005, 0.001, 0.01
+- AGW: https://arxiv.org/pdf/2001.04193.pdf
+- ABD-Net: https://arxiv.org/pdf/1908.01114.pdf
+- AdaptiveReID: https://arxiv.org/pdf/2007.07875v1.pdf
+- support more backbone: resnet50_ibn_a
+- build_backbone: 

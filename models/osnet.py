@@ -8,6 +8,8 @@ from torchsummary import summary
 import sys
 sys.path.append('.')
 
+from utils import summary
+
 class Standard3x3Conv(nn.Module):
     ''' Standard 3 × 3 convolution
     '''
