@@ -20,7 +20,7 @@ def build_optimizers(config, model):
     base_learning_rate = cfg_optimizer['lr']*0.1 if specified_lr else cfg_optimizer['lr']
     dict_paramsters = {'lr': base_learning_rate}
     if specified_lr:
-        dict_paramsters.update({"specified_lr": cfg_optimizer['specified_lr']})
+        dict_paramsters.update({"specified_lr (lr=base_lr*10)": cfg_optimizer['specified_lr']})
 
     if cfg_optimizer['name'] == 'adam':
         dict_paramsters.update({
