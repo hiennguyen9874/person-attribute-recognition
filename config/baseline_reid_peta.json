@@ -2,7 +2,9 @@
     "n_gpu": 1,
     "model": {
         "name": "baseline_reid",
-        "backbone": "resnet50"
+        "backbone": "resnet50",
+        "last_stride_1": true,
+        "pretrained": true
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
