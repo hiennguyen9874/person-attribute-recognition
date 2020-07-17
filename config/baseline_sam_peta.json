@@ -3,7 +3,7 @@
     "model": {
         "name": "baseline_sam",
         "backbone": "resnet50",
-        "last_stride_1": true,
+        "last_stride_1": false,
         "pretrained": true
     },
     "data": {
@@ -12,7 +12,7 @@
         "download": true,
         "extract": true,
         "tqdm": false,
-        "batch_size": 64,
+        "batch_size": 128,
         "shuffle": true,
         "num_workers": 4,
         "pin_memory": true,

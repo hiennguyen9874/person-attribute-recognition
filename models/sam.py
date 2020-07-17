@@ -60,6 +60,8 @@ class BaselineSAM(nn.Module):
         self.classifier = nn.ModuleList()
         for _ in range(num_classes):
             self.classifier.append(SAM(2048, 1))
+        # TODO: Add batch norm and test it
+        self.bn = nn.BatchNorm1d(self.num_classes)
 
     def forward(self, x):
         x = self.base(x)
@@ -67,7 +69,7 @@ class BaselineSAM(nn.Module):
         out = []
         for i in range(self.num_classes):
             out.append(self.classifier[i](x))
-        return torch.cat(out, dim=1)
+        return self.bn(torch.cat(out, dim=1))
 
 if __name__ == "__main__":
     model = BaselineSAM(26)

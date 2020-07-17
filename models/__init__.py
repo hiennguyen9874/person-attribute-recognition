@@ -18,6 +18,7 @@ def build_model(config, num_classes, pretrained=True, device=torch.device('cpu')
     dict_paramsters = None
     if config['name'] == 'osnet':
         model =  OSNet(num_classes=num_classes)
+    
     elif config['name'] == 'baseline_reid':
         dict_paramsters = {
             'backbone': config['backbone'],
@@ -42,7 +43,7 @@ def build_model(config, num_classes, pretrained=True, device=torch.device('cpu')
             last_stride_1=config['last_stride_1'],
             pretrained=pretrained)
 
-    elif config['name'] == 'baseline_alm':
+    elif config['name'] == 'baseline_sam':
         dict_paramsters = {
             'backbone': config['backbone'],
             'last_stride_1': config['last_stride_1'],
