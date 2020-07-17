@@ -1,8 +1,10 @@
 {
     "n_gpu": 1,
     "model": {
-        "name": "baseline_alm",
-        "backbone": "resnet50"
+        "name": "baseline_sam",
+        "backbone": "resnet50",
+        "last_stride_1": true,
+        "pretrained": true
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",

@@ -36,11 +36,16 @@ class BaselineReid(nn.Module):
         'resnet50': torchvision.models.resnet50,
         'resnet101': torchvision.models.resnet101
     }
-    def __init__(self, num_classes, backbone='resnet50', pretrained=True):
+    def __init__(self, num_classes, backbone='resnet50', last_stride_1=True, pretrained=True):
         super(BaselineReid, self).__init__()
         self.num_classes = num_classes
         
         resnet = self.__model_factory[backbone](pretrained=pretrained)
+        if last_stride_1:
+            # remove the final downsample of resnet
+            resnet.layer4[0].downsample[0].stride = (1, 1)
+            resnet.layer4[0].conv2.stride=(1,1)
+
         self.base = nn.Sequential(
             resnet.conv1,
             resnet.bn1,
@@ -54,10 +59,6 @@ class BaselineReid(nn.Module):
 
         self.avgpool = nn.AdaptiveAvgPool2d(1)
         
-        # remove the final downsample of resnet
-        self.base.layer4[0].downsample[0].stride = (1, 1)
-        self.base.layer4[0].conv2.stride=(1,1)
-
         self.bottleneck = nn.BatchNorm1d(2048)
         self.bottleneck.bias.requires_grad_(False)
         
@@ -72,7 +73,7 @@ class BaselineReid(nn.Module):
         x = self.avgpool(x)
         x = x.view(x.shape[0], -1)
         # x.size() = (batch_size, 2048)
-
+        x = torch.clamp(x, min=0, max=1)
         x = self.bottleneck(x)
         x = self.classifier(x)
         return x

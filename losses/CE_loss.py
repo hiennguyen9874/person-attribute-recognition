@@ -4,7 +4,6 @@ sys.path.append('.')
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.functional import margin_ranking_loss
 
 def ratio2weight(targets, ratio):
     ratio = ratio.type_as(targets)

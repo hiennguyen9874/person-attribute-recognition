@@ -13,11 +13,16 @@ class BaselineAttribute(nn.Module):
         'resnet50': torchvision.models.resnet50,
         'resnet101': torchvision.models.resnet101
     }
-    def __init__(self, num_classes, backbone='resnet50', pretrained=True):
+    def __init__(self, num_classes, backbone='resnet50', last_stride_1=True, pretrained=True):
         super(BaselineAttribute, self).__init__()
         self.num_classes = num_classes
         
         resnet = self.__model_factory[backbone](pretrained=pretrained)
+        if last_stride_1:
+            # remove the final downsample of resnet
+            resnet.layer4[0].downsample[0].stride = (1, 1)
+            resnet.layer4[0].conv2.stride=(1,1)
+
         self.base = nn.Sequential(
             resnet.conv1,
             resnet.bn1,

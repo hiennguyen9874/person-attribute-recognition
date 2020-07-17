@@ -9,13 +9,11 @@ from utils import download_with_url
 
 class BaseDataSource(object):
     google_drive_api = 'AIzaSyAVfS-7Dy34a3WjWgR509o-u_3Of59zizo'
-    list_phases = ['train', 'val', 'test']
     
-    def __init__(self, root_dir, dataset_dir, file_name, image_size = (256, 128), list_phases=['train', 'val', 'test']):
+    def __init__(self, root_dir, dataset_dir, file_name, image_size = (256, 128)):
         self.root_dir = root_dir
         self.dataset_dir = dataset_dir
         self.file_name = file_name
-        self.list_phases = list_phases
         self.data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
         self.image_size = image_size
         
@@ -56,9 +54,6 @@ class BaseDataSource(object):
             print("Downloading...")
             download_with_url(self.google_drive_api, dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), self.file_name, use_tqdm)
             print("Downloaded!")
-
-    def get_list_phase(self):
-        return self.list_phases
     
     def get_data(self, phase='train'):
         raise NotImplementedError
