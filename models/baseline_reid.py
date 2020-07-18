@@ -73,7 +73,6 @@ class BaselineReid(nn.Module):
         x = self.avgpool(x)
         x = x.view(x.shape[0], -1)
         # x.size() = (batch_size, 2048)
-        x = torch.clamp(x, min=0, max=1)
         x = self.bottleneck(x)
         x = self.classifier(x)
         return x

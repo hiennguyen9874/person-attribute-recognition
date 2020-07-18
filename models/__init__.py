@@ -1,4 +1,5 @@
 import torch
+from .layer import *
 from .osnet import OSNet
 from .baseline_reid import BaselineReid
 from .baseline_attribute import BaselineAttribute
