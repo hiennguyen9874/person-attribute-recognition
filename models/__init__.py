@@ -1,5 +1,5 @@
 import torch
-from .layer import *
+from models.layer import GeneralizedMeanPoolingP
 from .osnet import OSNet
 from .baseline_reid import BaselineReid
 from .baseline_attribute import BaselineAttribute
