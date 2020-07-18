@@ -1,14 +1,12 @@
 import sys
 sys.path.append('.')
 
-import copy
-import torch
 import random
 import math
 import numpy as np
 
 from PIL import Image
-from torchvision.transforms import *
+from collections import deque
 import torchvision.transforms.functional as F
 
 from data.image.ppe import PPE
