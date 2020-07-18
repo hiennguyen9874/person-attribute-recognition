@@ -2,7 +2,7 @@
     "n_gpu": 1,
     "model": {
         "name": "baseline_attribute",
-        "backbone": "resnet50_ibn_a",
+        "backbone": "resnet50",
         "last_stride_1": false,
         "pretrained": true
     },
