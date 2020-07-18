@@ -2,7 +2,7 @@
     "n_gpu": 1,
     "model": {
         "name": "baseline_attribute",
-        "backbone": "resnet50",
+        "backbone": "resnet50_ibn_a",
         "last_stride_1": false,
         "pretrained": true
     },
@@ -22,7 +22,8 @@
         "name": "sgd",
         "lr": 0.1,
         "specified_lr": [
-            "classifier"
+            "linear",
+            "bn"
         ],
         "weight_decay": 0.0005,
         "adam_beta1": 0.9,

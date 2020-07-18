@@ -9,7 +9,7 @@
 - build_backbone function.
 - build_transforms function.
 
-- transforms: [Auto-augment](https://github.com/JDAI-CV/fast-reid/blob/ee634df2900996233473cb95a80029bd456cce97/fastreid/data/transforms/autoaugment.py#L495),  [Random patch](https://github.com/JDAI-CV/fast-reid/blob/ee634df290/fastreid/data/transforms/transforms.py),
+- transforms: [Auto-augment](https://github.com/JDAI-CV/fast-reid/blob/ee634df2900996233473cb95a80029bd456cce97/fastreid/data/transforms/autoaugment.py#L495), [Random patch](https://github.com/JDAI-CV/fast-reid/blob/ee634df290/fastreid/data/transforms/transforms.py),
 
 - Pooling: [GeM pooling](https://github.com/JDAI-CV/fast-reid/blob/46228ce946/fastreid/layers/gem_pool.py), [Attention Pooling](https://github.com/JDAI-CV/fast-reid/blob/46228ce946/fastreid/layers/attention.py)
 
