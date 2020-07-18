@@ -7,6 +7,7 @@ import sys
 sys.path.append('.')
 
 from utils import summary
+from . import GeneralizedMeanPoolingP
 
 class BaselineAttribute(nn.Module):
     ''' https://arxiv.org/pdf/2005.11909.pdf
@@ -36,7 +37,8 @@ class BaselineAttribute(nn.Module):
             resnet.layer4
         )
 
-        self.avgpool = nn.AdaptiveAvgPool2d(1)
+        # self.avgpool = nn.AdaptiveAvgPool2d(1)
+        self.avgpool = GeneralizedMeanPoolingP()
 
         self.classifier = nn.Sequential(
             nn.Linear(2048, self.num_classes),
