@@ -7,9 +7,9 @@ import sys
 sys.path.append('.')
 
 from utils import summary
-from .layer import GeneralizedMeanPoolingP
-from .build_backbone import build_backbone
-from .weight_init import weights_init_classifier, weights_init_kaiming
+from models.layer import GeneralizedMeanPoolingP
+from models.build_backbone import build_backbone
+from models.weight_init import weights_init_classifier, weights_init_kaiming
 
 class BaselineAttribute(nn.Module):
     ''' https://arxiv.org/pdf/2005.11909.pdf
@@ -68,5 +68,5 @@ class BaselineAttribute(nn.Module):
         return heatmaps
 
 if __name__ == "__main__":
-    model = BaselineAttribute(26)
+    model = BaselineAttribute(26, 'resnet50_ibn_a')
     summary(print, model, (3, 256, 128), 64, 'cpu', True)
