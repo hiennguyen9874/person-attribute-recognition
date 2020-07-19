@@ -28,8 +28,6 @@ class DataManger(object):
         transform = dict()
         transform['train'] = transforms.Compose([
             transforms.Resize(size=self.datasource.get_image_size()),
-            transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0),
-            RandomPatch(),
             transforms.Pad(padding=10, fill=0, padding_mode='constant'),
             transforms.RandomCrop(size=self.datasource.get_image_size(), padding=None),
             transforms.RandomHorizontalFlip(p=0.5),
