@@ -1,38 +1,26 @@
 import torch
-from models.layer import GeneralizedMeanPoolingP
 from .osnet import OSNet
-from .baseline_reid import BaselineReid
-from .baseline_attribute import BaselineAttribute
+from .baseline import Baseline
 
-def build_model(config, num_classes, pretrained=True, device=torch.device('cpu')):
+def build_model(config, num_classes, device=torch.device('cpu')):
     dict_paramsters = None
     if config['name'] == 'osnet':
-        model =  OSNet(num_classes=num_classes)
-    
-    elif config['name'] == 'baseline_reid':
+        model = OSNet(num_classes=num_classes)
+
+    elif config['name'] == 'baseline':
         dict_paramsters = {
             'backbone': config['backbone'],
-            'last_stride_1': config['last_stride_1'],
-            'pretrained': config['pretrained']}
-        
-        model = BaselineReid(
+            'pretrained': config['pretrained'],
+            'pooling': config['pooling'],
+            'batch_norm_bias': config['batch_norm_bias']}
+
+        model = Baseline(
             num_classes=num_classes,
             backbone=config['backbone'],
-            last_stride_1=config['last_stride_1'],
-            pretrained=pretrained)
-    
-    elif config['name'] == 'baseline_attribute':
-        dict_paramsters = {
-            'backbone': config['backbone'],
-            'last_stride_1': config['last_stride_1'],
-            'pretrained': config['pretrained']}
-        
-        model = BaselineAttribute(
-            num_classes=num_classes,
-            backbone=config['backbone'],
-            last_stride_1=config['last_stride_1'],
-            pretrained=pretrained)
-            
+            pretrained=config['pretrained'],
+            pooling=config['pooling'],
+            batch_norm_bias=config['batch_norm_bias'])
+
     else:
         raise KeyError('config[model][name] error')
     return model, dict_paramsters
