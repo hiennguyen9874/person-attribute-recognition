@@ -15,4 +15,4 @@
 
 - [Reduction head](https://github.com/JDAI-CV/fast-reid/blob/46228ce946/fastreid/modeling/heads/reduction_head.py)
 
-- Non-Local Resnet
+- Non-Local : [Paper](https://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Non-Local_Neural_Networks_CVPR_2018_paper.pdf)
