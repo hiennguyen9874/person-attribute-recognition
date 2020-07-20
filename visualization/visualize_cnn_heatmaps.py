@@ -1,15 +1,14 @@
-from matplotlib.pyplot import broken_barh
 import numpy
 import torch
 import argparse
 import sys
 sys.path.append('.')
+
 import cv2
 
 import numpy as np
 import matplotlib.pyplot as plt
 
-from PIL import Image
 from torchvision import transforms
 from utils import read_json
 
@@ -17,7 +16,8 @@ from data.image import build_datasource
 from models import build_model
 
 def imread(path):
-    image = Image.open(path)
+    image = cv2.imread(path)
+    image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
     return image
 
 if __name__ == "__main__":
@@ -75,7 +75,6 @@ if __name__ == "__main__":
         heatmaps = torch.squeeze(heatmaps).cpu().detach().numpy()
         
         # RGB image
-        img_orig = cv2.cvtColor(numpy.array(img_orig), cv2.COLOR_RGB2BGR)
         img_orig = cv2.resize(img_orig, (width, height))
         
         list_image = [img_orig]
