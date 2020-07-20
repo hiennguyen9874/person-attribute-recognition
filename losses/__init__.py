@@ -3,7 +3,7 @@ sys.path.append('.')
 import torch
 import torch.nn as nn
 
-from .CE_loss import CEL_Sigmoid
+from losses.CE_loss import CEL_Sigmoid
 
 def build_losses(config, pos_ratio, use_gpu=True):
     cfg_loss = config['loss']

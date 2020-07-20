@@ -1,7 +1,10 @@
-from .pa_100k import PA_100K
-from .peta import Peta
-from .ppe import PPE
-from .ppe_two_attribute import PPE_Two
+import sys
+sys.path.append('.')
+
+from data.image.pa_100k import PA_100K
+from data.image.peta import Peta
+from data.image.ppe import PPE
+from data.image.ppe_two_attribute import PPE_Two
 
 __datasets = {'pa_100k': PA_100K, 'peta': Peta, 'ppe': PPE, 'ppe_two': PPE_Two}
 

@@ -39,5 +39,17 @@ def build_backbone(name, pretrained=True):
             model.layer3,
             model.layer4
         )
+    elif name == 'resnet101_ibn_a':
+        model = torch.hub.load('XingangPan/IBN-Net', 'resnet101_ibn_a', pretrained=pretrained)
+        return nn.Sequential(
+            model.conv1,
+            model.bn1,
+            model.relu,
+            model.maxpool,
+            model.layer1,
+            model.layer2,
+            model.layer3,
+            model.layer4
+        )
     else:
-        raise KeyError('name backbone error, name must in [resnet50, resnet101, resnet50_ibn_a]')
+        raise KeyError('name backbone error, name must in [resnet50, resnet101, resnet50_ibn_a, resnet101_ibn_a]')

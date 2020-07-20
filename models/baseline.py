@@ -22,7 +22,6 @@ class Baseline(nn.Module):
         self.backbone = build_backbone(backbone, pretrained=pretrained)
 
         self.avgpool = build_pooling(pooling)
-
         self.linear = nn.Linear(2048, self.num_classes)
         self.bn = nn.BatchNorm1d(self.num_classes)
         
@@ -44,6 +43,8 @@ class Baseline(nn.Module):
         return x
     
     def get_heat_maps(self, x, return_output=True):
+        r''' Get heatmaps using Class Activation Mapping: https://arxiv.org/pdf/1512.04150v1.pdf
+        '''
         x = self.backbone(x)
         feat = x
         fc_weights = list(self.linear.parameters())[0].data
@@ -63,5 +64,5 @@ class Baseline(nn.Module):
         return heatmaps
 
 if __name__ == "__main__":
-    model = Baseline(26, 'resnet50_ibn_a')
-    summary(print, model, (3, 256, 128), 64, 'cpu', True)
+    model = Baseline(26, 'resnet50', True, 'gem_pooling', True)
+    summary(print, model, (3, 256, 128), 64, 'cpu', False)

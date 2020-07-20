@@ -1,5 +1,6 @@
 import torch.optim.lr_scheduler as lr_scheduler
-from .scheduler import WarmupMultiStepLR
+
+from .warmup import WarmupMultiStepLR
 
 def build_lr_scheduler(config, optimizer):
     cfg_lr_scheduler = config['lr_scheduler']

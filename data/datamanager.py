@@ -9,9 +9,9 @@ import numpy as np
 from torchvision import transforms
 from torch.utils.data.dataloader import DataLoader
 
-from .datasets import ImageDataset
-from .image import build_datasource
-from .transforms import RandomErasing, RandomPatch
+from data.datasets import ImageDataset
+from data.image import build_datasource
+from data.transforms import RandomErasing, RandomPatch
 
 class DataManger(object):
     def __init__(self, config, phase='train'):
