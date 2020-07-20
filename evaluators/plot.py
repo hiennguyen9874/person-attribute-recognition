@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append('.')
 
-
 from utils import aggregate, aggregate1
 
 def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, low_ratio = .05, high_ratio = .95, com=0):
