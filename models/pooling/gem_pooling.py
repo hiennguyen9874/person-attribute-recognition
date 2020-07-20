@@ -1,8 +1,13 @@
 import sys
 sys.path.append('.')
 
+import torch
+import torch.nn.functional as F
+from torch import nn
+
 class GeneralizedMeanPooling(nn.Module):
-    r"""Applies a 2D power-average adaptive pooling over an input signal composed of several input planes.
+    r"""Copy from here: https://github.com/JDAI-CV/fast-reid/blob/e269caf8ab/fastreid/layers/pooling.py
+    Applies a 2D power-average adaptive pooling over an input signal composed of several input planes.
     The function computed is: :math:`f(X) = pow(sum(pow(X, p)), 1/p)`
         - At p = infinity, one gets Max Pooling
         - At p = 1, one gets Average Pooling
@@ -14,7 +19,6 @@ class GeneralizedMeanPooling(nn.Module):
                      H and W can be either a ``int``, or ``None`` which means the size will
                      be the same as that of the input.
     """
-
     def __init__(self, norm, output_size=1, eps=1e-6):
         super(GeneralizedMeanPooling, self).__init__()
         assert norm > 0
@@ -37,3 +41,9 @@ class GeneralizedMeanPoolingP(GeneralizedMeanPooling):
     def __init__(self, norm=3, output_size=1, eps=1e-6):
         super(GeneralizedMeanPoolingP, self).__init__(norm, output_size, eps)
         self.p = nn.Parameter(torch.ones(1) * norm)
+
+if __name__ == "__main__":
+    input = torch.rand((32, 2048, 16, 8))
+    pooling = GeneralizedMeanPoolingP()
+    out = pooling(input)
+    pass
