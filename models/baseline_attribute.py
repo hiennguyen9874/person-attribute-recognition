@@ -51,7 +51,7 @@ class BaselineAttribute(nn.Module):
     def get_heat_maps(self, x, return_output=True):
         x = self.base(x)
         feat = x
-        fc_weights = list(self.classifier[0].parameters())[0].data
+        fc_weights = list(self.linear.parameters())[0].data
         fc_weights = fc_weights.view(1, self.num_classes, feat.size(1), 1, 1)
         # fc_weights.size() = (batch_size, num_classes, 2048, 1, 1)
         feat = feat.unsqueeze(dim=1)

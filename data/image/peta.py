@@ -77,4 +77,5 @@ class Peta(BaseDataSource):
 
 if __name__ == "__main__":
     datasource = Peta(root_dir='/home/hien/Documents/datasets')
-    path = datasource.get_data()[0]
+    attribute_name = datasource.get_attribute()
+    pass

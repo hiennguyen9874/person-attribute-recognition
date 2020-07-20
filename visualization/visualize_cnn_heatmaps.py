@@ -8,7 +8,7 @@ import cv2
 
 import numpy as np
 import matplotlib.pyplot as plt
-
+from PIL import Image
 from torchvision import transforms
 from utils import read_json
 
@@ -16,19 +16,10 @@ from data.image import build_datasource
 from models import build_model
 
 def imread(path):
-    image = cv2.imread(path)
-    image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+    image = Image.open(path)
     return image
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='')
-    parser.add_argument('-c', '--config', default='config.json', type=str, help='config file path (default: ./config.json)')
-    parser.add_argument('-r', '--resume', default='', type=str, help='resume file path (default: .)')
-    args = parser.parse_args()
-
-    config = read_json(args.config)
-    config.update({'resume': args.resume})
-
+def main(config):
     datasource = build_datasource(
         name=config['data']['name'],
         root_dir=config['data']['data_dir'],
@@ -56,7 +47,6 @@ if __name__ == "__main__":
     model.to(device)
 
     width, height = datasource.get_image_size()
-
     attribute_name = datasource.get_attribute()
 
     for img_path, label in datasource.get_data('train'):
@@ -75,12 +65,13 @@ if __name__ == "__main__":
         heatmaps = torch.squeeze(heatmaps).cpu().detach().numpy()
         
         # RGB image
+        img_orig = cv2.cvtColor(np.array(img_orig), cv2.COLOR_RGB2BGR)
         img_orig = cv2.resize(img_orig, (width, height))
         
         list_image = [img_orig]
         title = ''
         for i, (heatmap, attribute) in enumerate(zip(heatmaps, attribute_name)):
-            if i == 5:
+            if i == config['num']:
                 break
             # heatmaps
             am = cv2.resize(heatmap, (width, height))
@@ -109,6 +100,23 @@ if __name__ == "__main__":
             # plt.show()
         plt.title(title)
         img = np.concatenate(list_image, axis=1)
+
+        mng = plt.get_current_fig_manager()
+        mng.resize(*mng.window.maxsize())
+        
         plt.imshow(img)
         plt.show()
 
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='')
+    parser.add_argument('--config', default='config.json', type=str, help='config file path (default: ./config.json)')
+    parser.add_argument('--resume', default='', type=str, help='resume file path (default: .)')
+    parser.add_argument('--num', default=5, type=int, help='num attribute visualize')
+    
+    args = parser.parse_args()
+    config = read_json(args.config)
+    config.update({'resume': args.resume})
+    config.update({'num': args.num})
+
+    main(config)
