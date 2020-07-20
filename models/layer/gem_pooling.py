@@ -1,6 +1,5 @@
-import torch
-import torch.nn.functional as F
-from torch import nn
+import sys
+sys.path.append('.')
 
 class GeneralizedMeanPooling(nn.Module):
     r"""Applies a 2D power-average adaptive pooling over an input signal composed of several input planes.
