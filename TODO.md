@@ -18,3 +18,5 @@
 - Auto-augmentation: [Paper](https://arxiv.org/pdf/1805.09501.pdf)
 
 - Non-Local : [Paper](https://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Non-Local_Neural_Networks_CVPR_2018_paper.pdf), [Paper](https://arxiv.org/pdf/2001.04193.pdf)
+
+- GradCAM: [Paper](https://arxiv.org/pdf/1610.02391.pdf)
