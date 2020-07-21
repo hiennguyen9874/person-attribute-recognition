@@ -4,7 +4,7 @@
         "name": "baseline",
         "backbone": "resnet50",
         "pretrained": true,
-        "pooling": "avg_pooling",
+        "pooling": "gem_pooling",
         "batch_norm_bias": true
     },
     "data": {
