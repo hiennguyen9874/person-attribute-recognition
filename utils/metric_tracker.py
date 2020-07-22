@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 
-
 class MetricTracker:
     def __init__(self, *keys):
         self._data = pd.DataFrame(index=keys, columns=['total', 'counts', 'average'])

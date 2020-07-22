@@ -11,7 +11,7 @@ sys.path.append('.')
 from utils import summary
 
 class Standard3x3Conv(nn.Module):
-    ''' Standard 3 × 3 convolution
+    r''' Standard 3 × 3 convolution
     '''
     def __init__(self, in_channels, out_channels):
         super(Standard3x3Conv, self).__init__()
@@ -26,7 +26,7 @@ class Standard3x3Conv(nn.Module):
         return x
 
 class Lite3x3Conv(nn.Module):
-    ''' Lite 3 × 3 convolution: use pointwise -> depthwise instead of depthwise -> pointwise
+    r''' Lite 3 × 3 convolution: use pointwise -> depthwise instead of depthwise -> pointwise
     '''
     def __init__(self, in_channels, out_channels):
         super(Lite3x3Conv, self).__init__()
@@ -43,7 +43,7 @@ class Lite3x3Conv(nn.Module):
         return x
 
 class Conv1x1(nn.Module):
-    """1x1 convolution"""
+    r"""1x1 convolution"""
 
     def __init__(self, in_channels, out_channels):
         super(Conv1x1, self).__init__()
@@ -58,7 +58,7 @@ class Conv1x1(nn.Module):
         return x
     
 class Conv1x1Linear(nn.Module):
-    """1x1 convolution without relu"""
+    r"""1x1 convolution without relu"""
 
     def __init__(self, in_channels, out_channels):
         super(Conv1x1Linear, self).__init__()
@@ -71,7 +71,7 @@ class Conv1x1Linear(nn.Module):
         return x
 
 class ChannelGate(nn.Module):
-    """A mini-network that generates channel-wise gates conditioned on input."""
+    r"""A mini-network that generates channel-wise gates conditioned on input."""
 
     def __init__(
         self,
@@ -132,7 +132,7 @@ class ChannelGate(nn.Module):
     
 
 class BaselineBottleneck(nn.Module):
-    ''' Baseline bottleneck
+    r''' Baseline bottleneck
     '''
     def __init__(self, in_channels, out_channels):
         super(BaselineBottleneck, self).__init__()
@@ -155,7 +155,7 @@ class BaselineBottleneck(nn.Module):
         return F.relu(out)
 
 class OSBlock(nn.Module):
-    """ Omni-scale feature learning block
+    r""" Omni-scale feature learning block
     """
     def __init__(self, in_channels, out_channels):
         super(OSBlock, self).__init__()
@@ -198,7 +198,7 @@ class OSBlock(nn.Module):
         return F.relu(out)
 
 class OSNet(nn.Module):
-    ''' https://arxiv.org/pdf/1905.00953.pdf
+    r''' https://arxiv.org/pdf/1905.00953.pdf
     '''
     def __init__(self, num_classes, channels=[64, 256, 384, 512], feature_dim=512, is_training=True):
         super(OSNet, self).__init__()
