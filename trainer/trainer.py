@@ -145,7 +145,7 @@ class Trainer(BaseTrainer):
             title=self.run_id + ': ' + self.config['model']['name'] + ", " + self.config['loss']['name'] + ", " + self.config['data']['name'])
       
     def _train_epoch(self, epoch):
-        """ Training step
+        r""" Training step
         """
         self.model.train()
         self.train_metrics.reset()
@@ -214,7 +214,7 @@ class Trainer(BaseTrainer):
         return self.train_metrics.result()
 
     def _valid_epoch(self, epoch):
-        """ Validation step
+        r""" Validation step
         """
         self.model.eval()
         self.valid_metrics.reset()
@@ -267,7 +267,7 @@ class Trainer(BaseTrainer):
         return self.valid_metrics.result()
 
     def _save_checkpoint(self, epoch, save_best_accuracy=False, save_best_loss=False, save_best_f1_score=False):
-        """ Save model to file
+        r""" Save model to file
         """
         state = {
             'epoch': epoch,
@@ -299,7 +299,7 @@ class Trainer(BaseTrainer):
             torch.save(state, filename)
 
     def _resume_checkpoint(self, resume_path):
-        """ Load model from checkpoint
+        r""" Load model from checkpoint
         """
         if not os.path.exists(resume_path):
             raise FileExistsError("Resume path not exist!")

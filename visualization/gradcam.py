@@ -21,7 +21,7 @@ def imread(path):
     return image
 
 class FeatureExtractor():
-    """ Class for extracting activations and 
+    r""" Class for extracting activations and 
     registering gradients from targetted intermediate layers """
 
     def __init__(self, model, target_layers):
@@ -44,7 +44,7 @@ class FeatureExtractor():
 
 
 class ModelOutputs():
-    """ Class for making a forward pass, and getting:
+    r""" Class for making a forward pass, and getting:
     1. The network output.
     2. Activations from intermeddiate targetted layers.
     3. Gradients from intermeddiate targetted layers. """
