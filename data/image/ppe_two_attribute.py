@@ -110,4 +110,8 @@ class PPE_Two(BaseDataSource):
 
 if __name__ == "__main__":
     datasource = PPE_Two(root_dir='/home/hien/Documents/datasets', download=True, extract=True)
-    pass
+    print('num image train:', len(datasource.get_data('train')))
+    print('num image val', len(datasource.get_data('val')))
+    print('num image test', len(datasource.get_data('test')))
+
+

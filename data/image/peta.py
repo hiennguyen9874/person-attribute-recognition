@@ -14,7 +14,16 @@ class Peta(BaseDataSource):
     '''
     dataset_id = '13UvQ4N-sY67htGnK6qheb027XuMx9Jbr'
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]
-  
+    
+    attribute_view = {'carryingMessengerBag': 'MessengerBag',
+                    'accessoryHat': 'Hat',
+                    'footwearSandals': 'Sandals',
+                    'lowerBodyShortSkirt': 'ShortSkirts',
+                    'upperBodyShortSleeve': 'ShortSleeve',
+                    'upperBodyLogo': 'UpperBodyLogo',
+                    'accessoryMuffler': 'AccessoryMuffler',
+                    }
+
     def __init__(self, root_dir='datasets', download=True, extract=True, use_tqdm=True, validation_split=0.1):
         super(Peta, self).__init__(root_dir, dataset_dir = 'peta', file_name = 'PETA-New.zip', image_size = (256, 192))
         if download:
@@ -77,5 +86,45 @@ class Peta(BaseDataSource):
 
 if __name__ == "__main__":
     datasource = Peta(root_dir='/home/hien/Documents/datasets')
-    attribute_name = datasource.get_attribute()
+    print(datasource.get_attribute())
     pass
+
+
+r'''
+['accessoryHat',
+'accessoryMuffler',
+'accessoryNothing',
+'accessorySunglasses',
+'hairLong',
+'upperBodyCasual',
+'upperBodyFormal',
+'upperBodyJacket',
+'upperBodyLogo',
+'upperBodyPlaid',
+'upperBodyShortSleeve',
+'upperBodyThinStripes',
+'upperBodyTshirt',
+'upperBodyOther',
+'upperBodyVNeck',
+'lowerBodyCasual',
+'lowerBodyFormal',
+'lowerBodyJeans',
+'lowerBodyShorts',
+'lowerBodyShortSkirt',
+'lowerBodyTrousers',
+'footwearLeatherShoes',
+'footwearSandals',
+'footwearShoes',
+'footwearSneaker',
+'carryingBackpack',
+'carryingOther',
+'carryingMessengerBag',
+'carryingNothing',
+'carryingPlasticBags',
+'personalLess30',
+'personalLess45',
+'personalLess60',
+'personalLarger60',
+'personalMale']
+
+'''

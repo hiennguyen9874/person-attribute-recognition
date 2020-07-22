@@ -4,15 +4,19 @@ import sys
 import shutil
 sys.path.append('.')
 
+from PIL import Image
+
 from pathlib import Path
 from collections import OrderedDict
 
+def imread(path):
+    image = Image.open(path)
+    return image
 
 def read_json(fname):
     fname = Path(fname)
     with fname.open('rt') as handle:
         return json.load(handle, object_hook=OrderedDict)
-
 
 def write_json(content, fname):
     fname = Path(fname)
@@ -26,7 +30,8 @@ def rmdir(path, remove_parent=True):
         for name in dirs:
             os.rmdir(os.path.join(root, name))
     if remove_parent:
-        os.rmdir(path)
+        if os.path.exists(path):
+            os.rmdir(path)
 
 def config_to_str(config):
     return "{" + "\n".join("{!r}: {!r},".format(k, v) for k, v in config.items()) + "}"
