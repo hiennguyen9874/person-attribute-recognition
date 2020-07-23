@@ -49,7 +49,7 @@ class Baseline(nn.Module):
         feat = x
         fc_weights = list(self.linear.parameters())[0].data
         fc_weights = fc_weights.view(1, self.num_classes, feat.size(1), 1, 1)
-        # fc_weights.size() = (batch_size, num_classes, 2048, 1, 1)
+        # fc_weights.avgpoolsize() = (batch_size, num_classes, 2048, 1, 1)
         feat = feat.unsqueeze(dim=1)
         # feat.size() = (batch_size, 1, 2048, H, W)
         heatmaps = feat * fc_weights
