@@ -1,6 +1,7 @@
 import torch
 from .osnet import OSNet
 from .baseline import Baseline
+from .util import *
 
 def build_model(config, num_classes, device=torch.device('cpu')):
     dict_paramsters = None
@@ -20,6 +21,13 @@ def build_model(config, num_classes, device=torch.device('cpu')):
             pretrained=config['pretrained'],
             pooling=config['pooling'],
             batch_norm_bias=config['batch_norm_bias'])
+
+    elif config['name'] == 'osnet':
+        dict_paramsters = {'pooling': config['pooling']}
+
+        model = OSNet(
+            num_classes=num_classes,
+            pooling=config['pooling'])
 
     else:
         raise KeyError('config[model][name] error')

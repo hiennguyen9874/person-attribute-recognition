@@ -3,12 +3,13 @@ import torchvision
 import torch.nn as nn
 from torch.nn import init
 from torch.nn import functional as F
-from torchsummary import summary
 
 import sys
 sys.path.append('.')
 
 from utils import summary
+from models.pooling import build_pooling
+from models.backbone import build_backbone
 
 class Standard3x3Conv(nn.Module):
     r''' Standard 3 × 3 convolution
@@ -200,9 +201,8 @@ class OSBlock(nn.Module):
 class OSNet(nn.Module):
     r''' https://arxiv.org/pdf/1905.00953.pdf
     '''
-    def __init__(self, num_classes, channels=[64, 256, 384, 512], feature_dim=512, is_training=True):
+    def __init__(self, num_classes, channels=[64, 256, 384, 512], feature_dim=512, pooling='avg'):
         super(OSNet, self).__init__()
-        self.is_training = is_training
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=channels[0], kernel_size=7, stride=2, padding=3, bias=False),
             nn.BatchNorm2d(channels[0]),
@@ -226,11 +226,12 @@ class OSNet(nn.Module):
             OSBlock(channels[3], channels[3])
         )
         self.conv5 = Conv1x1(channels[3], channels[3])
-        self.global_pool = nn.AdaptiveAvgPool2d(output_size=1)
+        self.global_pool = build_pooling(pooling)
         self.fc = nn.Sequential(
             nn.Linear(channels[3], feature_dim),
             nn.BatchNorm1d(feature_dim),
-            nn.ReLU(inplace=True)
+            nn.ReLU(inplace=True),
+            nn.Dropout()
         )
         self.classifier = nn.Linear(feature_dim, num_classes)
 
@@ -247,8 +248,6 @@ class OSNet(nn.Module):
         x = x.view(x.size(0), -1)
         x = self.fc(x)
         x = self.classifier(x)
-        if not self.is_training:
-            x = torch.sigmoid(x)
         return x
 
     def init_params(self):
