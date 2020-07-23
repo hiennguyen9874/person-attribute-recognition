@@ -1,4 +1,3 @@
-import torch
 import torch.nn as nn
 
 def weights_init_kaiming(m):

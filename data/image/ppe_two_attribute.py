@@ -36,11 +36,13 @@ class PPE_Two(BaseDataSource):
         self.data['val'] = [data['train'][idx] for idx in valid_idx.tolist()]
         self.data['test'] = data['test']
 
+        self.weight = dict()
         # compute weight
-        self.weight_train = np.zeros((len(self.attribute_name)))
-        for _, _attribute_label in self.data['train']:
-            self.weight_train += _attribute_label
-        self.weight_train = np.divide(self.weight_train, int(len(self.data['train'])))
+        for phase in ['train', 'val', 'test']:
+            self.weight[phase] = np.zeros((len(self.attribute_name)))
+            for _, _attribute_label in self.data[phase]:
+                self.weight[phase] += _attribute_label
+            self.weight[phase] = np.divide(self.weight[phase], int(len(self.data[phase])))
 
     def _processes_dir(self, data_dir):
         all_attribute = set()
@@ -86,19 +88,12 @@ class PPE_Two(BaseDataSource):
         return self.attribute_name
 
     def get_data(self, phase='train'):
-        if phase == 'train':
-            return self.data['train']
-        elif phase == 'val':
-            return self.data['val']
-        elif phase == 'test':
-            return self.data['test']
-        else:
-            raise ValueError('phase error, phase in [train, val, test]')
+        assert phase in ['train', 'val', 'test']
+        return self.data[phase]
     
     def get_weight(self, phase = 'train'):
-        if phase == 'train':
-            return self.weight_train
-        raise ValueError('phase error, phase in [train]')
+        assert phase in ['train', 'val', 'test']
+        return self.weight[phase]
 
     def _exists(self, extract_dir):
         if os.path.exists(os.path.join(extract_dir, 'ppe', 'ppe')) \
@@ -110,8 +105,11 @@ class PPE_Two(BaseDataSource):
 
 if __name__ == "__main__":
     datasource = PPE_Two(root_dir='/home/hien/Documents/datasets', download=True, extract=True)
-    print('num image train:', len(datasource.get_data('train')))
-    print('num image val', len(datasource.get_data('val')))
-    print('num image test', len(datasource.get_data('test')))
+    # print('num image train:', len(datasource.get_data('train')))
+    # print('num image val', len(datasource.get_data('val')))
+    # print('num image test', len(datasource.get_data('test')))
 
-
+    print(datasource.get_weight('train'))
+    print(datasource.get_weight('val'))
+    print(datasource.get_weight('test'))
+    

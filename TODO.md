@@ -20,3 +20,14 @@
 - Non-Local : [Paper](https://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Non-Local_Neural_Networks_CVPR_2018_paper.pdf), [Paper](https://arxiv.org/pdf/2001.04193.pdf)
 
 - GradCAM: [Paper](https://arxiv.org/pdf/1610.02391.pdf)
+
+- Thay đổi ngưỡng khi quyết định true or false
+
+- so sánh với các mô hình khác OSNET.
+
+- Thong ke ty le nhan
+
+- thay doi backbone bằng OSNET
+
+- train theo episode
+

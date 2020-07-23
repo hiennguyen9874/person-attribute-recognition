@@ -2,6 +2,8 @@ import torch
 import numpy as np
 from easydict import EasyDict
 
+__all__ = ['recognition_metrics', 'compute_accuracy_cuda']
+
 def recognition_metrics(labels, preds, threshold=0.5, eps = 1e-20):
     ''' https://en.wikipedia.org/wiki/Confusion_matrix
     Args:

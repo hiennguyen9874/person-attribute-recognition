@@ -1,11 +1,10 @@
 import torch
-from torch import batch_norm
-import torchvision
 import torch.nn as nn
-from torch.nn import init
 
 import sys
 sys.path.append('.')
+
+from torch.nn import init
 
 from utils import summary
 from models.pooling import build_pooling
