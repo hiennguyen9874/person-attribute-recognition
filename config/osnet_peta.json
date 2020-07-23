@@ -1,7 +1,8 @@
 {
     "n_gpu": 1,
     "model": {
-        "name": "osnet"
+        "name": "osnet",
+        "pooling": "gem_pooling"
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
@@ -17,7 +18,7 @@
     },
     "optimizer": {
         "name": "sgd",
-        "lr": 0.1,
+        "lr": 0.01,
         "weight_decay": 0.0005,
         "adam_beta1": 0.9,
         "adam_beta2": 0.99,
@@ -42,7 +43,7 @@
         "min_lr": 0.000001
     },
     "clip_grad_norm_":{
-        "active": true,
+        "active": false,
         "max_norm": 10.0
     },
     "trainer": {
