@@ -23,7 +23,6 @@
         "name": "sgd",
         "lr": 0.1,
         "specified_lr": [
-            "avgpool",
             "linear",
             "bn"
         ],
