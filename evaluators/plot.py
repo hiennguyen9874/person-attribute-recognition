@@ -1,12 +1,11 @@
 import os
-import torch
-import numpy as np
-import random
 import pandas as pd
 import matplotlib.pyplot as plt
 
 import sys
 sys.path.append('.')
+
+__all__ = ['plot_loss_accuracy']
 
 from utils import aggregate, aggregate1
 
@@ -94,35 +93,6 @@ def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, low_ratio =
         if os.path.exists(path_figure):
             os.remove(path_figure)
         fig.savefig(path_figure, dpi=300)
-
-
-def plot(path, run_id, title=None):
-    return plot_loss_accuracy(
-        dpath=path,
-        list_dname=[run_id],
-        path_figure=os.path.join(path, run_id, 'plot.png'),
-        title=title,
-        low_ratio=0.05,
-        high_ratio=0.95,
-        com=0.0)
-
-def show_image(distances, queryset, testset, k=5, num_image=5, size_img=(2.5, 5)):
-    plt.figure(figsize=((k+1)*size_img[0], num_image*size_img[1]))
-    to_show = []
-    for i in range(num_image):
-        index = random.randint(0, len(distances)-1)
-        query = queryset.get_img(index)
-        topk = distances[index].topk(k, largest=False)
-        to_display = [np.array(query)]
-        for distance, index in zip(topk.values, topk.indices):
-            img = np.array(testset.get_img(int(index.data)))
-            to_display.append(img)
-        to_display = np.concatenate(to_display, axis=1)
-        to_show.append(to_display)
-    to_show = np.concatenate(to_show, axis=0)
-    plt.imshow(to_show)
-    plt.axis('off')
-    plt.show()
 
 if __name__ == "__main__":
     import argparse

@@ -7,7 +7,7 @@ sys.path.append('.')
 from base import BaseDataSource
 
 class PA_100K(BaseDataSource):
-    ''' https://github.com/xh-liu/HydraPlus-Net/blob/master/README.md
+    r''' https://github.com/xh-liu/HydraPlus-Net/blob/master/README.md
     '''
     dataset_id = '13UjvKJQlkNXAmvsPG6h5dwOlhJQA_TcT'
     group_order = [7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 9, 10, 11, 12, 1, 2, 3, 0, 4, 5, 6]
@@ -34,29 +34,23 @@ class PA_100K(BaseDataSource):
         image_name['test'] = [os.path.join(self.data_dir, 'images', f['test_images_name'][i][0][0]) for i in range(10000)]
         label['test'] = f['test_label'][:, np.array(self.group_order)].astype(np.float32)
 
-        self.attr_name = [f['attributes'][i][0][0] for i in range(26)]
-        self.train = list(zip(image_name['train'], label['train']))
-        self.val = list(zip(image_name['val'], label['val']))
-        self.test = list(zip(image_name['test'], label['test']))
-        self.weight_train = np.mean(label['train'], axis=0).astype(np.float32)
+        self.attribute_name = [f['attributes'][i][0][0] for i in range(26)]
+        self.data = dict()
+        self.weight = dict()
+        for phase in ['train' 'val', 'test']:
+            self.data[phase] = list(zip(image_name[phase], label[phase]))
+            self.weight[phase] = np.mean(label[phase], axis=0).astype(np.float32)
 
     def get_data(self, phase='train'):
-        if phase == 'train':
-            return self.train
-        elif phase == 'val':
-            return self.val
-        elif phase == 'test':
-            return self.test
-        else:
-            raise ValueError('phase error, phase in [train, val, test]')
+        assert phase in ['train', 'val', 'test']
+        return self.data[phase]
         
     def get_attribute(self, mode = 'train'):
-        return self.attr_name
+        return self.attribute_name
     
     def get_weight(self, phase = 'train'):
-        if phase == 'train':
-            return self.weight_train
-        raise ValueError('phase error, phase in [train]')
+        assert phase in ['train', 'val', 'test']
+        return self.weight[phase]
 
     def _exists(self, extract_dir):
         if os.path.exists(os.path.join(extract_dir, 'images')) \

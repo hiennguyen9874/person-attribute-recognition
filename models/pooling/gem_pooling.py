@@ -36,7 +36,7 @@ class GeneralizedMeanPooling(nn.Module):
                + 'output_size=' + str(self.output_size) + ')'
 
 class GeneralizedMeanPoolingP(GeneralizedMeanPooling):
-    """ Same, but norm is trainable
+    r""" Same, but norm is trainable
     """
     def __init__(self, norm=3, output_size=1, eps=1e-6):
         super(GeneralizedMeanPoolingP, self).__init__(norm, output_size, eps)

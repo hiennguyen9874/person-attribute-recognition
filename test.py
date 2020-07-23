@@ -2,6 +2,7 @@ import argparse
 import os
 import logging
 import torch
+from torch import argmax, threshold
 import torch.nn as nn
 import numpy as np
 import matplotlib.pyplot as plt
@@ -15,10 +16,10 @@ from utils import read_json, rmdir, summary
 from evaluators import recognition_metrics
 
 def main(config):
-    cfg_testing = config['testing']
+    cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
     run_id = config['resume'].split('/')[-2]
     file_name = config['resume'].split('/')[-1].split('.')[0]
-    output_dir = os.path.join(cfg_testing['output_dir'], run_id, file_name)
+    output_dir = os.path.join(cfg_trainer['output_dir'], run_id, file_name)
     (os.path.exists(output_dir) or os.makedirs(output_dir, exist_ok=True)) and rmdir(output_dir, remove_parent=False)
     setup_logging(output_dir)
     logger = logging.getLogger('test')
@@ -56,43 +57,93 @@ def main(config):
     labels = torch.cat(labels, dim=0)
     preds = preds.cpu().numpy()
     labels = labels.cpu().numpy()
+
+    # get best threshold
+    from sklearn.metrics import roc_curve, auc, precision_recall_curve
     
-    result_label, result_instance = recognition_metrics(labels, preds)
-        
-    logger.info('instance-based metrics:')
-    logger.info('accuracy: %0.4f' % result_instance.accuracy)
-    logger.info('precision: %0.4f' % result_instance.precision)
-    logger.info('recall: %0.4f' % result_instance.recall)
-    logger.info('f1_score: %0.4f' % result_instance.f1_score)
-    
-    logger.info('class-based metrics:')
-    result = np.stack([result_label.accuracy, result_label.mean_accuracy, result_label.precision, result_label.recall, result_label.f1_score], axis=0)
-    result = np.around(result*100, 2)
-    result = result.transpose()
-    row_format ="{:>17}" * 6
-    logger.info(row_format.format('attribute', 'accuracy', 'mA', 'precision', 'recall', 'f1_score'))
-    logger.info(row_format.format(*['-']*6))
+    precision = dict()
+    recall = dict()
+    thresholds_pr = dict()
+    pr_auc = dict()
+    best_threshold = dict()
+
+    fpr = dict()
+    tpr = dict()
+    roc_auc = dict()
+    thresholds_roc = dict()
+
     for i in range(len(datamanager.datasource.get_attribute())):
-        logger.info(row_format.format(datamanager.datasource.get_attribute()[i], *result[i].tolist()))
+        precision[i], recall[i], thresholds_pr[i] = precision_recall_curve(labels[:, i], preds[:, i])
+        pr_auc[i] = auc(recall[i], precision[i])
+        best_threshold[i] = np.argmax((2 * precision[i] * recall[i]) / (precision[i] + recall[i]))
+        
+        fpr[i], tpr[i], thresholds_roc[i] = roc_curve(labels[:, i], preds[:, i])
+        roc_auc[i] = auc(fpr[i], tpr[i])
+
+        fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2)
+        ax1.plot(recall[i], precision[i], label='Precision-Recall Curve, mAP: %f' % pr_auc[i])
+        ax1.scatter(
+            recall[i][best_threshold[i]],
+            precision[i][best_threshold[i]],
+            marker='o',
+            color='black',
+            label='Best threshold %f' % (thresholds_pr[i][best_threshold[i]]))
+
+        ax1.set_xlabel('Recall')
+        ax1.set_ylabel('Precision')
+        ax1.set_title('Attribute: %s' % datamanager.datasource.get_attribute()[i])
+        # ax1.legend(loc="lower right")
+
+        fig, ax2 = plt.subplots(122)
+        ax2.plot(fpr[i], tpr[i], label='ROC curve (area = %0.2f)' % (roc_auc[i]))
+        ax2.plot([0, 1], [0, 1], 'k--')
+        ax2.scatter(fpr[i][best_threshold[i]], tpr[i][best_threshold[i]], marker='o', color='black', label='Best threshold %f' % (thresholds[i][best_threshold[i]]))
+        ax2.set_xlim([0.0, 1.0])
+        ax2.set_ylim([0.0, 1.05])
+        ax2.set_xlabel('False Positive Rate')
+        ax2.set_ylabel('True Positive Rate')
+        ax2.set_title('Attribute: %s' % datamanager.datasource.get_attribute()[i])
+        # ax2.legend(loc="lower right")
     
-    logger.info(row_format.format(*['-']*6))
-    logger.info(row_format.format(
-        'mean',
-        round(np.mean(result_label.accuracy)*100, 2),
-        round(np.mean(result_label.mean_accuracy)*100, 2),
-        round(np.mean(result_label.precision)*100, 2),
-        round(np.mean(result_label.recall)*100, 2),
-        round(np.mean(result_label.f1_score)*100, 2)))
+    plt.show()
+
+    # result_label, result_instance = recognition_metrics(labels, preds)
+
+    # logger.info('instance-based metrics:')
+    # logger.info('accuracy: %0.4f' % result_instance.accuracy)
+    # logger.info('precision: %0.4f' % result_instance.precision)
+    # logger.info('recall: %0.4f' % result_instance.recall)
+    # logger.info('f1_score: %0.4f' % result_instance.f1_score)
+    
+    # logger.info('class-based metrics:')
+    # result = np.stack([result_label.accuracy, result_label.mean_accuracy, result_label.precision, result_label.recall, result_label.f1_score], axis=0)
+    # result = np.around(result*100, 2)
+    # result = result.transpose()
+    # row_format ="{:>17}" * 6
+    # logger.info(row_format.format('attribute', 'accuracy', 'mA', 'precision', 'recall', 'f1_score'))
+    # logger.info(row_format.format(*['-']*6))
+    # for i in range(len(datamanager.datasource.get_attribute())):
+    #     logger.info(row_format.format(datamanager.datasource.get_attribute()[i], *result[i].tolist()))
+    
+    # logger.info(row_format.format(*['-']*6))
+    # logger.info(row_format.format(
+    #     'mean',
+    #     round(np.mean(result_label.accuracy)*100, 2),
+    #     round(np.mean(result_label.mean_accuracy)*100, 2),
+    #     round(np.mean(result_label.precision)*100, 2),
+    #     round(np.mean(result_label.recall)*100, 2),
+    #     round(np.mean(result_label.f1_score)*100, 2)))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('-c', '--config', default='config.json', type=str, help='config file path (default: ./config.json)')
-    parser.add_argument('-r', '--resume', default='', type=str, help='resume file path (default: .)')
-    parser.add_argument('-e', '--extract', default=True, type=lambda x: (str(x).lower() == 'true'), help='extract feature (default: true')
+    parser.add_argument('--config', default='config.json', type=str, help='config file path (default: ./config.json)')
+    parser.add_argument('--resume', default='', type=str, help='resume file path (default: .)')
+    parser.add_argument('--colab', default=False, type=lambda x: (str(x).lower() == 'true'), help='train on colab (default: false)')
     args = parser.parse_args()
 
     config = read_json(args.config)
     config.update({'resume': args.resume})
-    config.update({'extract': args.extract})
-
+    config.update({'colab': args.colab})
+    
     main(config)
+

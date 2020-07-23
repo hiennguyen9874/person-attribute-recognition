@@ -1,17 +1,12 @@
-import os
-import json
-import torchvision
 import sys
 sys.path.append('.')
-
-import numpy as np
 
 from torchvision import transforms
 from torch.utils.data.dataloader import DataLoader
 
 from data.datasets import ImageDataset
 from data.image import build_datasource
-from data.transforms import RandomErasing, RandomPatch
+from data.transforms import RandomErasing
 
 class DataManger(object):
     def __init__(self, config, phase='train'):
@@ -70,7 +65,11 @@ class DataManger(object):
             pin_memory=config['pin_memory'],
             drop_last=config['drop_last']
         )
-        self.dataloader['test'] = DataLoader(dataset['test'], batch_size=32, shuffle=False, drop_last=False)
+        self.dataloader['test'] = DataLoader(
+            dataset['test'],
+            batch_size=32,
+            shuffle=False,
+            drop_last=False)
 
     def get_dataloader(self, phase):
         if phase not in ['train', 'val', 'test']:

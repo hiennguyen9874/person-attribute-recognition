@@ -50,6 +50,7 @@
         "epochs": 120,
         "checkpoint_dir": "saved/checkpoints",
         "log_dir": "saved/logs",
+        "output_dir": "saved/outputs",
         "tqdm": true
     },
     "trainer_colab": {
@@ -57,9 +58,7 @@
         "checkpoint_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints",
         "log_dir": "saved/logs",
         "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs",
+        "output_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs",
         "tqdm": false
-    },
-    "testing": {
-        "output_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs"
     }
 }

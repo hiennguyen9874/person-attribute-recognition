@@ -1,5 +1,3 @@
-import torch
-import torchvision
 import torch.nn as nn
 from torch.nn import init
 from torch.nn import functional as F
@@ -201,8 +199,9 @@ class OSBlock(nn.Module):
 class OSNet(nn.Module):
     r''' https://arxiv.org/pdf/1905.00953.pdf
     '''
-    def __init__(self, num_classes, channels=[64, 256, 384, 512], feature_dim=512, pooling='avg'):
+    def __init__(self, num_classes, channels=[64, 256, 384, 512], feature_dim=512, pooling='avg_pooling', batch_norm_bias=True):
         super(OSNet, self).__init__()
+        self.num_classes = num_classes
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=3, out_channels=channels[0], kernel_size=7, stride=2, padding=3, bias=False),
             nn.BatchNorm2d(channels[0]),
@@ -226,14 +225,13 @@ class OSNet(nn.Module):
             OSBlock(channels[3], channels[3])
         )
         self.conv5 = Conv1x1(channels[3], channels[3])
-        self.global_pool = build_pooling(pooling)
-        self.fc = nn.Sequential(
-            nn.Linear(channels[3], feature_dim),
-            nn.BatchNorm1d(feature_dim),
-            nn.ReLU(inplace=True),
-            nn.Dropout()
-        )
-        self.classifier = nn.Linear(feature_dim, num_classes)
+        
+        self.avgpool = build_pooling(pooling)
+        self.linear = nn.Linear(channels[3], self.num_classes)
+        self.bn = nn.BatchNorm1d(self.num_classes)
+        # freeze bias of batch_norm layer
+        if not batch_norm_bias:
+            self.bn.bias.requires_grad_(False)
 
         self.init_params()
 
@@ -244,10 +242,10 @@ class OSNet(nn.Module):
         x = self.conv3(x)
         x = self.conv4(x)
         x = self.conv5(x)
-        x = self.global_pool(x)
+        x = self.avgpool(x)
         x = x.view(x.size(0), -1)
-        x = self.fc(x)
-        x = self.classifier(x)
+        x = self.linear(x)
+        x = self.bn(x)
         return x
 
     def init_params(self):
@@ -271,7 +269,9 @@ class OSNet(nn.Module):
                     nn.init.constant_(m.bias, 0)
 
 if __name__ == "__main__":
-    model = OSNet(num_classes=26)
-    summary(model, input_size=(3, 256, 128), batch_size=32, device='cpu')
-    params = model.state_dict()
+    model = OSNet(num_classes=26, pooling='avg_pooling')
+    summary(print, model, input_size=(3, 256, 128), batch_size=32, device='cpu', print_step=False)
     pass
+
+
+
