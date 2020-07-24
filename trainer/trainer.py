@@ -8,7 +8,7 @@ sys.path.append('.')
 from torch.nn.utils import clip_grad_norm_
 
 from base import BaseTrainer
-from callbacks import Tqdm
+from callbacks import Tqdm, FreezeLayers
 from data import DataManger
 from evaluators import plot_loss_accuracy, compute_accuracy_cuda
 from losses import build_losses
@@ -37,6 +37,9 @@ class Trainer(BaseTrainer):
 
         # learing rate scheduler
         self.lr_scheduler, params_lr_scheduler = build_lr_scheduler(config, self.optimizer)
+
+        # callbacks for freeze backbone
+        self.freeze = FreezeLayers(self.model, config['freeze']['layers'], config['freeze']['epochs'])
 
         # track metric
         self.train_metrics = MetricTracker('loss', 'accuracy', 'f1_score')
@@ -78,7 +81,13 @@ class Trainer(BaseTrainer):
 
     def train(self):
         for epoch in range(self.start_epoch, self.epochs + 1):
+            # freeze layer
+            self.freeze.on_epoch_begin(epoch)
+
+            # train
             result = self._train_epoch(epoch)
+            
+            # epoch
             result = self._valid_epoch(epoch)
 
             if self.lr_scheduler is not None:

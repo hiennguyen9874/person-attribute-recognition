@@ -29,6 +29,12 @@
     "loss": {
         "name": "CEL_Sigmoid"
     },
+    "freeze": {
+        "layers": [
+            "backbone"
+        ],
+        "epochs": 10
+    },
     "lr_scheduler": {
         "name": "WarmupCosineAnnealingLR",
         "delay_iters": 30,
