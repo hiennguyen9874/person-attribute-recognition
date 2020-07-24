@@ -1,9 +1,13 @@
 import math
 import warnings
+import sys
+sys.path.append('.')
 
 import torch
 import torch.nn as nn
 from torch.hub import load_state_dict_from_url
+
+from utils import summary
 
 __all__ = ['resnet50_ibn_a', 'resnet101_ibn_a']
 
@@ -14,9 +18,12 @@ model_urls = {
 }
 
 class IBN(nn.Module):
-    r"""Instance-Batch Normalization layer from
+    r"""
+    https://medium.com/syncedreview/facebook-ai-proposes-group-normalization-alternative-to-batch-normalization-fb0699bffae7
+    Instance-Batch Normalization layer from
     `"Two at Once: Enhancing Learning and Generalization Capacities via IBN-Net"
     <https://arxiv.org/pdf/1807.09441.pdf>`
+    
     Args:
         planes (int): Number of channels for the input tensor
         ratio (float): Ratio of instance normalization in the IBN layer
@@ -210,3 +217,6 @@ def resnet101_ibn_a(pretrained=False, **kwargs):
     if pretrained:
         model.load_state_dict(load_state_dict_from_url(model_urls['resnet101_ibn_a']), strict=False)
     return model
+
+if __name__ == "__main__":
+     summary(print, resnet50_ibn_a(pretrained=True), (3, 256, 128), 32, 'cpu', False)

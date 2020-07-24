@@ -1,6 +1,11 @@
+import sys
+sys.path.append('.')
+
 import torch
 import torch.nn as nn
 from torch.hub import load_state_dict_from_url
+
+from utils import summary
 
 __all__ = ['resnet50_nl', 'resnet101_nl']
 
@@ -313,7 +318,5 @@ def resnet101_nl(pretrained=False, progress=True, **kwargs):
     return _resnet('resnet101', Bottleneck, [3, 4, 23, 3], [0, 2, 9, 0], pretrained, progress, **kwargs)
 
 if __name__ == "__main__":
-    batch = torch.rand((4, 3, 256, 128))
-    model = resnet50_nl(True)
-    out = model(batch)
+    summary(print, resnet50_nl(True), (3, 256, 128), 32, 'cpu', False)
     pass

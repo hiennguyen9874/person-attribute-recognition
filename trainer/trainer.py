@@ -39,7 +39,10 @@ class Trainer(BaseTrainer):
         self.lr_scheduler, params_lr_scheduler = build_lr_scheduler(config, self.optimizer)
 
         # callbacks for freeze backbone
-        self.freeze = FreezeLayers(self.model, config['freeze']['layers'], config['freeze']['epochs'])
+        if 'freeze' in config:
+            self.freeze = FreezeLayers(self.model, config['freeze']['layers'], config['freeze']['epochs'])
+        else:
+            self.freeze = None
 
         # track metric
         self.train_metrics = MetricTracker('loss', 'accuracy', 'f1_score')
@@ -82,7 +85,8 @@ class Trainer(BaseTrainer):
     def train(self):
         for epoch in range(self.start_epoch, self.epochs + 1):
             # freeze layer
-            self.freeze.on_epoch_begin(epoch)
+            if self.freeze != None:
+                self.freeze.on_epoch_begin(epoch)
 
             # train
             result = self._train_epoch(epoch)
