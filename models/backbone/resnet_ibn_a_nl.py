@@ -1,8 +1,7 @@
 import math
 import sys
-
-import torchvision
 sys.path.append('.')
+import torchvision
 
 import torch
 import torch.nn as nn
@@ -265,5 +264,5 @@ if __name__ == "__main__":
     model = resnet50_ibn_a_nl(True)
     out = model(batch)
     summary(print, model, (3, 256, 128), 32, 'cpu', False)
-    summary(print, torchvision.models.resnet50(True), (3, 256, 128), 32, 'cpu', False)
+    # summary(print, torchvision.models.resnet50(True), (3, 256, 128), 32, 'cpu', False)
     pass
