@@ -120,14 +120,13 @@ def _get_warmup_factor_at_iter(method: str, iter: int, warmup_iters: int, warmup
     else:
         raise ValueError("Unknown warmup method: {}".format(method))
 
-
 if __name__ == "__main__":
     x = []
     y = []
     net = nn.Linear(10, 10)
     optimizer = torch.optim.SGD(net.parameters(), lr=0.00035)
-    lr_scheduler = WarmupMultiStepLR(optimizer, [20, 40], warmup_iters=10)
-    for i in range(50):
+    lr_scheduler = WarmupCosineAnnealingLR(optimizer, max_iters=120, delay_iters=30, eta_min_lr=0.00000077, warmup_factor=0.01, warmup_iters=10, warmup_method="linear")
+    for i in range(120):
         lr_scheduler.step()
         for j in range(3):
             # print(i, lr_scheduler.get_lr()[0])
