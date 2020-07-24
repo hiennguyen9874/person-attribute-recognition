@@ -20,7 +20,7 @@ class FreezeLayers(object):
                     param.requires_grad = True
 
     def on_epoch_begin(self, epoch):
-        if epoch == 0:
+        if epoch == 1:
             self._freeze()
         if epoch == self.freeze_epochs:
             self._unfreeze()
