@@ -2,7 +2,7 @@
     "n_gpu": 1,
     "model": {
         "name": "baseline",
-        "backbone": "resnet50",
+        "backbone": "resnet50_ibn_a_nl",
         "pretrained": true,
         "pooling": "gem_pooling",
         "batch_norm_bias": true
