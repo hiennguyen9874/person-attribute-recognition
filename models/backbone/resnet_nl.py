@@ -179,16 +179,6 @@ class ResNet(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2, dilate=replace_stride_with_dilation[1])
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2, dilate=replace_stride_with_dilation[2])
         
-        # non local block
-        self.NL_1 = nn.ModuleList([NonLocalBlock(256) for i in range(non_layers[0])])
-        self.NL_1_idx = sorted([layers[0] - (i + 1) for i in range(non_layers[0])])
-        self.NL_2 = nn.ModuleList([NonLocalBlock(512) for i in range(non_layers[1])])
-        self.NL_2_idx = sorted([layers[1] - (i + 1) for i in range(non_layers[1])])
-        self.NL_3 = nn.ModuleList([NonLocalBlock(1024) for i in range(non_layers[2])])
-        self.NL_3_idx = sorted([layers[2] - (i + 1) for i in range(non_layers[2])])
-        self.NL_4 = nn.ModuleList([NonLocalBlock(2048) for i in range(non_layers[3])])
-        self.NL_4_idx = sorted([layers[3] - (i + 1) for i in range(non_layers[3])])
-
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
@@ -205,6 +195,16 @@ class ResNet(nn.Module):
                     nn.init.constant_(m.bn3.weight, 0)
                 elif isinstance(m, BasicBlock):
                     nn.init.constant_(m.bn2.weight, 0)
+
+        # non local block
+        self.NL_1 = nn.ModuleList([NonLocalBlock(256) for i in range(non_layers[0])])
+        self.NL_1_idx = sorted([layers[0] - (i + 1) for i in range(non_layers[0])])
+        self.NL_2 = nn.ModuleList([NonLocalBlock(512) for i in range(non_layers[1])])
+        self.NL_2_idx = sorted([layers[1] - (i + 1) for i in range(non_layers[1])])
+        self.NL_3 = nn.ModuleList([NonLocalBlock(1024) for i in range(non_layers[2])])
+        self.NL_3_idx = sorted([layers[2] - (i + 1) for i in range(non_layers[2])])
+        self.NL_4 = nn.ModuleList([NonLocalBlock(2048) for i in range(non_layers[3])])
+        self.NL_4_idx = sorted([layers[3] - (i + 1) for i in range(non_layers[3])])
 
     def _make_layer(self, block, planes, blocks, stride=1, dilate=False):
         norm_layer = self._norm_layer

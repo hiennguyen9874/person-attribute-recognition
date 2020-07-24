@@ -194,9 +194,9 @@ class Trainer(BaseTrainer):
             # update process
             if self.cfg_trainer['tqdm']:
                 tqdm_callback.on_batch_end(
-                    self.train_metrics.avg('loss'),
-                    self.train_metrics.avg('accuracy'),
-                    self.train_metrics.avg('f1_score'))
+                    loss.item(),
+                    accuracy.item(),
+                    f1_score.item())
             else:
                 end_time = time.time()
                 if (batch_idx+1) % self.log_step[0] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('train')):
@@ -205,9 +205,9 @@ class Trainer(BaseTrainer):
                         batch_idx+1,
                         len(self.datamanager.get_dataloader('train')),
                         1/(end_time-start_time),
-                        self.train_metrics.avg('loss'),
-                        self.train_metrics.avg('accuracy'),
-                        self.train_metrics.avg('f1_score')))
+                        loss.item(),
+                        accuracy.item(),
+                        f1_score.item()))
         
         if self.cfg_trainer['tqdm']:
             tqdm_callback.on_epoch_end()
@@ -248,9 +248,9 @@ class Trainer(BaseTrainer):
                 # update process
                 if self.cfg_trainer['tqdm']:
                     tqdm_callback.on_batch_end(
-                        self.valid_metrics.avg('loss'),
-                        self.valid_metrics.avg('accuracy'),
-                        self.valid_metrics.avg('f1_score'))
+                        loss.item(),
+                        accuracy.item(),
+                        f1_score.item())
                 else:
                     end_time = time.time()
                     if (batch_idx+1) % self.log_step[1] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('val'))-1:
@@ -259,9 +259,9 @@ class Trainer(BaseTrainer):
                             batch_idx+1,
                             len(self.datamanager.get_dataloader('val')),
                             1/(end_time-start_time),
-                            self.valid_metrics.avg('loss'),
-                            self.valid_metrics.avg('accuracy'),
-                            self.valid_metrics.avg('f1_score')))
+                            loss.item(),
+                            accuracy.item(),
+                            f1_score.item()))
         if self.cfg_trainer['tqdm']:
             tqdm_callback.on_epoch_end()
         return self.valid_metrics.result()

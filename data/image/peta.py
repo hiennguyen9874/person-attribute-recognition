@@ -10,7 +10,9 @@ from collections import defaultdict
 from base import BaseDataSource
 
 class Peta(BaseDataSource):
-    r''' http://mmlab.ie.cuhk.edu.hk/projects/PETA.html
+    r''' 
+        http://mmlab.ie.cuhk.edu.hk/projects/PETA.html
+        https://github.com/dangweili/pedestrian-attribute-recognition-pytorch
     '''
     dataset_id = '13UvQ4N-sY67htGnK6qheb027XuMx9Jbr'
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]

@@ -144,6 +144,14 @@ class ResNet_IBN(nn.Module):
         self.layer3 = self._make_layer(block, 256, layers[2], stride=2, ibn=ibn_cfg[2])
         self.layer4 = self._make_layer(block, 512, layers[3], stride=2, ibn=ibn_cfg[3])
         
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
+                m.weight.data.normal_(0, math.sqrt(2. / n))
+            elif isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.InstanceNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+
         # non local block
         self.NL_1 = nn.ModuleList([NonLocalBlock(256) for i in range(non_layers[0])])
         self.NL_1_idx = sorted([layers[0] - (i + 1) for i in range(non_layers[0])])
@@ -153,14 +161,6 @@ class ResNet_IBN(nn.Module):
         self.NL_3_idx = sorted([layers[2] - (i + 1) for i in range(non_layers[2])])
         self.NL_4 = nn.ModuleList([NonLocalBlock(2048) for i in range(non_layers[3])])
         self.NL_4_idx = sorted([layers[3] - (i + 1) for i in range(non_layers[3])])
-
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                n = m.kernel_size[0] * m.kernel_size[1] * m.out_channels
-                m.weight.data.normal_(0, math.sqrt(2. / n))
-            elif isinstance(m, nn.BatchNorm2d) or isinstance(m, nn.InstanceNorm2d):
-                m.weight.data.fill_(1)
-                m.bias.data.zero_()
 
     def _make_layer(self, block, planes, blocks, stride=1, ibn=None):
         downsample = None
