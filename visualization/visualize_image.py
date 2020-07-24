@@ -33,11 +33,13 @@ def main(config):
         img_orig = imread(path)
 
         # RGB image
-        img_orig = cv2.resize(img_orig, (width, height))
+        # img_orig = cv2.resize(img_orig, (height, width))
 
         # add label below image
-        plt.figtext(0.5, 0.05, str([x + ": " + str(True if y == 1.0 else False) for x, y in zip(attribute_name, label)]), ha="center", fontsize=16, bbox={"facecolor":"orange", "alpha":0.5, "pad":5})
-
+        # plt.figtext(0.5, 0.05, str([x + ": " + str(True if y == 1.0 else False) for x, y in zip(attribute_name, label)]), ha="center", fontsize=16, bbox={"facecolor":"orange", "alpha":0.5, "pad":5})
+        print(str([x + ": " + str(True if y == 1.0 else False) for x, y in zip(attribute_name, label) if y == 1]))
+        print()
+        
         # full windows
         mng = plt.get_current_fig_manager()
         mng.resize(*mng.window.maxsize())
