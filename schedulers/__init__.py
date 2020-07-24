@@ -1,6 +1,6 @@
 import torch.optim.lr_scheduler as lr_scheduler
 
-from .warmup import WarmupMultiStepLR
+from .warmup import WarmupMultiStepLR, WarmupCosineAnnealingLR
 
 def build_lr_scheduler(config, optimizer):
     cfg_lr_scheduler = config['lr_scheduler']
@@ -41,5 +41,23 @@ def build_lr_scheduler(config, optimizer):
             optimizer,
             milestones=cfg_lr_scheduler['steps'],
             gamma=cfg_lr_scheduler['gamma']), dict_paramsters
+    
+    elif cfg_lr_scheduler['name'] == 'WarmupCosineAnnealingLR':
+        dict_paramsters = {
+            'milestones': cfg_lr_scheduler['steps'],
+            'gamma': cfg_lr_scheduler['gamma']
+        }
+
+        return WarmupCosineAnnealingLR(
+            optimizer,
+            max_iters=config['trainer']['epoch'],
+            delay_iters=cfg_lr_scheduler['delay_iters'],
+            eta_min_lr=cfg_lr_scheduler['eta_min_lr'],
+            warmup_factor=cfg_lr_scheduler['warmup_factor'],
+            warmup_iters=cfg_lr_scheduler['warmup_iters'],
+            warmup_method=cfg_lr_scheduler['warmup_method']
+        )
+    
+    
     else:
         raise KeyError('config[lr_scheduler][name] error')
