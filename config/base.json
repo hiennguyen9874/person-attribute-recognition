@@ -1,8 +1,11 @@
 {
     "n_gpu": 1,
     "model": {
-        "name": "baseline_attribute",
-        "backbone": "resnet101"
+        "name": "baseline",
+        "backbone": "resnet50",
+        "pretrained": true,
+        "pooling": "gem_pooling",
+        "batch_norm_bias": true
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
@@ -18,11 +21,14 @@
     },
     "optimizer": {
         "name": "sgd",
-        "lr": 0.1,
-        "specified_lr": [
-            "classifier",
-            "bn"
-        ],
+        "lr": 0.01,
+        "specified_lr": {
+            "lr": 0.1,
+            "layers": [
+                "linear",
+                "bn"
+            ]
+        },
         "weight_decay": 0.0005,
         "adam_beta1": 0.9,
         "adam_beta2": 0.99,
@@ -44,26 +50,25 @@
         "iters": 10,
         "method": "linear",
         "patience": 4,
-        "min_lr": 0.000001
+        "min_lr": 0.00001
     },
     "clip_grad_norm_": {
         "active": true,
         "max_norm": 10.0
     },
     "trainer": {
-        "epochs": 60,
+        "epochs": 50,
         "checkpoint_dir": "saved/checkpoints",
         "log_dir": "saved/logs",
+        "output_dir": "saved/outputs",
         "tqdm": true
     },
     "trainer_colab": {
-        "epochs": 60,
+        "epochs": 50,
         "checkpoint_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints",
         "log_dir": "saved/logs",
         "log_dir_saved": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs",
+        "output_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs",
         "tqdm": false
-    },
-    "testing": {
-        "output_dir": "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs"
     }
 }

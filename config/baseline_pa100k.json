@@ -21,14 +21,15 @@
     },
     "optimizer": {
         "name": "sgd",
-        "lr": 0.1,
-        "specified_lr": [
-            "linear",
-            "bn"
-        ],
+        "lr": 0.01,
+        "specified_lr": {
+            "lr": 0.1,
+            "layers": [
+                "linear",
+                "bn"
+            ]
+        },
         "weight_decay": 0.0005,
-        "adam_beta1": 0.9,
-        "adam_beta2": 0.99,
         "momentum": 0.9,
         "sgd_dampening": 0,
         "sgd_nesterov": false
@@ -38,14 +39,7 @@
     },
     "lr_scheduler": {
         "name": "ReduceLROnPlateau",
-        "steps": [
-            40,
-            70
-        ],
-        "gamma": 0.1,
         "factor": 0.1,
-        "iters": 10,
-        "method": "linear",
         "patience": 5,
         "min_lr": 0
     },
