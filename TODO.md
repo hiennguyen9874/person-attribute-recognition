@@ -25,9 +25,9 @@
 
 - so sánh với các mô hình khác OSNET.
 
-- Thong ke ty le nhan
+- ~~Thong ke ty le nhan~~
 
-- thay doi backbone bằng OSNET
+- ~~thay doi backbone bằng OSNET~~
 
 - train theo episode
 
