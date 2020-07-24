@@ -19,3 +19,5 @@ class Tqdm(object):
 
     def on_epoch_end(self):
         self.progbar.close()
+
+

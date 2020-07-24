@@ -44,19 +44,22 @@ def build_lr_scheduler(config, optimizer):
     
     elif cfg_lr_scheduler['name'] == 'WarmupCosineAnnealingLR':
         dict_paramsters = {
-            'milestones': cfg_lr_scheduler['steps'],
-            'gamma': cfg_lr_scheduler['gamma']
+            'delay_iters': cfg_lr_scheduler['delay_iters'],
+            'eta_min_lr': cfg_lr_scheduler['eta_min_lr'],
+            'warmup_factor': cfg_lr_scheduler['warmup_factor'],
+            'warmup_iters': cfg_lr_scheduler['warmup_iters'],
+            'warmup_method': cfg_lr_scheduler['warmup_method']
         }
 
         return WarmupCosineAnnealingLR(
             optimizer,
-            max_iters=config['trainer']['epoch'],
+            max_iters=config['trainer']['epochs'],
             delay_iters=cfg_lr_scheduler['delay_iters'],
             eta_min_lr=cfg_lr_scheduler['eta_min_lr'],
             warmup_factor=cfg_lr_scheduler['warmup_factor'],
             warmup_iters=cfg_lr_scheduler['warmup_iters'],
             warmup_method=cfg_lr_scheduler['warmup_method']
-        )
+        ), dict_paramsters
     
     
     else:
