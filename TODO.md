@@ -31,3 +31,4 @@
 
 - train theo episode
 
+- So sanh cua hai ham loss khi su dung CEL_sigmoid va BCE
