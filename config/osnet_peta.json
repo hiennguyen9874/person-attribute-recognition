@@ -21,8 +21,6 @@
         "name": "sgd",
         "lr": 0.01,
         "weight_decay": 0.0005,
-        "adam_beta1": 0.9,
-        "adam_beta2": 0.99,
         "momentum": 0.9,
         "sgd_dampening": 0,
         "sgd_nesterov": false
@@ -33,11 +31,11 @@
     "lr_scheduler": {
         "name": "ReduceLROnPlateau",
         "factor": 0.1,
-        "patience": 5,
+        "patience": 10,
         "min_lr": 0.000001
     },
     "clip_grad_norm_":{
-        "active": true,
+        "active": false,
         "max_norm": 10.0
     },
     "trainer": {
