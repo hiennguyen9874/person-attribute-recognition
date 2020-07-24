@@ -136,7 +136,7 @@ def main(config):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--config', default='config.json', type=str, help='config file path (default: ./config.json)')
+    parser.add_argument('--config', default='base/config.json', type=str, help='config file path (default: base/config.json)')
     parser.add_argument('--resume', default='', type=str, help='resume file path (default: .)')
     parser.add_argument('--colab', default=False, type=lambda x: (str(x).lower() == 'true'), help='train on colab (default: false)')
     args = parser.parse_args()

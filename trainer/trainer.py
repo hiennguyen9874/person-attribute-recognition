@@ -199,7 +199,7 @@ class Trainer(BaseTrainer):
                     self.train_metrics.avg('f1_score'))
             else:
                 end_time = time.time()
-                if (batch_idx+1) % self.log_step[0] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('train'))-1:
+                if (batch_idx+1) % self.log_step[0] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('train')):
                     self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f} F1-score: {:.6f}'.format(
                         epoch,
                         batch_idx+1,
