@@ -84,63 +84,63 @@ class Trainer(BaseTrainer):
             # freeze layer
             self.freeze.on_epoch_begin(epoch)
 
-            # train
-            result = self._train_epoch(epoch)
+            # # train
+            # result = self._train_epoch(epoch)
             
-            # epoch
-            result = self._valid_epoch(epoch)
+            # # epoch
+            # result = self._valid_epoch(epoch)
 
-            if self.lr_scheduler is not None:
-                if isinstance(self.lr_scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
-                    self.lr_scheduler.step(self.valid_metrics.avg('loss'))
-                else:
-                    self.lr_scheduler.step()
+            # if self.lr_scheduler is not None:
+            #     if isinstance(self.lr_scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+            #         self.lr_scheduler.step(self.valid_metrics.avg('loss'))
+            #     else:
+            #         self.lr_scheduler.step()
             
-            # add scalars to tensorboard
-            self.writer.add_scalars('Loss',
-                {
-                    'Train': self.train_metrics.avg('loss'),
-                    'Val': self.valid_metrics.avg('loss')
-                }, global_step=epoch)
-            self.writer.add_scalars('Accuracy',
-                {
-                    'Train': self.train_metrics.avg('accuracy'),
-                    'Val': self.valid_metrics.avg('accuracy')
-                }, global_step=epoch)
-            self.writer.add_scalars('F1-Score',
-                {
-                    'Train': self.train_metrics.avg('f1_score'),
-                    'Val': self.valid_metrics.avg('f1_score')
-                }, global_step=epoch)
-            self.writer.add_scalar('lr', self.optimizer.param_groups[-1]['lr'], global_step=epoch)
+            # # add scalars to tensorboard
+            # self.writer.add_scalars('Loss',
+            #     {
+            #         'Train': self.train_metrics.avg('loss'),
+            #         'Val': self.valid_metrics.avg('loss')
+            #     }, global_step=epoch)
+            # self.writer.add_scalars('Accuracy',
+            #     {
+            #         'Train': self.train_metrics.avg('accuracy'),
+            #         'Val': self.valid_metrics.avg('accuracy')
+            #     }, global_step=epoch)
+            # self.writer.add_scalars('F1-Score',
+            #     {
+            #         'Train': self.train_metrics.avg('f1_score'),
+            #         'Val': self.valid_metrics.avg('f1_score')
+            #     }, global_step=epoch)
+            # self.writer.add_scalar('lr', self.optimizer.param_groups[-1]['lr'], global_step=epoch)
 
-            # logging result to console
-            log = {'epoch': epoch}
-            log.update(result)
-            for key, value in log.items():
-                self.logger.info('    {:15s}: {}'.format(str(key), value))
+            # # logging result to console
+            # log = {'epoch': epoch}
+            # log.update(result)
+            # for key, value in log.items():
+            #     self.logger.info('    {:15s}: {}'.format(str(key), value))
 
-            # save model
-            save_best_accuracy = False
-            save_best_loss = False
-            save_best_f1_score = False
-            if self.best_accuracy == None or self.best_accuracy < self.valid_metrics.avg('accuracy'):
-                self.best_accuracy = self.valid_metrics.avg('accuracy')
-                save_best_accuracy = True
+            # # save model
+            # save_best_accuracy = False
+            # save_best_loss = False
+            # save_best_f1_score = False
+            # if self.best_accuracy == None or self.best_accuracy < self.valid_metrics.avg('accuracy'):
+            #     self.best_accuracy = self.valid_metrics.avg('accuracy')
+            #     save_best_accuracy = True
 
-            if self.best_f1_score == None or self.best_f1_score < self.valid_metrics.avg('f1_score'):
-                self.best_f1_score = self.valid_metrics.avg('f1_score')
-                save_best_f1_score = True
+            # if self.best_f1_score == None or self.best_f1_score < self.valid_metrics.avg('f1_score'):
+            #     self.best_f1_score = self.valid_metrics.avg('f1_score')
+            #     save_best_f1_score = True
             
-            if self.best_loss == None or self.best_loss > self.valid_metrics.avg('loss'):
-                self.best_loss = self.valid_metrics.avg('loss')
-                save_best_loss = True
+            # if self.best_loss == None or self.best_loss > self.valid_metrics.avg('loss'):
+            #     self.best_loss = self.valid_metrics.avg('loss')
+            #     save_best_loss = True
 
-            self._save_checkpoint(epoch, save_best_accuracy=save_best_accuracy, save_best_loss=save_best_loss, save_best_f1_score=save_best_f1_score)
+            # self._save_checkpoint(epoch, save_best_accuracy=save_best_accuracy, save_best_loss=save_best_loss, save_best_f1_score=save_best_f1_score)
 
-            # save logs to drive if using colab
-            if self.config['colab']:
-                self._save_logs(epoch)
+            # # save logs to drive if using colab
+            # if self.config['colab']:
+            #     self._save_logs(epoch)
 
         # wait for tensorboard flush all metrics to file
         self.writer.flush()
