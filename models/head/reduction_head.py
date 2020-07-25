@@ -7,13 +7,13 @@ from models.weight_init import weights_init_classifier, weights_init_kaiming
 
 class ReductionHead(nn.Module):
     def __init__(self, in_features, hidden_feature, out_features, bias_freeze, bn_where='after'):
-        assert bn_where in ['before', 'after']
+        assert bn_where in ['before', 'after'], 'bn_where must be before or after'
         super(ReductionHead, self).__init__()
         self.bn_where = bn_where
         self.bottleneck = nn.Sequential(
-            nn.Linear(in_features, hidden_feature),
-            get_norm(hidden_feature, type_norm='1d', bias_freeze=bias_freeze),
-            nn.LeakyReLU(0.2),
+            nn.Conv2d(in_features, hidden_feature, kernel_size=1, stride=1, bias=False),
+            get_norm(hidden_feature, type_norm='2d', bias_freeze=bias_freeze),
+            nn.LeakyReLU(0.1, inplace=True),
             nn.Dropout()
         )
         if bn_where == 'before':

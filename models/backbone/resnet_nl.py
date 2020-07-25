@@ -19,7 +19,7 @@ class NonLocalBlock(nn.Module):
     """
     def __init__(self, in_channel, reduction_ratio=2):
         super(NonLocalBlock, self).__init__()
-        assert in_channel % reduction_ratio == 0
+        assert in_channel % reduction_ratio == 0, 'in_channel must divide by reduction_ratio'
         self.in_channel = in_channel
         self.hidden_channel = in_channel // reduction_ratio
         

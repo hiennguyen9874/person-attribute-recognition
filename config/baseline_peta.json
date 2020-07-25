@@ -2,10 +2,13 @@
     "n_gpu": 1,
     "model": {
         "name": "baseline",
-        "backbone": "resnet50_ibn_a_nl",
+        "backbone": "resnet50",
         "pretrained": true,
         "pooling": "gem_pooling",
-        "batch_norm_bias": true
+        "head": "BNHead",
+        "bn_where": "after",
+        "batch_norm_bias": true,
+        "use_tqdm": false
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
@@ -25,8 +28,7 @@
         "specified_lr": {
             "lr": 0.1,
             "layers": [
-                "linear",
-                "bn"
+                "head"
             ]
         },
         "weight_decay": 0.0005,

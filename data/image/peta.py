@@ -55,16 +55,16 @@ class Peta(BaseDataSource):
             # self.weight_trainval.append(np.mean(label[_trainval], axis=0))
 
     def get_data(self, phase='train', partition=0):
-        assert phase in ['train', 'val', 'test']
-        assert partition < 5
+        assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
+        assert partition < 5, 'partition must in [0-5]'
         return self.data[phase][partition]
 
     def get_attribute(self, phase = 'train'):
         return self.attribute_name
     
     def get_weight(self, phase = 'train', partition=0):
-        assert phase in ['train', 'val', 'test']
-        assert partition < 5
+        assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
+        assert partition < 5, 'partition must in [0-5]'
         return self.weight[phase][partition]
     
     def _exists(self, extract_dir):
