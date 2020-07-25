@@ -189,7 +189,7 @@ class ResNet_IBN(nn.Module):
         return x
 
 
-def resnet50_ibn_a(pretrained=False, **kwargs):
+def resnet50_ibn_a(pretrained=False, progress=True, **kwargs):
     """Constructs a ResNet-50-IBN-a model.
 
     Args:
@@ -200,11 +200,11 @@ def resnet50_ibn_a(pretrained=False, **kwargs):
                        ibn_cfg=('a', 'a', 'a', None),
                        **kwargs)
     if pretrained:
-        model.load_state_dict(load_state_dict_from_url(model_urls['resnet50_ibn_a']), strict=False)
+        model.load_state_dict(load_state_dict_from_url(model_urls['resnet50_ibn_a'], progress=progress), strict=False)
     return model
 
 
-def resnet101_ibn_a(pretrained=False, **kwargs):
+def resnet101_ibn_a(pretrained=False, progress=True, **kwargs):
     """Constructs a ResNet-101-IBN-a model.
 
     Args:
@@ -215,7 +215,7 @@ def resnet101_ibn_a(pretrained=False, **kwargs):
                        ibn_cfg=('a', 'a', 'a', None),
                        **kwargs)
     if pretrained:
-        model.load_state_dict(load_state_dict_from_url(model_urls['resnet101_ibn_a']), strict=False)
+        model.load_state_dict(load_state_dict_from_url(model_urls['resnet101_ibn_a'], progress=progress), strict=False)
     return model
 
 if __name__ == "__main__":

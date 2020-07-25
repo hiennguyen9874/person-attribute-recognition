@@ -22,7 +22,8 @@ def build_model(config, num_classes, device=torch.device('cpu')):
             pooling=config['pooling'],
             head=config['head'],
             bn_where=config['bn_where'],
-            batch_norm_bias=config['batch_norm_bias'])
+            batch_norm_bias=config['batch_norm_bias'],
+            use_tqdm=config['use_tqdm'])
 
     elif config['name'] == 'osnet':
         dict_paramsters = {

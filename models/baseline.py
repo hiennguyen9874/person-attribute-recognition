@@ -24,11 +24,12 @@ class Baseline(nn.Module):
         pooling='avg_pooling',
         head='BNHead',
         bn_where='after',
-        batch_norm_bias=True):
+        batch_norm_bias=True,
+        use_tqdm=True):
         super(Baseline, self).__init__()
         self.num_classes = num_classes
         
-        self.backbone = build_backbone(backbone, pretrained=pretrained)
+        self.backbone = build_backbone(backbone, pretrained=pretrained, progress=use_tqdm)
         self.avgpool = build_pooling(pooling)
         self.head = build_head(head, 2048, self.num_classes, bias_freeze=not batch_norm_bias, bn_where=bn_where)
 
@@ -36,8 +37,6 @@ class Baseline(nn.Module):
         x = self.backbone(x)
         # x.size = (batch_size, 2048, 16, 8)
         x = self.avgpool(x)
-        x = x.view(x.shape[0], -1)
-        # x.size() = (batch_size, 2048)
         x = self.head(x)
         return x
     

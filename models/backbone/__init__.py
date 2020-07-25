@@ -14,6 +14,6 @@ __backbones = {
     'resnet101_ibn_a_nl': resnet101_ibn_a_nl,
 }
 
-def build_backbone(name, pretrained=True):
+def build_backbone(name, pretrained=True, progress=True):
     assert name in __backbones.keys()
-    return __backbones[name](pretrained=pretrained)
+    return __backbones[name](pretrained=pretrained, progress=progress)
