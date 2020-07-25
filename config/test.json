@@ -5,9 +5,10 @@
         "backbone": "resnet50_ibn_a_nl",
         "pretrained": true,
         "pooling": "gem_pooling",
-        "head": "ReductionHead",
-        "bn_where": "after",
-        "batch_norm_bias": true
+        "head": "BNHead",
+        "bn_where": "before",
+        "batch_norm_bias": true,
+        "use_tqdm": false
     },
     "data": {
         "data_dir": "/home/hien/Documents/datasets",
