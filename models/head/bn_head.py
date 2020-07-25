@@ -5,6 +5,7 @@ import sys
 sys.path.append('.')
 
 from models.util import get_norm
+from models.weight_init import weights_init_classifier, weights_init_kaiming
 
 class BNHead(nn.Module):
     def __init__(self, in_features, out_features, bias_freeze, bn_where='after'):
@@ -15,8 +16,11 @@ class BNHead(nn.Module):
         if bn_where == 'before':
             self.bnneck = get_norm(in_features, '2d',  bias_freeze)
         else:
-            self.bnneck = get_norm(in_features, '1d',  bias_freeze)
+            self.bnneck = get_norm(out_features, '1d',  bias_freeze)
         self.linear = nn.Linear(in_features, out_features)
+
+        self.linear.apply(weights_init_classifier)
+        self.bnneck.apply(weights_init_kaiming)
     
     def forward(self, x):
         if self.bn_where == 'before':
