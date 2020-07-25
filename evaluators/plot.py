@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
 import sys
@@ -9,36 +10,52 @@ __all__ = ['plot_loss_accuracy']
 
 from utils import aggregate, aggregate1
 
-def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, low_ratio = .05, high_ratio = .95, com=0):
+def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, com=0):
     """ Plot loss and accuracy from tensorboard file
     Args:
         dpath (str): path to folder contain (eg: saved/logs)
         list_dname (list(str)): list of run_id to plot.
         output_path (str): path to save csv file after concat logs from different run time
         title (str): title for figure
-        low, high (float [0, 1]): ratio for remove outlier
         com (float [0, 1]): ratio for smooth line
-    """
+    """ 
+    # check folder exists
+    assert os.path.exists(dpath), "folder %s not exists" % dpath
+    for dname in list_dname:
+        assert os.path.exists(os.path.join(dpath, dname)), "folder %s not exists" % str(os.path.join(dpath, dname))
+
     dict_data_frame, list_part = aggregate(dpath, list_dname)
 
     fig, ax = plt.subplots(nrows=1, ncols=len(list_part[0]), figsize=(25, 10))
     
     for i in range(len(list_part[0])):
-        colors = ['red', 'green']
+        colors = ['red', 'green', 'blue', 'orange']
+        
         # get outlier from phase train and valid
-        list_quant_df = []
+        low, high = None, None
         for j in range(len(list_part[1])):
             df = dict_data_frame[list_part[0][i]][list_part[1][j]]
-            list_quant_df.append(df.quantile([low_ratio, high_ratio]))
-        low = min(*[x.loc[low_ratio, 'Value'] for x in list_quant_df])
-        high = max(*[x.loc[high_ratio, 'Value'] for x in list_quant_df])
-        # 
+            z_score = (df['Value'] - df['Value'].mean()) / (df['Value'].std(ddof=0))
+            df_min = df['Value'][np.abs(z_score) >= 3]
+            
+            if low != None:
+                low = min(df_min[df_min < df['Value'].mean()].min(), low)
+            else:
+                low = df_min[df_min < df['Value'].mean()].min()
+            if np.isnan(low):
+                low = None
+
+            if high != None:
+                high = max(df_min[df_min > df['Value'].mean()].max(), high)
+            else:
+                high = df_min[df_min > df['Value'].mean()].max()
+            
+            if np.isnan(high):
+                high = None
+        
+        # plot
         for j in range(len(list_part[1])):
             df = dict_data_frame[list_part[0][i]][list_part[1][j]]
-            # remove outlier
-            df = df[(df['Value'] >= low) & (df['Value'] <= high)]
-            # df.loc[df['Value'] < low, 'Value'] = low
-            # df.loc[df['Value'] > high, 'Value'] = high
             # smoothing
             df['Value'] = df['Value'].ewm(com=com).mean()
             # plot
@@ -49,7 +66,7 @@ def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, low_ratio =
                 color=colors[j],
                 ax=ax[i])
         # set limit for y-axis
-        # ax[i].set_ylim([low, high])
+        ax[i].set_ylim(low, high)
         # set label
         ax[i].set_title(list_part[0][i])
         ax[i].set_xlabel('Epoch')
@@ -76,6 +93,7 @@ def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, low_ratio =
     for key, value in dict_data_frame.items():
         fig, ax = plt.subplots()
         df = dict_data_frame[key]
+        # df['Value'] = np.log2(df['Value'])
         df.plot.line(x='Step', y ='Value', label=key, ax=ax)
         # set label
         ax.set_title(key)
@@ -108,10 +126,10 @@ if __name__ == "__main__":
     
     cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
     run_id = args.run_id
-    
+    log_dir = cfg_trainer['log_dir_saved'] if config['colab'] == True else cfg_trainer['log_dir']
     plot_loss_accuracy(
-        dpath=cfg_trainer['log_dir_saved'],
+        dpath=log_dir,
         list_dname=[run_id],
-        path_folder=os.path.join(cfg_trainer['log_dir_saved'], run_id),
+        path_folder=os.path.join(log_dir, run_id),
         title=run_id + ': ' + config['model']['name'] + ", " + config['loss']['name'] + ", " + config['data']['name'])
 
