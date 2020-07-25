@@ -11,13 +11,17 @@ def build_model(config, num_classes, device=torch.device('cpu')):
             'backbone': config['backbone'],
             'pretrained': config['pretrained'],
             'pooling': config['pooling'],
-            'batch_norm_bias': config['batch_norm_bias']}
+            'batch_norm_bias': config['batch_norm_bias'],
+            'head': config['head'],
+            'bn_where': config['bn_where']}
 
         model = Baseline(
             num_classes=num_classes,
             backbone=config['backbone'],
             pretrained=config['pretrained'],
             pooling=config['pooling'],
+            head=config['head'],
+            bn_where=config['bn_where'],
             batch_norm_bias=config['batch_norm_bias'])
 
     elif config['name'] == 'osnet':

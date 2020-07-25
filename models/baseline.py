@@ -8,6 +8,7 @@ from torch.nn import init
 
 from utils import summary
 from models.pooling import build_pooling
+from models.head import build_head
 from models.backbone import build_backbone
 from models.weight_init import weights_init_classifier, weights_init_kaiming
 from models.util import *
@@ -15,18 +16,21 @@ from models.util import *
 class Baseline(nn.Module):
     r''' Model inspired https://arxiv.org/pdf/2005.11909.pdf
     '''
-    def __init__(self, num_classes, backbone='resnet50', pretrained=True, pooling='avg_pooling', batch_norm_bias=True):
+    def __init__(
+        self,
+        num_classes,
+        backbone='resnet50',
+        pretrained=True,
+        pooling='avg_pooling',
+        head='BNHead',
+        bn_where='after',
+        batch_norm_bias=True):
         super(Baseline, self).__init__()
         self.num_classes = num_classes
         
         self.backbone = build_backbone(backbone, pretrained=pretrained)
-
         self.avgpool = build_pooling(pooling)
-        self.linear = nn.Linear(2048, self.num_classes)
-        self.bn = get_norm(self.num_classes, '1d', not batch_norm_bias)
-
-        self.linear.apply(weights_init_classifier)
-        self.bn.apply(weights_init_kaiming)
+        self.head = build_head(head, 2048, self.num_classes, bias_freeze=not batch_norm_bias, bn_where=bn_where)
 
     def forward(self, x):
         x = self.backbone(x)
@@ -34,8 +38,7 @@ class Baseline(nn.Module):
         x = self.avgpool(x)
         x = x.view(x.shape[0], -1)
         # x.size() = (batch_size, 2048)
-        x = self.linear(x)
-        x = self.bn(x)
+        x = self.head(x)
         return x
     
     def get_heat_maps_with_cam(self, x, return_output=True):
