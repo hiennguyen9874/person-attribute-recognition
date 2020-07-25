@@ -10,6 +10,7 @@ from utils import summary
 from models.pooling import build_pooling
 from models.backbone import build_backbone
 from models.weight_init import weights_init_classifier, weights_init_kaiming
+from models.util import *
 
 class Baseline(nn.Module):
     r''' Model inspired https://arxiv.org/pdf/2005.11909.pdf
@@ -22,11 +23,7 @@ class Baseline(nn.Module):
 
         self.avgpool = build_pooling(pooling)
         self.linear = nn.Linear(2048, self.num_classes)
-        self.bn = nn.BatchNorm1d(self.num_classes)
-        
-        # freeze bias of batch_norm layer
-        if not batch_norm_bias:
-            self.bn.bias.requires_grad_(False)
+        self.bn = get_norm(self.num_classes, '1d', not batch_norm_bias)
 
         self.linear.apply(weights_init_classifier)
         self.bn.apply(weights_init_kaiming)
@@ -63,5 +60,6 @@ class Baseline(nn.Module):
         return heatmaps
 
 if __name__ == "__main__":
-    model = Baseline(26, 'resnet50', True, 'gem_pooling', True)
+    model = Baseline(26, 'resnet50_ibn_a_nl', True, 'gem_pooling', True)
     summary(print, model, (3, 256, 128), 64, 'cpu', False)
+

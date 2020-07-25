@@ -56,6 +56,10 @@ def get_valid_filename(s):
 
 
 def aggregate(dpath, list_dname, output_path=None):
+    assert os.path.exists(dpath), "folder %s not exists" % dpath
+    for dname in list_dname:
+        assert os.path.exists(os.path.join(dpath, dname)), "folder %s not exists" % str(os.path.join(dpath, dname))
+
     extracts_per_subpath = dict()
     for dname in list_dname:
         extracts_per_subpath[dname] = dict()
@@ -110,6 +114,10 @@ def aggregate(dpath, list_dname, output_path=None):
     return ret, list_part
 
 def aggregate1(dpath, list_dname, output_path=None):
+    assert os.path.exists(dpath), "folder %s not exists" % dpath
+    for dname in list_dname:
+        assert os.path.exists(os.path.join(dpath, dname)), "folder %s not exists" % str(os.path.join(dpath, dname))
+
     extracts_per_subpath = {dname: extract(os.path.join(dpath, dname)) for dname in list_dname}
 
     list_data_frame = dict()
