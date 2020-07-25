@@ -88,11 +88,11 @@ class PPE(BaseDataSource):
         return self.attribute_name
 
     def get_data(self, phase='train'):
-        assert phase in ['train', 'val', 'test']
+        assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
         return self.data[phase]
     
     def get_weight(self, phase = 'train'):
-        assert phase in ['train', 'val', 'test']
+        assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
         return self.weight[phase]
 
     def _exists(self, extract_dir):

@@ -19,7 +19,7 @@ class CEL_Sigmoid(nn.Module):
     '''
     def __init__(self, pos_ratio=None, reduction='mean', use_gpu=True):
         super(CEL_Sigmoid, self).__init__()
-        assert reduction in ['sum', 'mean']
+        assert reduction in ['sum', 'mean'], 'reduction must be mean or sum'
         self.pos_ratio = pos_ratio
         self.reduction = reduction
         self.use_gpu = use_gpu

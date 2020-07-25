@@ -5,7 +5,7 @@ class Tqdm(object):
         """
         Tqdm Progress Bar callback
         """
-        assert phase in ['train', 'val', 'test']
+        assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
         self.progbar = tqdm(total=total)
         self.progbar.set_description(f'Epoch {epoch}')
         self.phase = phase

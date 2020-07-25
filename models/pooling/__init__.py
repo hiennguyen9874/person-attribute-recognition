@@ -1,5 +1,8 @@
-from .gem_pooling import GeneralizedMeanPoolingP
-from .avg_pooling import FastGlobalAvgPool2d
+import sys
+sys.path.append('.')
+
+from models.pooling.gem_pooling import GeneralizedMeanPoolingP
+from models.pooling.avg_pooling import FastGlobalAvgPool2d
 
 __poolings = {'gem_pooling': GeneralizedMeanPoolingP, 'avg_pooling': FastGlobalAvgPool2d}
 
@@ -9,4 +12,4 @@ def build_pooling(name):
     return __poolings[name]()
 
 if __name__ == "__main__":
-    build_pooling('fda')
+    build_pooling('gem_pooling')

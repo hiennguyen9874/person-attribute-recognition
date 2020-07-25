@@ -39,7 +39,7 @@ class BaseTrainer(object):
         self.start_epoch = 1
         self.writer = SummaryWriter(self.logs_dir)
     
-    def _print_config(self, params_model=None, params_loss=None, params_optimizers=None, params_lr_scheduler=None):
+    def _print_config(self, params_model=None, params_loss=None, params_optimizers=None, params_lr_scheduler=None, freeze_layers=False):
         def __prams_to_str(params: dict):
             if params == None:
                 return ''
@@ -49,6 +49,8 @@ class BaseTrainer(object):
         self.logger.info('Run id: %s' % (self.run_id))
         self.logger.info('Dataset: %s, batch_size: %d ' % (self.config['data']['name'], self.config['data']['batch_size']))
         self.logger.info('Model: %s ' % (self.config['model']['name']) + __prams_to_str(params_model))
+        if freeze_layers:
+            self.logger.info('Freeze layer: %s ,at first epoch %d' % (str(self.config['freeze']['layers']), self.config['freeze']['epochs']))
         self.logger.info('Loss: %s ' % (self.config['loss']['name']) + __prams_to_str(params_loss))
         self.logger.info('Optimizer: %s ' % (self.config['optimizer']['name']) + __prams_to_str(params_optimizers))
         self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))

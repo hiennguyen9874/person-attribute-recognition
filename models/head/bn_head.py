@@ -9,7 +9,7 @@ from models.weight_init import weights_init_classifier, weights_init_kaiming
 
 class BNHead(nn.Module):
     def __init__(self, in_features, out_features, bias_freeze, bn_where='after'):
-        assert bn_where in ['before', 'after']
+        assert bn_where in ['before', 'after'], 'bn_where must be before or after'
         super(BNHead, self).__init__()
         self.bn_where = bn_where
         

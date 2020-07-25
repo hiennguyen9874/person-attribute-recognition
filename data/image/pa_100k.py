@@ -42,14 +42,14 @@ class PA_100K(BaseDataSource):
             self.weight[phase] = np.mean(label[phase], axis=0).astype(np.float32)
 
     def get_data(self, phase='train'):
-        assert phase in ['train', 'val', 'test']
+        assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
         return self.data[phase]
         
     def get_attribute(self, mode = 'train'):
         return self.attribute_name
     
     def get_weight(self, phase = 'train'):
-        assert phase in ['train', 'val', 'test']
+        assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
         return self.weight[phase]
 
     def _exists(self, extract_dir):
