@@ -11,5 +11,22 @@
 - ```conda env create -f environment.yml```
 - ```conda activate reid```
 
+## Dataset
+- Automatic download and extract dataset.
+- Manual download from [My drive](https://drive.google.com/drive/folders/1eoiYomnR8d6SUgwL3l11jX6_x7nt6_eL?usp=sharing)
+  - ```
+    dataset_dir/
+    |
+    |--<dataset_name>/
+    |   |--raw/
+    |   |  |--<dataset_file.zip>
+    |   |--processed/
+    |   |  |--...
+    ```
+
 ## Run
-- ```python3 train.py --config <path/to/config_file.json> --colab <true if run on colab else flase>```
+- ```python3 train.py --config <path/to/config_file.yml> --colab <true if run on colab else flase>```
+
+## Config
+- Using config file in [config](config) folder.
+- Add new config file based on [config/base.yml](config/base.yml).
