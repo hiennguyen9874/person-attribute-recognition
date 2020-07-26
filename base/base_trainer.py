@@ -17,7 +17,7 @@ class BaseTrainer(object):
         self.cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
 
         # self.run_id = datetime.now().strftime(r'%m%d_%H%M%S')
-        self.run_id = datetime.now(pytz.timezone('Asia/Ho_Chi_Minh')).strftime(r'%m%d_%H%M%S')
+        self.run_id = datetime.now(pytz.timezone(config['timezone'])).strftime(r'%m%d_%H%M%S')
         
         self.checkpoint_dir = os.path.join(self.cfg_trainer['checkpoint_dir'], self.run_id)
         os.makedirs(self.checkpoint_dir, exist_ok=True)
