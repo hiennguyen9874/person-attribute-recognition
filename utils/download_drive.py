@@ -4,6 +4,9 @@ import sys
 import os
 # from tqdm import tqdm
 
+
+__all__ = ['download_file_from_google_drive', 'download_with_url']
+
 def download_file_from_google_drive(id, destination=None):
     URL = "https://docs.google.com/uc?export=download"
 

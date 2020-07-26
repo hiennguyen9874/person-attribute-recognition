@@ -1,0 +1,89 @@
+# 0 if using cpu. >= 1 if using gpu
+n_gpu: 1
+
+model:
+  name: baseline
+  backbone: resnet50
+  pretrained: True
+  pooling: gem_pooling
+  head: BNHead
+  bn_where: after
+  batch_norm_bias: True
+  use_tqdm: False
+
+data:
+  data_dir: /home/hien/Documents/datasets
+  name: peta
+  download: True
+  extract: True
+  use_tqdm: False
+  batch_size: 32
+  shuffle: True
+  num_workers: 4
+  pin_memory: True
+  drop_last: False
+
+optimizer:
+  name: adam
+  lr: 0.00035
+  specified_lr:
+    enable: False
+    lr: 0.1
+    layers: [head]
+  weight_decay: 0.0005
+  adam_beta1: 0.9
+  adam_beta2: 0.99
+  momentum: 0.9
+  sgd_dampening: 0
+  sgd_nesterov: False
+
+loss:
+  name: CEL_Sigmoid
+
+freeze:
+  enable: False
+  layers: [backbone]
+  epochs: 10
+
+lr_scheduler:
+  enable: True
+  name: MultiStepLR
+  default:
+    WarmupMultiStepLR:
+      steps: [40, 90]
+      gamma: 0.1
+      warmup_factor: 0.01
+      warmup_iters: 10
+      warmup_method: linear
+    ReduceLROnPlateau:
+      factor: 0.1
+      patience: 10
+      min_lr: 0.0000001
+    MultiStepLR:
+      steps: [40, 70]
+      gamma: 0.1
+    WarmupCosineAnnealingLR:
+      delay_iters: 30
+      eta_min_lr: 0.00000077
+      warmup_factor: 0.01
+      warmup_iters: 10
+      warmup_method: linear
+
+clip_grad_norm_:
+  enable: False
+  max_norm: 10.0
+
+trainer:
+  epochs: 120
+  checkpoint_dir: saved/checkpoints
+  log_dir: saved/logs
+  output_dir: saved/outputs
+  use_tqdm: True
+  
+trainer_colab:
+  epochs: 120
+  checkpoint_dir: /content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints
+  log_dir: saved/logs
+  log_dir_saved: /content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs
+  output_dir: /content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs
+  use_tqdm: False

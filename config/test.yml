@@ -1,0 +1,24 @@
+model:
+  backbone: resnet50_ibn_a_nl
+  pooling: gem_pooling
+  head: BNHead
+  bn_where: after
+  batch_norm_bias: True
+
+data:
+  name: peta
+
+freeze:
+  enable: True
+  layers: [backbone]
+  epochs: 10
+
+lr_scheduler:
+  enable: True
+  name: WarmupCosineAnnealingLR
+
+trainer:
+  epochs: 120
+  
+trainer_colab:
+  epochs: 120

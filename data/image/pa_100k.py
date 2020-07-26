@@ -37,7 +37,7 @@ class PA_100K(BaseDataSource):
         self.attribute_name = [f['attributes'][i][0][0] for i in range(26)]
         self.data = dict()
         self.weight = dict()
-        for phase in ['train' 'val', 'test']:
+        for phase in ['train', 'val', 'test']:
             self.data[phase] = list(zip(image_name[phase], label[phase]))
             self.weight[phase] = np.mean(label[phase], axis=0).astype(np.float32)
 

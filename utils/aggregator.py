@@ -18,6 +18,8 @@ import numpy as np
 import tensorflow.compat.v1 as tf
 # tf.disable_v2_behavior()
 
+__all__ = ['aggregate', 'aggregate1']
+
 def extract(path_to_folder):
     scalar_accumulators = [EventAccumulator(path_to_folder).Reload().scalars]
 

@@ -9,6 +9,8 @@ from PIL import Image
 from pathlib import Path
 from collections import OrderedDict
 
+__all__ = ['imread', 'read_json', 'write_json', 'rmdir', 'config_to_str']
+
 def imread(path):
     image = Image.open(path)
     return image

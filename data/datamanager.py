@@ -18,7 +18,7 @@ class DataManger(object):
             root_dir=config['data_dir'],
             download=config['download'],
             extract=config['extract'],
-            use_tqdm=False if 'tqdm' not in config else config['tqdm'])
+            use_tqdm=config['use_tqdm'])
         
         transform = dict()
         transform['train'] = transforms.Compose([

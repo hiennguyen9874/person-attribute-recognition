@@ -24,7 +24,7 @@ class Trainer(BaseTrainer):
 
         # model
         self.model, params_model = build_model(
-            config['model'],
+            config,
             num_classes=len(self.datamanager.datasource.get_attribute()),
             device=self.device)
 
@@ -39,7 +39,7 @@ class Trainer(BaseTrainer):
         self.lr_scheduler, params_lr_scheduler = build_lr_scheduler(config, self.optimizer)
 
         # callbacks for freeze backbone
-        if 'freeze' in config:
+        if config['freeze']['enable']:
             self.freeze = FreezeLayers(self.model, config['freeze']['layers'], config['freeze']['epochs'])
         else:
             self.freeze = None
@@ -163,11 +163,11 @@ class Trainer(BaseTrainer):
         """
         self.model.train()
         self.train_metrics.reset()
-        if self.cfg_trainer['tqdm']:
+        if self.cfg_trainer['use_tqdm']:
             tqdm_callback = Tqdm(epoch, len(self.datamanager.get_dataloader('train')), phase='train')
         for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('train')):
             # get time for log num iter per seconds
-            if not self.cfg_trainer['tqdm']:
+            if not self.cfg_trainer['use_tqdm']:
                 start_time = time.time()
             # push data to device
             data, labels = data.to(self.device), labels.to(self.device)
@@ -185,7 +185,7 @@ class Trainer(BaseTrainer):
             loss.backward()
 
             # Clips gradient norm of an iterable of parameters.
-            if self.config['clip_grad_norm_']['active']:
+            if self.config['clip_grad_norm_']['enable']:
                 clip_grad_norm_(
                     parameters=self.model.parameters(),
                     max_norm=self.config['clip_grad_norm_']['max_norm'])
@@ -206,7 +206,7 @@ class Trainer(BaseTrainer):
             self.train_metrics.update('f1_score', f1_score.item())
 
             # update process
-            if self.cfg_trainer['tqdm']:
+            if self.cfg_trainer['use_tqdm']:
                 tqdm_callback.on_batch_end(
                     loss.item(),
                     accuracy.item(),
@@ -223,7 +223,7 @@ class Trainer(BaseTrainer):
                         accuracy.item(),
                         f1_score.item()))
         
-        if self.cfg_trainer['tqdm']:
+        if self.cfg_trainer['use_tqdm']:
             tqdm_callback.on_epoch_end()
         return self.train_metrics.result()
 
@@ -233,10 +233,10 @@ class Trainer(BaseTrainer):
         self.model.eval()
         self.valid_metrics.reset()
         with torch.no_grad():
-            if self.cfg_trainer['tqdm']:
+            if self.cfg_trainer['use_tqdm']:
                 tqdm_callback = Tqdm(epoch, len(self.datamanager.get_dataloader('val')), phase='val')
             for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('val')):
-                if not self.cfg_trainer['tqdm']:
+                if not self.cfg_trainer['use_tqdm']:
                     start_time = time.time()
                 # push data to device
                 data, labels = data.to(self.device), labels.to(self.device)
@@ -260,7 +260,7 @@ class Trainer(BaseTrainer):
                 self.valid_metrics.update('f1_score', f1_score.item())
 
                 # update process
-                if self.cfg_trainer['tqdm']:
+                if self.cfg_trainer['use_tqdm']:
                     tqdm_callback.on_batch_end(
                         loss.item(),
                         accuracy.item(),
@@ -276,7 +276,7 @@ class Trainer(BaseTrainer):
                             loss.item(),
                             accuracy.item(),
                             f1_score.item()))
-        if self.cfg_trainer['tqdm']:
+        if self.cfg_trainer['use_tqdm']:
             tqdm_callback.on_epoch_end()
         return self.valid_metrics.result()
 
