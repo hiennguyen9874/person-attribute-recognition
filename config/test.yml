@@ -1,5 +1,5 @@
 model:
-  backbone: resnet50_ibn_a_nl
+  backbone: resnet50
   pooling: gem_pooling
   head: BNHead
   bn_where: after
@@ -7,6 +7,9 @@ model:
 
 data:
   name: peta
+
+loss:
+  name: Non_BCEWithLogitsLoss
 
 freeze:
   enable: True
