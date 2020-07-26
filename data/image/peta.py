@@ -26,7 +26,6 @@ class Peta(BaseDataSource):
         
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
         
-        
         f = scipy.io.loadmat(os.path.join(data_dir, 'PETA.mat'))
         
         raw_attr_name = [i[0][0] for i in f['peta'][0][0][1]]
