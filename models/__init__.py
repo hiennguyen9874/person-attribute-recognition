@@ -1,39 +1,29 @@
 import torch
-from .osnet import OSNet
 from .baseline import Baseline
 from .util import *
 
 def build_model(config, num_classes, device=torch.device('cpu')):
+    cfg_model = config['model']
     dict_paramsters = None
     
-    if config['name'] == 'baseline':
+    if cfg_model['name'] == 'baseline':
         dict_paramsters = {
-            'backbone': config['backbone'],
-            'pretrained': config['pretrained'],
-            'pooling': config['pooling'],
-            'batch_norm_bias': config['batch_norm_bias'],
-            'head': config['head'],
-            'bn_where': config['bn_where']}
+            'backbone': cfg_model['backbone'],
+            'pretrained': cfg_model['pretrained'],
+            'pooling': cfg_model['pooling'],
+            'batch_norm_bias': cfg_model['batch_norm_bias'],
+            'head': cfg_model['head'],
+            'bn_where': cfg_model['bn_where']}
 
         model = Baseline(
             num_classes=num_classes,
-            backbone=config['backbone'],
-            pretrained=config['pretrained'],
-            pooling=config['pooling'],
-            head=config['head'],
-            bn_where=config['bn_where'],
-            batch_norm_bias=config['batch_norm_bias'],
-            use_tqdm=config['use_tqdm'])
-
-    elif config['name'] == 'osnet':
-        dict_paramsters = {
-            'pooling': config['pooling'],
-            'batch_norm_bias': config['batch_norm_bias']}
-
-        model = OSNet(
-            num_classes=num_classes,
-            pooling=config['pooling'],
-            batch_norm_bias=config['batch_norm_bias'])
+            backbone=cfg_model['backbone'],
+            pretrained=cfg_model['pretrained'],
+            pooling=cfg_model['pooling'],
+            head=cfg_model['head'],
+            bn_where=cfg_model['bn_where'],
+            batch_norm_bias=cfg_model['batch_norm_bias'],
+            use_tqdm=cfg_model['use_tqdm'])
 
     else:
         raise KeyError('config[model][name] error')

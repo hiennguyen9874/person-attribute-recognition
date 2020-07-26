@@ -1,0 +1,37 @@
+model:
+  backbone: resnet50
+  pooling: gem_pooling
+  head: BNHead
+  bn_where: after
+  batch_norm_bias: True
+
+data:
+  name: pa_100k
+
+optimizer:
+  name: sgd
+  lr: 0.01
+  specified_lr:
+    enable: True
+    lr: 0.1
+    layers: [head]
+
+loss:
+  name: CEL_Sigmoid
+
+lr_scheduler:
+  enable: True
+  name: ReduceLROnPlateau
+  factor: 0.1
+  patience: 5
+  min_lr: 0.0000001
+
+clip_grad_norm_:
+  enable: True
+  max_norm: 10.0
+
+trainer:
+  epochs: 50
+  
+trainer_colab:
+  epochs: 50

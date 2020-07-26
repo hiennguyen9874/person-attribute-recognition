@@ -4,21 +4,23 @@ from .warmup import WarmupMultiStepLR, WarmupCosineAnnealingLR
 
 def build_lr_scheduler(config, optimizer):
     cfg_lr_scheduler = config['lr_scheduler']
+    if cfg_lr_scheduler['enable'] == False:
+        return None, None
     if cfg_lr_scheduler['name'] == "WarmupMultiStepLR":
         dict_paramsters = {
             'milestones': cfg_lr_scheduler['steps'],
             'gamma': cfg_lr_scheduler['gamma'],
-            'warmup_factor': cfg_lr_scheduler['factor'],
-            'warmup_iters': cfg_lr_scheduler['iters'],
-            'warmup_method': cfg_lr_scheduler['method']
+            'warmup_factor': cfg_lr_scheduler['warmup_factor'],
+            'warmup_iters': cfg_lr_scheduler['warmup_iters'],
+            'warmup_method': cfg_lr_scheduler['warmup_method']
         }
         return WarmupMultiStepLR(
             optimizer,
             milestones=cfg_lr_scheduler['steps'],
             gamma=cfg_lr_scheduler['gamma'],
-            warmup_factor=cfg_lr_scheduler['factor'],
-            warmup_iters=cfg_lr_scheduler['iters'],
-            warmup_method=cfg_lr_scheduler['method']), dict_paramsters
+            warmup_factor=cfg_lr_scheduler['warmup_factor'],
+            warmup_iters=cfg_lr_scheduler['warmup_iters'],
+            warmup_method=cfg_lr_scheduler['warmup_method']), dict_paramsters
             
     elif cfg_lr_scheduler['name'] == 'ReduceLROnPlateau':
         dict_paramsters = {

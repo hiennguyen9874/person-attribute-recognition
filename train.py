@@ -1,7 +1,7 @@
 import argparse
 
 from trainer import Trainer
-from utils import read_json
+from utils import read_config
 
 def main(config):
     trainer = Trainer(config)
@@ -9,11 +9,12 @@ def main(config):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--config', default='base/config.json', type=str, help='config file path (default: base/config.json)')
+    parser.add_argument('--config', default='config/base.yml', type=str, help='config file path (default: config/base.yml)')
     parser.add_argument('--resume', default='', type=str)
     parser.add_argument('--colab', default=False, type=lambda x: (str(x).lower() == 'true'), help='train on colab (default: false)')
     args = parser.parse_args()
-    config = read_json(args.config)
+    
+    config = read_config(args.config)
     config.update({'resume': args.resume})
     config.update({'colab': args.colab})
     main(config)

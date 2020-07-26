@@ -128,7 +128,7 @@ def main(config):
         root_dir=config['data']['data_dir'],
         download=config['data']['download'],
         extract=config['data']['extract'],
-        use_tqdm=False if 'tqdm' not in config else config['data']['tqdm'])
+        use_tqdm=config['data']['use_tqdm'])
     
     transform = transforms.Compose([
         transforms.Resize(size=datasource.get_image_size()),

@@ -8,7 +8,7 @@ def build_optimizers(config, model):
     assert 'lr' in cfg_optimizer
 
     specified_lr = False
-    if 'specified_lr' in cfg_optimizer:
+    if 'specified_lr' in cfg_optimizer and cfg_optimizer['specified_lr']['enable'] == True:
         assert 'layers' in cfg_optimizer['specified_lr']
         assert 'lr' in cfg_optimizer['specified_lr']
         

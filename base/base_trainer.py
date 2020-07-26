@@ -55,7 +55,8 @@ class BaseTrainer(object):
             self.logger.info('Freeze layer: %s ,at first epoch %d' % (str(self.config['freeze']['layers']), self.config['freeze']['epochs']))
         self.logger.info('Loss: %s ' % (self.config['loss']['name']) + __prams_to_str(params_loss))
         self.logger.info('Optimizer: %s ' % (self.config['optimizer']['name']) + __prams_to_str(params_optimizers))
-        self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
+        if params_lr_scheduler != None:
+            self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
 
     def _save_logs(self, epoch):
         """ Save logs from google colab to google drive
