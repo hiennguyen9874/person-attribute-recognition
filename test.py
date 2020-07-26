@@ -12,7 +12,7 @@ from tqdm import tqdm
 from models import build_model
 from data import DataManger
 from logger import setup_logging
-from utils import read_json, rmdir, summary
+from utils import read_config, rmdir, summary
 from evaluators import recognition_metrics
 
 def main(config):
@@ -30,7 +30,7 @@ def main(config):
 
     datamanager = DataManger(config['data'], phase='test')
     
-    model, _ = build_model(config['model'], num_classes=len(datamanager.datasource.get_attribute()))
+    model, _ = build_model(config, num_classes=len(datamanager.datasource.get_attribute()))
 
     logger.info('Loading checkpoint: {} ...'.format(config['resume']))
     checkpoint = torch.load(config['resume'], map_location=map_location)
@@ -141,7 +141,7 @@ if __name__ == "__main__":
     parser.add_argument('--colab', default=False, type=lambda x: (str(x).lower() == 'true'), help='train on colab (default: false)')
     args = parser.parse_args()
 
-    config = read_json(args.config)
+    config = read_config(args.config)
     config.update({'resume': args.resume})
     config.update({'colab': args.colab})
     

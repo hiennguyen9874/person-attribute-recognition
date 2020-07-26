@@ -10,6 +10,8 @@ def build_losses(config, pos_ratio, use_gpu=True):
     if cfg_loss['name'] == 'BCEWithLogitsLoss':
         pos_weight = torch.exp(-1 * pos_ratio)
         return nn.BCEWithLogitsLoss(pos_weight=pos_weight), {}
+    elif cfg_loss['name'] == 'Non_BCEWithLogitsLoss':
+        return nn.BCEWithLogitsLoss(), {}
     elif cfg_loss['name'] == 'CEL_Sigmoid':
         return CEL_Sigmoid(pos_ratio, use_gpu=use_gpu), {}
     else:
