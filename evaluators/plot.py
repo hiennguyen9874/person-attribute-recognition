@@ -114,14 +114,14 @@ def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, com=0):
 
 if __name__ == "__main__":
     import argparse
-    from utils import read_json
+    from utils import read_config
 
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--config', default='config.json', type=str, help='config file path (default: ./config.json)')
     parser.add_argument('--colab', default=False, type=lambda x: (str(x).lower() == 'true'), help='train on colab (default: false)')
     parser.add_argument('--run_id', default='', type=str)
     args = parser.parse_args()
-    config = read_json(args.config)
+    config = read_config(args.config)
     config.update({'colab': args.colab, 'run_id': args.run_id})
     
     cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']

@@ -71,7 +71,9 @@ def aggregate(dpath, list_dname, output_path=None):
         set_part1 = set()
         set_part2 = set()
         for dpart in list_part:
-            x, y = dpart.split('_')
+            # x, y = 
+            splited = dpart.split('_')
+            x, y = '_'.join(splited[:-1]), splited[-1]
             set_part1.add(x)
             set_part2.add(y)
         for part1 in set_part1:
