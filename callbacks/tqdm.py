@@ -10,11 +10,12 @@ class Tqdm(object):
         self.progbar.set_description(f'Epoch {epoch}')
         self.phase = phase
     
-    def on_batch_end(self, loss, accuracy, f1_score):
-        self.progbar.set_postfix({
-            '{}_loss'.format(self.phase): loss,
-            '{}_acc'.format(self.phase): accuracy,
-            '{}_f1-score'.format(self.phase): f1_score})
+    def on_batch_end(self, dict_metrics):
+        self.progbar.set_postfix({'{}_{}'.format(self.phase, str(key)): value for key, value in dict_metrics.items()})
+        # self.progbar.set_postfix({
+        #     '{}_loss'.format(self.phase): loss,
+        #     '{}_acc'.format(self.phase): accuracy,
+        #     '{}_f1-score'.format(self.phase): f1_score})
         self.progbar.update(1)
 
     def on_epoch_end(self):

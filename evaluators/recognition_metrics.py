@@ -56,11 +56,20 @@ def recognition_metrics(labels, preds, threshold=0.5, eps = 1e-20):
     return result_label, result_instance
 
 
-def compute_accuracy_cuda(labels, preds, eps=1e-20):
-    # result = EasyDict()
+def compute_accuracy_cuda(labels, preds, threshold=0.5, eps=1e-20):
+    preds[preds > threshold] = 1
+    preds[preds <= threshold] = 0
     labels = labels.type(torch.BoolTensor)
     preds = preds.type(torch.BoolTensor)
 
+    # class-based metrics
+    tn_fp = torch.sum(labels.type(torch.FloatTensor), dim=0)
+    tp_fn = torch.sum(preds.type(torch.FloatTensor), dim=0)
+    tp = torch.sum((preds & labels).type(torch.FloatTensor), dim=0)
+    tn = torch.sum(((~preds) & (~labels)).type(torch.FloatTensor), dim=0)
+    mean_accuracy = ((tp / (tp_fn + eps)) + (tn / (tn_fp + eps))) / 2
+
+    # instance-based metrics
     _positive = preds.type(torch.FloatTensor)
     _true = labels.type(torch.FloatTensor)
     intersect = (preds & labels).type(torch.FloatTensor)
@@ -71,9 +80,4 @@ def compute_accuracy_cuda(labels, preds, eps=1e-20):
     _recall = (torch.sum(intersect, dim=1) / (torch.sum(_true, dim=1) + eps))
     _f1_score = 2 * torch.mul(_precision, _recall) / (torch.add(_precision, _recall) + eps)
 
-    # result.accuracy = torch.mean(_accuracy)
-    # result.precision = torch.mean(_precision)
-    # result.recall = torch.mean(_recall)
-    # result.f1_score = torch.mean(_f1_score)
-
-    return torch.mean(_accuracy), torch.mean(_f1_score)
+    return torch.mean(mean_accuracy), torch.mean(_accuracy), torch.mean(_f1_score)

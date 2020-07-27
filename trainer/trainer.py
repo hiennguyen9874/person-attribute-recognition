@@ -45,8 +45,8 @@ class Trainer(BaseTrainer):
             self.freeze = None
 
         # track metric
-        self.train_metrics = MetricTracker('loss', 'accuracy', 'f1_score')
-        self.valid_metrics = MetricTracker('loss', 'accuracy', 'f1_score')
+        self.train_metrics = MetricTracker('loss', 'mA', 'accuracy', 'f1_score')
+        self.valid_metrics = MetricTracker('loss', 'mA', 'accuracy', 'f1_score')
 
         # step log loss and accuracy
         self.log_step = (len(self.datamanager.get_dataloader('train')) // 10,
@@ -195,30 +195,31 @@ class Trainer(BaseTrainer):
             
             # calculate instance-based accuracy
             preds = torch.sigmoid(out)
-            preds[preds < 0.5] = 0
-            preds[preds >= 0.5] = 1
             
-            accuracy, f1_score = compute_accuracy_cuda(labels, preds)
+            mean_accuracy, accuracy, f1_score = compute_accuracy_cuda(labels, preds)
 
             # update loss and accuracy in MetricTracker
             self.train_metrics.update('loss', loss.item())
+            self.train_metrics.update('mA', mean_accuracy.item())
             self.train_metrics.update('accuracy', accuracy.item())
             self.train_metrics.update('f1_score', f1_score.item())
 
             # update process
             if self.cfg_trainer['use_tqdm']:
-                tqdm_callback.on_batch_end(
-                    loss.item(),
-                    accuracy.item(),
-                    f1_score.item())
+                tqdm_callback.on_batch_end({
+                    'loss': loss.item(),
+                    'mA': mean_accuracy.item(),
+                    'accuracy': accuracy.item(),
+                    'f1-score': f1_score.item()})
             else:
                 end_time = time.time()
                 if (batch_idx+1) % self.log_step[0] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('train')):
-                    self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f} F1-score: {:.6f}'.format(
+                    self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} mA: {:.6f} Acc: {:.6f} F1-score: {:.6f}'.format(
                         epoch,
                         batch_idx+1,
                         len(self.datamanager.get_dataloader('train')),
                         1/(end_time-start_time),
+                        mean_accuracy.item(),
                         loss.item(),
                         accuracy.item(),
                         f1_score.item()))
@@ -249,30 +250,31 @@ class Trainer(BaseTrainer):
 
                 # calculate instance-based accuracy
                 preds = torch.sigmoid(out)
-                preds[preds < 0.5] = 0
-                preds[preds >= 0.5] = 1
                 
-                accuracy, f1_score = compute_accuracy_cuda(labels, preds)
+                mean_accuracy, accuracy, f1_score = compute_accuracy_cuda(labels, preds)
 
                 # update loss and accuracy in MetricTracker
                 self.valid_metrics.update('loss', loss.item())
+                self.valid_metrics.update('mA', mean_accuracy.item())
                 self.valid_metrics.update('accuracy', accuracy.item())
                 self.valid_metrics.update('f1_score', f1_score.item())
 
                 # update process
                 if self.cfg_trainer['use_tqdm']:
-                    tqdm_callback.on_batch_end(
-                        loss.item(),
-                        accuracy.item(),
-                        f1_score.item())
+                    tqdm_callback.on_batch_end({
+                        'loss': loss.item(),
+                        'mA': mean_accuracy.item(),
+                        'accuracy': accuracy.item(),
+                        'f1-score': f1_score.item()})
                 else:
                     end_time = time.time()
                     if (batch_idx+1) % self.log_step[1] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('val'))-1:
-                        self.logger.info('Valid Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} Acc: {:.6f} F1-score: {:.6f}'.format(
+                        self.logger.info('Valid Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} mA: {:.6f} Acc: {:.6f} F1-score: {:.6f}'.format(
                             epoch,
                             batch_idx+1,
                             len(self.datamanager.get_dataloader('val')),
                             1/(end_time-start_time),
+                            mean_accuracy.item(),
                             loss.item(),
                             accuracy.item(),
                             f1_score.item()))
