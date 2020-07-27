@@ -10,7 +10,7 @@ from utils import download_with_url
 class BaseDataSource(object):
     google_drive_api = 'AIzaSyAVfS-7Dy34a3WjWgR509o-u_3Of59zizo'
     
-    def __init__(self, root_dir, dataset_dir, file_name, image_size = (256, 128)):
+    def __init__(self, root_dir, dataset_dir, file_name, image_size=(256, 128)):
         self.root_dir = root_dir
         self.dataset_dir = dataset_dir
         self.file_name = file_name
@@ -21,6 +21,10 @@ class BaseDataSource(object):
         raise NotImplementedError
     
     def _extract(self, use_tqdm=True):
+        r""" extract compressed file
+        Args:
+            use_tqdm (boolean): use tqdm process bar when extracting
+        """
         file_path = os.path.join(self.root_dir, self.dataset_dir, 'raw', self.file_name)
         extract_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
         if self._exists(extract_dir):
@@ -46,6 +50,11 @@ class BaseDataSource(object):
         print("Extracted!")
     
     def _download(self, dataset_id=None, use_tqdm=True):
+        r""" download file from google drive.
+        Args:
+            dataset_id (str): id of file on google drive. guide to get it (https://www.wonderplugin.com/wordpress-tutorials/how-to-apply-for-a-google-drive-api-key/)
+            use_tqdm (boolean): use tqdm process bar when downloading
+        """
         os.makedirs(os.path.join(self.root_dir, self.dataset_dir, 'raw'), exist_ok=True)
         if dataset_id == None:
             if not os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'raw', self.file_name)):
@@ -56,7 +65,11 @@ class BaseDataSource(object):
             print("Downloaded!")
     
     def get_data(self, phase='train'):
+        r""" get data, must return list of (image_path, label)
+        """
         raise NotImplementedError
 
     def get_image_size(self):
+        r""" get size of image to resize when training
+        """
         return self.image_size

@@ -1,3 +1,6 @@
+import sys
+sys.path.append('.')
+
 import torch
 import numpy as np
 from easydict import EasyDict
@@ -5,11 +8,13 @@ from easydict import EasyDict
 __all__ = ['recognition_metrics', 'compute_accuracy_cuda']
 
 def recognition_metrics(labels, preds, threshold=0.5, eps = 1e-20):
-    ''' https://en.wikipedia.org/wiki/Confusion_matrix
+    r""" https://en.wikipedia.org/wiki/Confusion_matrix
     Args:
         labels (num_sampler, num_attribute): 2d numpy array binary
         preds (num_sampler, num_attribute): 2d numpy array float
-    '''
+        threshold (float): 
+        eps (float):
+    """
     preds[preds > threshold] = 1
     preds[preds <= threshold] = 0
     preds = preds.astype(bool)
@@ -55,8 +60,18 @@ def recognition_metrics(labels, preds, threshold=0.5, eps = 1e-20):
     
     return result_label, result_instance
 
-
 def compute_accuracy_cuda(labels, preds, threshold=0.5, eps=1e-20):
+    r""" compute mean accuracy (class-based), accuracy, f1-score (instance-based).
+    Args:
+        labels (tensor 2d (float 0, 1) (num_classes, num_attribute)): tensor 2d 0, 1;
+        preds (tensor 2d (float)(num_classes, num_attribute)): output after sigmoid layer
+        threshold (float)
+        eps (float): epsilon for avoid divide by zero
+    Return:
+        mean_accuracy (float)
+        accuracy (float)
+        f1-score (float)
+    """
     preds[preds > threshold] = 1
     preds[preds <= threshold] = 0
     labels = labels.type(torch.BoolTensor)
@@ -80,4 +95,7 @@ def compute_accuracy_cuda(labels, preds, threshold=0.5, eps=1e-20):
     _recall = (torch.sum(intersect, dim=1) / (torch.sum(_true, dim=1) + eps))
     _f1_score = 2 * torch.mul(_precision, _recall) / (torch.add(_precision, _recall) + eps)
 
-    return torch.mean(mean_accuracy), torch.mean(_accuracy), torch.mean(_f1_score)
+    return torch.mean(mean_accuracy).item(), torch.mean(_accuracy).item(), torch.mean(_f1_score).item()
+
+if __name__ == "__main__":
+    pass

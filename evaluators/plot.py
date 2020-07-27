@@ -11,7 +11,7 @@ __all__ = ['plot_loss_accuracy']
 from utils import aggregate, aggregate1
 
 def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, com=0):
-    """ Plot loss and accuracy from tensorboard file
+    r""" Plot metrics from tensorboard log folder
     Args:
         dpath (str): path to folder contain (eg: saved/logs)
         list_dname (list(str)): list of run_id to plot.

@@ -42,6 +42,8 @@ class BaseTrainer(object):
         self.writer = SummaryWriter(self.logs_dir)
     
     def _print_config(self, params_model=None, params_loss=None, params_optimizers=None, params_lr_scheduler=None, freeze_layers=False):
+        r""" print config into log file
+        """
         def __prams_to_str(params: dict):
             if params == None:
                 return ''
@@ -59,7 +61,7 @@ class BaseTrainer(object):
             self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
 
     def _save_logs(self, epoch):
-        """ Save logs from google colab to google drive
+        r""" Save logs from google colab to google drive
         """
         if os.path.isdir(self.logs_dir_saved):
             shutil.rmtree(self.logs_dir_saved)
