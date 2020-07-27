@@ -13,17 +13,30 @@
 
 ## Dataset
 - Automatic download and extract dataset.
-- Manual download from [My drive](https://drive.google.com/drive/folders/1eoiYomnR8d6SUgwL3l11jX6_x7nt6_eL?usp=sharing)
-  - ```
-    dataset_dir/
-    |
-    |--<dataset_name>/
-    |   |--raw/
-    |   |  |--<dataset_file.zip>
-    |   |--processed/
-    |   |  |--...
+- Manual download from [github.com/dangweili/pedestrian-attribute-recognition-pytorch](https://github.com/dangweili/pedestrian-attribute-recognition-pytorch)
+  - PETA
     ```
-
+    dataset_dir/
+    |--peta/
+    |  |--processed/
+    |  |  |--images/
+    |  |  |  |--00001.png
+    |  |  |  |--00002.png
+    |  |  |  |--...
+    |  |  |--PETA.mat
+    ```
+  - PA-100K
+    ```
+    dataset_dir/
+    |--pa_100k/
+    |  |--processed/
+    |  |  |--images/
+    |  |  |  |--0000001.png
+    |  |  |  |--0000002.png
+    |  |  |  |--...
+    |  |  |--annotation.mat
+    ```
+  dataset_dir in config file.
 ## Run
 - ```python3 train.py --config <path/to/config_file.yml> --colab <true if run on colab else false>```
 
@@ -32,6 +45,9 @@
 - Add new config file based on [config/base.yml](config/base.yml).
 
 ## Result
+
+### Peta dataset
+
 | backbone          	| bn after linear 	| Head          	| Loss              	|   mA  	| Accuracy 	| Precision 	| Recall 	| F1-Score 	|
 |-------------------	|:---------------:	|---------------	|-------------------	|:-----:	|:--------:	|:---------:	|:------:	|:--------:	|
 | resnet50          	|     &check;     	| BNHead        	| CEL_Sigmoid       	|  83.06 	|   79.46  	|   88.48   	|  85.30 	|   86.54  	|
@@ -43,3 +59,18 @@
 | resnet50_ibn_a_nl 	|                 	| BNHead        	| CEL_Sigmoid       	|  82.24 	|   78.57  	|   88.48   	|  84.20 	|   85.91  	|
 | osnet             	|                 	| ReductionHead 	| CEL_Sigmoid       	|  77.93 	|   73.00  	|   83.82   	|  80.65 	|   81.81  	|
 | osnet             	|                 	| BNHead        	| CEL_Sigmoid       	|  77.72 	|   73.04  	|   84.65   	|  79.82 	|   81.68  	|
+
+### PPE dataset
+
+| backbone          	| bn after linear 	| Head          	| Loss              	|   mA  	| Accuracy 	| Precision 	| Recall 	| F1-Score 	|
+|-------------------	|:---------------:	|---------------	|-------------------	|:-----:	|:--------:	|:---------:	|:------:	|:--------:	|
+| resnet50          	|     &check;     	| BNHead        	| CEL_Sigmoid       	|  65.64 	|   84.63  	|   88.61   	|  88.80 	|   87.35  	|
+
+
+### PA-100K
+
+| backbone          	| bn after linear 	| Head          	| Loss              	|   mA  	| Accuracy 	| Precision 	| Recall 	| F1-Score 	|
+|-------------------	|:---------------:	|---------------	|-------------------	|:-----:	|:--------:	|:---------:	|:------:	|:--------:	|
+| resnet50          	|     &check;     	| BNHead        	| CEL_Sigmoid       	|        	|         	|             |       	|         	|
+
+
