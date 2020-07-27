@@ -63,8 +63,8 @@ def compute_accuracy_cuda(labels, preds, threshold=0.5, eps=1e-20):
     preds = preds.type(torch.BoolTensor)
 
     # class-based metrics
-    tn_fp = torch.sum(labels.type(torch.FloatTensor), dim=0)
-    tp_fn = torch.sum(preds.type(torch.FloatTensor), dim=0)
+    tp_fn = torch.sum(labels.type(torch.FloatTensor), dim=0)
+    tn_fp = torch.sum((~labels).type(torch.FloatTensor), dim=0)
     tp = torch.sum((preds & labels).type(torch.FloatTensor), dim=0)
     tn = torch.sum(((~preds) & (~labels)).type(torch.FloatTensor), dim=0)
     mean_accuracy = ((tp / (tp_fn + eps)) + (tn / (tn_fp + eps))) / 2
