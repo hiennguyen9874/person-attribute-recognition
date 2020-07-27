@@ -10,7 +10,7 @@ data:
   batch_size: 32
 
 loss:
-  name: Non_BCEWithLogitsLoss
+  name: CEL_Sigmoid
 
 freeze:
   enable: True
@@ -22,8 +22,7 @@ lr_scheduler:
   name: WarmupCosineAnnealingLR
 
 trainer:
-  epochs: 3
-  use_tqdm: False
+  epochs: 120
   
 trainer_colab:
   epochs: 120
