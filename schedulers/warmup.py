@@ -10,7 +10,6 @@ import torch.nn as nn
 import matplotlib.pyplot as plt
 from bisect import bisect_right
 
-
 # FIXME ideally this would be achieved with a CombinedLRScheduler,
 # separating MultiStepLR with WarmupLR
 # but the current LRScheduler design doesn't allow it
@@ -61,7 +60,6 @@ class WarmupMultiStepLR(torch.optim.lr_scheduler._LRScheduler):
             for base_lr in self.base_lrs
         ]
 
-
 class WarmupCosineAnnealingLR(torch.optim.lr_scheduler._LRScheduler):
     r""" Warpmup learning rate, copied from here: https://github.com/JDAI-CV/fast-reid/blob/master/fastreid/solver/lr_scheduler.py
     """
@@ -92,9 +90,10 @@ class WarmupCosineAnnealingLR(torch.optim.lr_scheduler._LRScheduler):
             return [base_lr * warmup_factor for base_lr in self.base_lrs]
         elif self.last_epoch <= self.delay_iters:
             return self.base_lrs
-
-        else:
+        elif self.last_epoch <= self.max_iters:
             return [self.eta_min_lr + (base_lr - self.eta_min_lr) * (1 + math.cos(math.pi * (self.last_epoch - self.delay_iters) / (self.max_iters - self.delay_iters))) / 2 for base_lr in self.base_lrs]
+        else:
+            return [self.eta_min_lr for base_lr in self.base_lrs]
 
 def _get_warmup_factor_at_iter(method: str, iter: int, warmup_iters: int, warmup_factor: float) -> float:
     r"""
@@ -125,7 +124,7 @@ if __name__ == "__main__":
     y = []
     net = nn.Linear(10, 10)
     optimizer = torch.optim.SGD(net.parameters(), lr=0.00035)
-    lr_scheduler = WarmupCosineAnnealingLR(optimizer, max_iters=120, delay_iters=30, eta_min_lr=0.00000077, warmup_factor=0.01, warmup_iters=10, warmup_method="linear")
+    lr_scheduler = WarmupCosineAnnealingLR(optimizer, max_iters=80, delay_iters=30, eta_min_lr=0.00000077, warmup_factor=0.01, warmup_iters=10, warmup_method="linear")
     for i in range(120):
         lr_scheduler.step()
         for j in range(3):

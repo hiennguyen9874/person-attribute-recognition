@@ -16,7 +16,7 @@
 - Manual download from [github.com/dangweili/pedestrian-attribute-recognition-pytorch](https://github.com/dangweili/pedestrian-attribute-recognition-pytorch)
   - PETA
     ```
-    dataset_dir/
+    data_dir/
     |--peta/
     |  |--processed/
     |  |  |--images/
@@ -27,7 +27,7 @@
     ```
   - PA-100K
     ```
-    dataset_dir/
+    data_dir/
     |--pa_100k/
     |  |--processed/
     |  |  |--images/
@@ -36,7 +36,7 @@
     |  |  |  |--...
     |  |  |--annotation.mat
     ```
-  dataset_dir in config file.
+  data_dir in config file.
 ## Run
 - ```python3 train.py --config <path/to/config_file.yml> --colab <true if run on colab else false>```
 
