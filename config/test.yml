@@ -6,7 +6,7 @@ model:
   batch_norm_bias: True
 
 data:
-  name: peta
+  name: ppe_two
   batch_size: 32
 
 loss:

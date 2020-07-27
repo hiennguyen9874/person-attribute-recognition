@@ -12,7 +12,7 @@ from PIL import Image
 from torchvision import transforms
 from collections import defaultdict
 
-from utils import read_json, rmdir
+from utils import read_config, rmdir
 from data.image import build_datasource
 from models import build_model
 
@@ -235,7 +235,7 @@ if __name__ == "__main__":
     parser.add_argument('--num', default=5, type=int, help='num attribute visualize')
     
     args = parser.parse_args()
-    config = read_json(args.config)
+    config = read_config(args.config)
     config.update({'resume': args.resume})
     config.update({'num': args.num})
 

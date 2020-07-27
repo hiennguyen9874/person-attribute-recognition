@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from data import DataManger, build_datasource
-from utils import read_json
+from utils import read_config
 
 def imread(path):
     image = cv2.imread(path)
@@ -53,5 +53,5 @@ if __name__ == "__main__":
     parser.add_argument('-c', '--config', default='config.json', type=str, help='config file path (default: ./config.json)')
     args = parser.parse_args()
     
-    config = read_json(args.config)
+    config = read_config(args.config)
     main(config)
