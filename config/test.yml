@@ -22,7 +22,8 @@ lr_scheduler:
   name: WarmupCosineAnnealingLR
 
 trainer:
-  epochs: 120
+  epochs: 3
+  use_tqdm: False
   
 trainer_colab:
   epochs: 120

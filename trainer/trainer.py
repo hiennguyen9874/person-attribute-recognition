@@ -44,9 +44,12 @@ class Trainer(BaseTrainer):
         else:
             self.freeze = None
 
+        # metrics
+        self.lst_metrics = ['mA', 'accuracy', 'f1_score']
+
         # track metric
-        self.train_metrics = MetricTracker('loss', 'mA', 'accuracy', 'f1_score')
-        self.valid_metrics = MetricTracker('loss', 'mA', 'accuracy', 'f1_score')
+        self.train_metrics = MetricTracker('loss', *self.lst_metrics)
+        self.valid_metrics = MetricTracker('loss', *self.lst_metrics)
 
         # step log loss and accuracy
         self.log_step = (len(self.datamanager.get_dataloader('train')) // 10,
@@ -54,9 +57,10 @@ class Trainer(BaseTrainer):
         self.log_step = (self.log_step[0] if self.log_step[0] > 0 else 1, self.log_step[1] if self.log_step[1] > 0 else 1)
         
         # best accuracy and loss
-        self.best_accuracy = None
         self.best_loss = None
-        self.best_f1_score = None
+        self.best_metrics = dict()
+        for x in self.lst_metrics:
+            self.best_metrics[x] = None
         
         # print config
         self._print_config(
@@ -107,16 +111,14 @@ class Trainer(BaseTrainer):
                     'Train': self.train_metrics.avg('loss'),
                     'Val': self.valid_metrics.avg('loss')
                 }, global_step=epoch)
-            self.writer.add_scalars('Accuracy',
-                {
-                    'Train': self.train_metrics.avg('accuracy'),
-                    'Val': self.valid_metrics.avg('accuracy')
-                }, global_step=epoch)
-            self.writer.add_scalars('F1-Score',
-                {
-                    'Train': self.train_metrics.avg('f1_score'),
-                    'Val': self.valid_metrics.avg('f1_score')
-                }, global_step=epoch)
+            
+            for metric in self.lst_metrics:
+                self.writer.add_scalars(metric,
+                    {
+                        'Train': self.train_metrics.avg(metric),
+                        'Val': self.valid_metrics.avg(metric)
+                    }, global_step=epoch)
+                    
             self.writer.add_scalar('lr', self.optimizer.param_groups[-1]['lr'], global_step=epoch)
 
             # logging result to console
@@ -126,22 +128,18 @@ class Trainer(BaseTrainer):
                 self.logger.info('    {:15s}: {}'.format(str(key), value))
 
             # save model
-            save_best_accuracy = False
-            save_best_loss = False
-            save_best_f1_score = False
-            if self.best_accuracy == None or self.best_accuracy < self.valid_metrics.avg('accuracy'):
-                self.best_accuracy = self.valid_metrics.avg('accuracy')
-                save_best_accuracy = True
-
-            if self.best_f1_score == None or self.best_f1_score < self.valid_metrics.avg('f1_score'):
-                self.best_f1_score = self.valid_metrics.avg('f1_score')
-                save_best_f1_score = True
-            
             if self.best_loss == None or self.best_loss > self.valid_metrics.avg('loss'):
                 self.best_loss = self.valid_metrics.avg('loss')
                 save_best_loss = True
 
-            self._save_checkpoint(epoch, save_best_accuracy=save_best_accuracy, save_best_loss=save_best_loss, save_best_f1_score=save_best_f1_score)
+            save_best = dict()
+            for metric in self.lst_metrics:
+                save_best[metric] = False
+                if self.best_metrics[metric] == None or self.best_metrics[metric] < self.valid_metrics.avg(metric):
+                    self.best_metrics[metric] = self.valid_metrics.avg(metric)
+                    save_best[metric] = True
+
+            self._save_checkpoint(epoch, save_best_loss, save_best)
 
             # save logs to drive if using colab
             if self.config['colab']:
@@ -214,7 +212,7 @@ class Trainer(BaseTrainer):
             else:
                 end_time = time.time()
                 if (batch_idx+1) % self.log_step[0] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('train')):
-                    self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} mA: {:.6f} Acc: {:.6f} F1-score: {:.6f}'.format(
+                    self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.4f} mA: {:.4f} Acc: {:.4f} F1-score: {:.4f}'.format(
                         epoch,
                         batch_idx+1,
                         len(self.datamanager.get_dataloader('train')),
@@ -223,7 +221,6 @@ class Trainer(BaseTrainer):
                         loss.item(),
                         accuracy.item(),
                         f1_score.item()))
-        
         if self.cfg_trainer['use_tqdm']:
             tqdm_callback.on_epoch_end()
         return self.train_metrics.result()
@@ -269,7 +266,7 @@ class Trainer(BaseTrainer):
                 else:
                     end_time = time.time()
                     if (batch_idx+1) % self.log_step[1] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('val'))-1:
-                        self.logger.info('Valid Epoch: {} {}/{} {:.1f}batch/s Loss: {:.6f} mA: {:.6f} Acc: {:.6f} F1-score: {:.6f}'.format(
+                        self.logger.info('Valid Epoch: {} {}/{} {:.1f}batch/s Loss: {:.4f} mA: {:.4f} Acc: {:.4f} F1-score: {:.4f}'.format(
                             epoch,
                             batch_idx+1,
                             len(self.datamanager.get_dataloader('val')),
@@ -282,7 +279,7 @@ class Trainer(BaseTrainer):
             tqdm_callback.on_epoch_end()
         return self.valid_metrics.result()
 
-    def _save_checkpoint(self, epoch, save_best_accuracy=False, save_best_loss=False, save_best_f1_score=False):
+    def _save_checkpoint(self, epoch, save_best_loss, save_best_metrics):
         r""" Save model to file
         """
         state = {
@@ -291,28 +288,25 @@ class Trainer(BaseTrainer):
             'loss': self.criterion.state_dict(),
             'optimizer': self.optimizer.state_dict(),
             'lr_scheduler': self.lr_scheduler.state_dict(),
-            'best_accuracy': self.best_accuracy,
-            'best_loss': self.best_loss,
-            'best_f1_score': self.best_f1_score
+            'best_loss': self.best_loss
         }
+        for metric in self.lst_metrics:
+            state.update({'best_{}'.format(metric): self.best_metrics[metric]})
+
         filename = os.path.join(self.checkpoint_dir, 'model_last.pth')
         self.logger.info("Saving last model: model_last.pth ...")
         torch.save(state, filename)
-        
-        if save_best_accuracy:
-            filename = os.path.join(self.checkpoint_dir, 'model_best_accuracy.pth')
-            self.logger.info("Saving current best accuracy: model_best_accuracy.pth ...")
-            torch.save(state, filename)
         
         if save_best_loss:
             filename = os.path.join(self.checkpoint_dir, 'model_best_loss.pth')
             self.logger.info("Saving current best loss: model_best_loss.pth ...")
             torch.save(state, filename)
         
-        if save_best_f1_score:
-            filename = os.path.join(self.checkpoint_dir, 'model_best_f1_score.pth')
-            self.logger.info("Saving current best f1-score: model_best_f1_score.pth ...")
-            torch.save(state, filename)
+        for metric in self.lst_metrics:
+            if save_best_metrics[metric]:
+                filename = os.path.join(self.checkpoint_dir, 'model_best_{}.pth'.format(metric))
+                self.logger.info("Saving current best {}: model_best_{}.pth ...".format(metric, metric))
+                torch.save(state, filename)
 
     def _resume_checkpoint(self, resume_path):
         r""" Load model from checkpoint
@@ -326,7 +320,7 @@ class Trainer(BaseTrainer):
         self.criterion.load_state_dict(checkpoint['loss'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])
         self.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
-        self.best_accuracy = checkpoint['best_accuracy']
         self.best_loss = checkpoint['best_loss']
-        self.best_f1_score = checkpoint['best_f1_score']
+        for metric in self.lst_metrics:
+            self.best_metrics[metric] = checkpoint['best_{}'.format(metric)]
         self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))
