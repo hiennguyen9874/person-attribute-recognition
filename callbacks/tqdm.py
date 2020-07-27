@@ -2,8 +2,11 @@ from tqdm import tqdm
 
 class Tqdm(object):
     def __init__(self, epoch, total, phase='train'):
-        """
-        Tqdm Progress Bar callback
+        r""" Tqdm Progress Bar callback
+        Args:
+            epoch (int):
+            total (int): num of iterator in one epoch
+            phase (str): training or validation
         """
         assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
         self.phase = phase

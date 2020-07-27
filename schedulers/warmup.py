@@ -16,8 +16,8 @@ from bisect import bisect_right
 # but the current LRScheduler design doesn't allow it
 
 class WarmupMultiStepLR(torch.optim.lr_scheduler._LRScheduler):
-    ''' Bag of tricks: https://arxiv.org/pdf/1903.07071.pdf
-    '''
+    r""" Bag of tricks: https://arxiv.org/pdf/1903.07071.pdf
+    """
     def __init__(
         self,
         optimizer,
@@ -63,7 +63,7 @@ class WarmupMultiStepLR(torch.optim.lr_scheduler._LRScheduler):
 
 
 class WarmupCosineAnnealingLR(torch.optim.lr_scheduler._LRScheduler):
-    r""" Copy from here: https://github.com/JDAI-CV/fast-reid/blob/master/fastreid/solver/lr_scheduler.py
+    r""" Warpmup learning rate, copied from here: https://github.com/JDAI-CV/fast-reid/blob/master/fastreid/solver/lr_scheduler.py
     """
     def __init__(
             self,
@@ -97,7 +97,7 @@ class WarmupCosineAnnealingLR(torch.optim.lr_scheduler._LRScheduler):
             return [self.eta_min_lr + (base_lr - self.eta_min_lr) * (1 + math.cos(math.pi * (self.last_epoch - self.delay_iters) / (self.max_iters - self.delay_iters))) / 2 for base_lr in self.base_lrs]
 
 def _get_warmup_factor_at_iter(method: str, iter: int, warmup_iters: int, warmup_factor: float) -> float:
-    """
+    r"""
     Return the learning rate warmup factor at a specific iteration.
     See https://arxiv.org/abs/1706.02677 for more details.
     Args:
@@ -129,7 +129,6 @@ if __name__ == "__main__":
     for i in range(120):
         lr_scheduler.step()
         for j in range(3):
-            # print(i, lr_scheduler.get_lr()[0])
             x.append(i)
             y.append(lr_scheduler.get_lr()[0])
             optimizer.step()

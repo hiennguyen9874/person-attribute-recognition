@@ -15,8 +15,8 @@ def ratio2weight(targets, ratio):
     return weights
 
 class CEL_Sigmoid(nn.Module):
-    ''' https://arxiv.org/pdf/2005.11909.pdf
-    '''
+    r""" https://arxiv.org/pdf/2005.11909.pdf
+    """
     def __init__(self, pos_ratio=None, reduction='mean', use_gpu=True):
         super(CEL_Sigmoid, self).__init__()
         assert reduction in ['sum', 'mean'], 'reduction must be mean or sum'

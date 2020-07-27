@@ -198,17 +198,17 @@ class Trainer(BaseTrainer):
 
             # update loss and accuracy in MetricTracker
             self.train_metrics.update('loss', loss.item())
-            self.train_metrics.update('mA', mean_accuracy.item())
-            self.train_metrics.update('accuracy', accuracy.item())
-            self.train_metrics.update('f1_score', f1_score.item())
+            self.train_metrics.update('mA', mean_accuracy)
+            self.train_metrics.update('accuracy', accuracy)
+            self.train_metrics.update('f1_score', f1_score)
 
             # update process
             if self.cfg_trainer['use_tqdm']:
                 tqdm_callback.on_batch_end({
                     'loss': loss.item(),
-                    'mA': mean_accuracy.item(),
-                    'accuracy': accuracy.item(),
-                    'f1-score': f1_score.item()})
+                    'mA': mean_accuracy,
+                    'accuracy': accuracy,
+                    'f1-score': f1_score})
             else:
                 end_time = time.time()
                 if (batch_idx+1) % self.log_step[0] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('train')):
@@ -217,10 +217,10 @@ class Trainer(BaseTrainer):
                         batch_idx+1,
                         len(self.datamanager.get_dataloader('train')),
                         1/(end_time-start_time),
-                        mean_accuracy.item(),
                         loss.item(),
-                        accuracy.item(),
-                        f1_score.item()))
+                        mean_accuracy,
+                        accuracy,
+                        f1_score))
         if self.cfg_trainer['use_tqdm']:
             tqdm_callback.on_epoch_end()
         return self.train_metrics.result()
@@ -252,17 +252,17 @@ class Trainer(BaseTrainer):
 
                 # update loss and accuracy in MetricTracker
                 self.valid_metrics.update('loss', loss.item())
-                self.valid_metrics.update('mA', mean_accuracy.item())
-                self.valid_metrics.update('accuracy', accuracy.item())
-                self.valid_metrics.update('f1_score', f1_score.item())
+                self.valid_metrics.update('mA', mean_accuracy)
+                self.valid_metrics.update('accuracy', accuracy)
+                self.valid_metrics.update('f1_score', f1_score)
 
                 # update process
                 if self.cfg_trainer['use_tqdm']:
                     tqdm_callback.on_batch_end({
                         'loss': loss.item(),
-                        'mA': mean_accuracy.item(),
-                        'accuracy': accuracy.item(),
-                        'f1-score': f1_score.item()})
+                        'mA': mean_accuracy,
+                        'accuracy': accuracy,
+                        'f1-score': f1_score})
                 else:
                     end_time = time.time()
                     if (batch_idx+1) % self.log_step[1] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('val'))-1:
@@ -271,10 +271,10 @@ class Trainer(BaseTrainer):
                             batch_idx+1,
                             len(self.datamanager.get_dataloader('val')),
                             1/(end_time-start_time),
-                            mean_accuracy.item(),
                             loss.item(),
-                            accuracy.item(),
-                            f1_score.item()))
+                            mean_accuracy,
+                            accuracy,
+                            f1_score))
         if self.cfg_trainer['use_tqdm']:
             tqdm_callback.on_epoch_end()
         return self.valid_metrics.result()

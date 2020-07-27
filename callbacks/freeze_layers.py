@@ -2,10 +2,16 @@ import torch
 import torch.nn as nn
 
 class FreezeLayers(object):
-    def __init__(self, model, freeze_layers, freeze_epochs) -> None:
+    r""" freeze some layers when training
+    Args:
+        model (nn.Module)
+        freeze_layers (list): list of layer will freeze
+        freeze_epochs (int): num of epoch will frozen
+    """
+    def __init__(self, model, freeze_layers, freeze_epochs):
+        self.model = model
         self.freeze_layers = freeze_layers
         self.freeze_epochs = freeze_epochs
-        self.model = model
 
     def _freeze(self):
         for name, module in self.model.named_children():

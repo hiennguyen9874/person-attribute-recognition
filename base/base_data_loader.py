@@ -5,7 +5,7 @@ from torch.utils.data.dataloader import default_collate
 from torch.utils.data.sampler import SubsetRandomSampler
 
 class BaseDataLoader(DataLoader):
-    """ Base class for all data loaders
+    r""" Base class for all data loaders
     """
     def __init__(self, dataset, batch_size, shuffle, num_workers, pin_memory=False, validation_split=0.5, collate_fn=default_collate):
         self.validation_split = validation_split
@@ -27,7 +27,7 @@ class BaseDataLoader(DataLoader):
 
     
     def _split_sampler(self, split):
-        """ Split sampler with validation
+        r""" Split sampler with validation
         """
         if split == 0.0:
             return None, None
