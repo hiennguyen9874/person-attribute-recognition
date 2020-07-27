@@ -1,20 +1,20 @@
 # Copy from here: https://gist.github.com/grimpy/7dd579059d7c4c42d0528e4676edffaf
-import requests
-import sys
 import os
-# from tqdm import tqdm
+import sys
+sys.path.append('.')
 
+import requests
+from tqdm import tqdm
 
 __all__ = ['download_file_from_google_drive', 'download_with_url']
 
-def download_file_from_google_drive(id, destination=None):
+def download_file_from_google_drive(id, destination=None, use_tqdm=True):
     URL = "https://docs.google.com/uc?export=download"
 
     session = requests.Session()
     viewresp = session.get(URL, params={"id": id}, stream=True)
 
     token = None
-    print(viewresp.cookies.get_dict())
     for key, value in viewresp.cookies.get_dict().items():
         if key.startswith("download_warning"):
             token = value
@@ -62,12 +62,14 @@ def download_file_from_google_drive(id, destination=None):
         initial = stat.st_size 
         range = response.headers.get('Content-Range', None)
 
-    # with tqdm(desc=destination, total=total_size, initial=initial, unit="B", unit_scale=True) as pbar:
+    if use_tqdm:
+        pbar = tqdm(desc=destination, total=total_size, initial=initial, unit="B", unit_scale=True)
     with open(partfile, "ab") as f:
         f.seek(initial)
         for chunk in response.iter_content(CHUNK_SIZE):
             if chunk:
-                # pbar.update(CHUNK_SIZE)
+                if use_tqdm:
+                    pbar.update(CHUNK_SIZE)
                 f.write(chunk)
         os.rename(partfile, destination)
     return filename
