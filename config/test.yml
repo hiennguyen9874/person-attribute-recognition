@@ -6,8 +6,8 @@ model:
   batch_norm_bias: True
 
 data:
-  name: ppe_two
-  batch_size: 32
+  name: pa_100k
+  batch_size: 128
 
 loss:
   name: CEL_Sigmoid
