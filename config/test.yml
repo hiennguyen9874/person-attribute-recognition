@@ -7,6 +7,7 @@ model:
 
 data:
   name: peta
+  batch_size: 32
 
 loss:
   name: Non_BCEWithLogitsLoss
