@@ -61,7 +61,7 @@ def recognition_metrics(labels, preds, threshold=0.5, eps = 1e-20):
     return result_label, result_instance
 
 def compute_accuracy_cuda(labels, preds, threshold=0.5, eps=1e-20):
-    r""" compute mean accuracy (class-based), accuracy, f1-score (instance-based).
+    r""" compute mean accuracy (class-based), accuracy (instance-based), f1-score (instance-based).
     Args:
         labels (tensor 2d (float 0, 1) (num_classes, num_attribute)): tensor 2d 0, 1;
         preds (tensor 2d (float)(num_classes, num_attribute)): output after sigmoid layer

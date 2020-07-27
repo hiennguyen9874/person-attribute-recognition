@@ -44,7 +44,7 @@ class Trainer(BaseTrainer):
         else:
             self.freeze = None
 
-        # metrics
+        # list of metrics
         self.lst_metrics = ['mA', 'accuracy', 'f1_score']
 
         # track metric
@@ -54,7 +54,8 @@ class Trainer(BaseTrainer):
         # step log loss and accuracy
         self.log_step = (len(self.datamanager.get_dataloader('train')) // 10,
                         len(self.datamanager.get_dataloader('val')) // 10)
-        self.log_step = (self.log_step[0] if self.log_step[0] > 0 else 1, self.log_step[1] if self.log_step[1] > 0 else 1)
+        self.log_step = (self.log_step[0] if self.log_step[0] > 0 else 1,
+                        self.log_step[1] if self.log_step[1] > 0 else 1)
         
         # best accuracy and loss
         self.best_loss = None
