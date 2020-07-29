@@ -7,7 +7,7 @@ model:
 
 data:
   name: pa_100k
-  batch_size: 128
+  batch_size: 64
 
 loss:
   name: CEL_Sigmoid

@@ -13,17 +13,17 @@
 
 - Pooling: [~~GeM pooling~~](https://github.com/JDAI-CV/fast-reid/blob/46228ce946/fastreid/layers/gem_pool.py), [Attention Pooling](https://github.com/JDAI-CV/fast-reid/blob/46228ce946/fastreid/layers/attention.py)
 
-- [Reduction head](https://github.com/JDAI-CV/fast-reid/blob/46228ce946/fastreid/modeling/heads/reduction_head.py)
+- [~~Reduction head~~](https://github.com/JDAI-CV/fast-reid/blob/46228ce946/fastreid/modeling/heads/reduction_head.py)
 
 - Auto-augmentation: [Paper](https://arxiv.org/pdf/1805.09501.pdf)
 
-- Non-Local : [Paper](https://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Non-Local_Neural_Networks_CVPR_2018_paper.pdf), [Paper](https://arxiv.org/pdf/2001.04193.pdf)
+- ~~Non-Local~~ : [Paper](https://openaccess.thecvf.com/content_cvpr_2018/papers/Wang_Non-Local_Neural_Networks_CVPR_2018_paper.pdf), [Paper](https://arxiv.org/pdf/2001.04193.pdf)
 
 - GradCAM: [Paper](https://arxiv.org/pdf/1610.02391.pdf)
 
 - Thay đổi ngưỡng khi quyết định true or false
 
-- so sánh với các mô hình khác OSNET.
+- ~~so sánh với các mô hình khác OSNET~~.
 
 - ~~Thong ke ty le nhan~~
 
@@ -31,6 +31,6 @@
 
 - train theo episode
 
-- So sanh cua hai ham loss khi su dung CEL_sigmoid va BCE
+- ~~So sanh cua hai ham loss khi su dung CEL_sigmoid va BCE~~
 
-- print freeze 
+- ~~print freeze~~
