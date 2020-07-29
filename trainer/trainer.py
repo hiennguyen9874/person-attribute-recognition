@@ -129,6 +129,7 @@ class Trainer(BaseTrainer):
                 self.logger.info('    {:15s}: {}'.format(str(key), value))
 
             # save model
+            save_best_loss = False
             if self.best_loss == None or self.best_loss > self.valid_metrics.avg('loss'):
                 self.best_loss = self.valid_metrics.avg('loss')
                 save_best_loss = True
