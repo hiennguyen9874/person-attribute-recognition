@@ -11,7 +11,15 @@ from utils import download_with_url, download_file_from_google_drive
 class BaseDataSource(object):
     google_drive_api = ''
     
-    def __init__(self, root_dir, dataset_dir, file_name, image_size=(256, 128)):
+    def __init__(
+        self,
+        root_dir,
+        dataset_dir,
+        file_name,
+        image_size=(256, 128),
+        phase=['train', 'val', 'test']):
+        
+        self.phase = phase
         self.root_dir = root_dir
         self.dataset_dir = dataset_dir
         self.file_name = file_name
@@ -75,3 +83,6 @@ class BaseDataSource(object):
         r""" get size of image to resize when training
         """
         return self.image_size
+    
+    def get_phase(self):
+        return self.phase

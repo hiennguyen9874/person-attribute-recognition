@@ -44,7 +44,7 @@ class DataManger(object):
         ])
 
         dataset = dict()
-        for _phase in ['train', 'val', 'test']:
+        for _phase in self.datasource.get_phase():
             dataset[_phase] = ImageDataset(self.datasource.get_data(_phase), transform=transform[_phase])
         
         self.dataloader = dict()
@@ -65,13 +65,15 @@ class DataManger(object):
             pin_memory=config['pin_memory'],
             drop_last=config['drop_last']
         )
+
         self.dataloader['test'] = DataLoader(
             dataset['test'],
             batch_size=32,
             shuffle=False,
-            drop_last=False)
+            drop_last=False
+        )
 
     def get_dataloader(self, phase):
-        if phase not in ['train', 'val', 'test']:
-            raise ValueError("Error phase paramaster, phase in [train, val, test]")
+        if phase not in self.datasource.get_phase():
+            raise ValueError("Error phase paramaster, phase in %s" % str(self.datasource.get_phase()))
         return self.dataloader[phase]
