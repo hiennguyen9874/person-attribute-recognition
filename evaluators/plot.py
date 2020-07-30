@@ -8,7 +8,7 @@ sys.path.append('.')
 
 __all__ = ['plot_loss_accuracy']
 
-from utils import aggregate, aggregate1
+from utils.aggregator import aggregate, aggregate1
 
 def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, com=0):
     r""" Plot metrics from tensorboard log folder

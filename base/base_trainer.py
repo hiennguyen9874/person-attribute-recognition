@@ -31,7 +31,7 @@ class BaseTrainer(object):
         setup_logging(self.logs_dir)
         self.logger = logging.getLogger('train')
         
-        self.use_gpu = config['n_gpu'] > 0 and torch.cuda.is_available()
+        self.use_gpu = self.cfg_trainer['n_gpu'] > 0 and torch.cuda.is_available()
         if self.use_gpu:
             torch.backends.cudnn.benchmark = True
         self.device = torch.device('cuda:0' if self.use_gpu else 'cpu')
@@ -66,3 +66,49 @@ class BaseTrainer(object):
         if os.path.isdir(self.logs_dir_saved):
             shutil.rmtree(self.logs_dir_saved)
         shutil.copytree(self.logs_dir, self.logs_dir_saved)
+
+    def _save_checkpoint(self, epoch, save_best_loss, save_best_metrics):
+        r""" Save model to file
+        """
+        state = {
+            'epoch': epoch,
+            'state_dict': self.model.state_dict(),
+            'loss': self.criterion.state_dict(),
+            'optimizer': self.optimizer.state_dict(),
+            'lr_scheduler': self.lr_scheduler.state_dict(),
+            'best_loss': self.best_loss
+        }
+        for metric in self.lst_metrics:
+            state.update({'best_{}'.format(metric): self.best_metrics[metric]})
+
+        filename = os.path.join(self.checkpoint_dir, 'model_last.pth')
+        self.logger.info("Saving last model: model_last.pth ...")
+        torch.save(state, filename)
+        
+        if save_best_loss:
+            filename = os.path.join(self.checkpoint_dir, 'model_best_loss.pth')
+            self.logger.info("Saving current best loss: model_best_loss.pth ...")
+            torch.save(state, filename)
+        
+        for metric in self.lst_metrics:
+            if save_best_metrics[metric]:
+                filename = os.path.join(self.checkpoint_dir, 'model_best_{}.pth'.format(metric))
+                self.logger.info("Saving current best {}: model_best_{}.pth ...".format(metric, metric))
+                torch.save(state, filename)
+
+    def _resume_checkpoint(self, resume_path):
+        r""" Load model from checkpoint
+        """
+        if not os.path.exists(resume_path):
+            raise FileExistsError("Resume path not exist!")
+        self.logger.info("Loading checkpoint: {} ...".format(resume_path))
+        checkpoint = torch.load(resume_path, map_location=self.map_location)
+        self.start_epoch = checkpoint['epoch'] + 1
+        self.model.load_state_dict(checkpoint['state_dict'])
+        self.criterion.load_state_dict(checkpoint['loss'])
+        self.optimizer.load_state_dict(checkpoint['optimizer'])
+        self.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
+        self.best_loss = checkpoint['best_loss']
+        for metric in self.lst_metrics:
+            self.best_metrics[metric] = checkpoint['best_{}'.format(metric)]
+        self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))

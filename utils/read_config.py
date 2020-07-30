@@ -8,6 +8,8 @@ import collections.abc
 __all__ = ['read_config']
 
 def update(d, u):
+    r""" deep update dict. copied from here: https://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth
+    """
     for k, v in u.items():
         if isinstance(v, collections.abc.Mapping):
             d[k] = update(d.get(k, {}), v)
@@ -16,6 +18,8 @@ def update(d, u):
     return d
 
 def read_config(path_config: str, path_config_base='config/base.yml'):
+    r""" read config yml file, return to dict
+    """
     base_config = yaml.safe_load(open(path_config_base))
     new_config = yaml.safe_load(open(path_config))
     all_config = update(base_config, new_config)

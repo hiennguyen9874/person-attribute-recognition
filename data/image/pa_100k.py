@@ -52,13 +52,13 @@ class PA_100K(BaseDataSource):
     def get_data(self, phase='train'):
         assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
         return self.data[phase]
-        
-    def get_attribute(self, mode = 'train'):
-        return self.attribute_name
     
     def get_weight(self, phase = 'train'):
         assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
         return self.weight[phase]
+    
+    def get_attribute(self):
+        return self.attribute_name
 
     def _exists(self, extract_dir):
         if os.path.exists(os.path.join(extract_dir, 'images')) \
@@ -84,9 +84,10 @@ class PA_100K(BaseDataSource):
         return [list(itertools.chain(*ele)) for ele in itertools.product(*arr)]
 
 if __name__ == "__main__":
-    datasource = PA_100K(root_dir='/home/hien/Documents/datasets', download=True, extract=True)
-    all_data = datasource.get_data('train')[0] + datasource.get_data('val')[0] + datasource.get_data('test')[0]
-    datasource.get_list_attribute_random()
+    from utils import read_config
+    config = read_config('config/base.yml')
+    datasource = PA_100K(root_dir=config['data']['data_dir'], download=True, extract=True)
+    print(np.expand_dims(datasource.get_weight('train'), axis=1))
     pass
 
 '''

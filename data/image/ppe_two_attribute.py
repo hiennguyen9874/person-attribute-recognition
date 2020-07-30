@@ -104,7 +104,9 @@ class PPE_Two(BaseDataSource):
         return False
 
 if __name__ == "__main__":
-    datasource = PPE_Two(root_dir='/home/hien/Documents/datasets', download=True, extract=True)
+    from utils import read_config
+    config = read_config('config/base.yml')
+    datasource = PPE_Two(root_dir=config['data']['data_dir'], download=True, extract=True)
     # print('num image train:', len(datasource.get_data('train')))
     # print('num image val', len(datasource.get_data('val')))
     # print('num image test', len(datasource.get_data('test')))

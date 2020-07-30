@@ -1,6 +1,7 @@
 name: reid
 channels:
   - pytorch
+  - anaconda
   - conda-forge
   - defaults
 dependencies:
@@ -207,6 +208,7 @@ dependencies:
   - xorg-xextproto=7.3.0=h14c3975_1002
   - xorg-xproto=7.0.31=h14c3975_1007
   - xz=5.2.5=h7b6447c_0
+  - yaml=0.2.5=h7b6447c_0
   - yapf=0.30.0=py_0
   - zeromq=4.3.2=he1b5a44_2
   - zipp=3.1.0=py_0
@@ -221,6 +223,7 @@ dependencies:
     - future==0.18.2
     - kiwisolver==1.2.0
     - matplotlib==3.2.2
+    - pyyaml==5.3.1
     - thop==0.0.31-2005241907
     - torchsummary==1.5.1
 

@@ -1,13 +1,13 @@
 from tqdm import tqdm
 
 class Tqdm(object):
+    r""" Tqdm Progress Bar callback \
+    Args: \
+        epoch (int): \
+        total (int): num of iterator in one epoch \
+        phase (str): training or validation \
+    """
     def __init__(self, epoch, total, phase='train'):
-        r""" Tqdm Progress Bar callback
-        Args:
-            epoch (int):
-            total (int): num of iterator in one epoch
-            phase (str): training or validation
-        """
         assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
         self.phase = phase
         self.progbar = tqdm(total=total)
@@ -19,5 +19,4 @@ class Tqdm(object):
 
     def on_epoch_end(self):
         self.progbar.close()
-
 

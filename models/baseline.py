@@ -25,6 +25,7 @@ class Baseline(nn.Module):
         bn_where='after',
         batch_norm_bias=True,
         use_tqdm=True):
+        
         super(Baseline, self).__init__()
         self.head_name = head
         self.num_classes = num_classes
@@ -61,6 +62,6 @@ class Baseline(nn.Module):
         return heatmaps
 
 if __name__ == "__main__":
-    model = Baseline(26, 'osnet', True, 'gem_pooling', 'BNHead')
+    model = Baseline(26, 'resnet50', True, 'gem_pooling', 'BNHead')
     summary(print, model, (3, 256, 128), 32, 'cpu', False)
 

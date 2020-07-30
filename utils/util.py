@@ -1,8 +1,11 @@
 import os
 import json
+
 import sys
-import shutil
 sys.path.append('.')
+
+import shutil
+from utils.read_config import read_config
 
 from PIL import Image
 
@@ -39,4 +42,4 @@ def config_to_str(config):
     return "{" + "\n".join("{!r}: {!r},".format(k, v) for k, v in config.items()) + "}"
 
 if __name__ == "__main__":
-    shutil.rmtree('/home/hien/Documents/Models_Attribute_Recognition/OSNet_Person_Attribute_Refactor/test')
+    print(json.dumps(read_config('config/test.yml'), indent=4))
