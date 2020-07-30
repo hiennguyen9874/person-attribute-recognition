@@ -3,7 +3,6 @@ model:
   pooling: gem_pooling
   head: BNHead
   bn_where: after
-  batch_norm_bias: True
 
 data:
   name: peta
