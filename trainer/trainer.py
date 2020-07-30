@@ -1,6 +1,6 @@
-import torch
 import os
 import time
+import torch
 
 import sys
 sys.path.append('.')
@@ -71,17 +71,13 @@ class Trainer(BaseTrainer):
             params_lr_scheduler=params_lr_scheduler,
             freeze_layers=False if self.freeze == None else True)
 
-        # send model to device
-        self.model.to(self.device)
-        self.criterion.to(self.device)
-
         # summary model
         summary(
             func=self.logger.info,
             model=self.model,
             input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
             batch_size=config['data']['batch_size'],
-            device='cuda' if self.use_gpu else 'cpu',
+            device='cpu',
             print_step=False)
 
         # resume model from last checkpoint
@@ -89,6 +85,10 @@ class Trainer(BaseTrainer):
             self._resume_checkpoint(config['resume'])
 
     def train(self):
+        # send model to device
+        self.model.to(self.device)
+        self.criterion.to(self.device)
+        # begin train
         for epoch in range(self.start_epoch, self.epochs + 1):
             # freeze layer
             if self.freeze != None:
@@ -97,9 +97,10 @@ class Trainer(BaseTrainer):
             # train
             result = self._train_epoch(epoch)
             
-            # epoch
+            # valid
             result = self._valid_epoch(epoch)
 
+            # learning rate
             if self.lr_scheduler is not None:
                 if isinstance(self.lr_scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
                     self.lr_scheduler.step(self.valid_metrics.avg('loss'))
@@ -281,48 +282,3 @@ class Trainer(BaseTrainer):
             tqdm_callback.on_epoch_end()
         return self.valid_metrics.result()
 
-    def _save_checkpoint(self, epoch, save_best_loss, save_best_metrics):
-        r""" Save model to file
-        """
-        state = {
-            'epoch': epoch,
-            'state_dict': self.model.state_dict(),
-            'loss': self.criterion.state_dict(),
-            'optimizer': self.optimizer.state_dict(),
-            'lr_scheduler': self.lr_scheduler.state_dict(),
-            'best_loss': self.best_loss
-        }
-        for metric in self.lst_metrics:
-            state.update({'best_{}'.format(metric): self.best_metrics[metric]})
-
-        filename = os.path.join(self.checkpoint_dir, 'model_last.pth')
-        self.logger.info("Saving last model: model_last.pth ...")
-        torch.save(state, filename)
-        
-        if save_best_loss:
-            filename = os.path.join(self.checkpoint_dir, 'model_best_loss.pth')
-            self.logger.info("Saving current best loss: model_best_loss.pth ...")
-            torch.save(state, filename)
-        
-        for metric in self.lst_metrics:
-            if save_best_metrics[metric]:
-                filename = os.path.join(self.checkpoint_dir, 'model_best_{}.pth'.format(metric))
-                self.logger.info("Saving current best {}: model_best_{}.pth ...".format(metric, metric))
-                torch.save(state, filename)
-
-    def _resume_checkpoint(self, resume_path):
-        r""" Load model from checkpoint
-        """
-        if not os.path.exists(resume_path):
-            raise FileExistsError("Resume path not exist!")
-        self.logger.info("Loading checkpoint: {} ...".format(resume_path))
-        checkpoint = torch.load(resume_path, map_location=self.map_location)
-        self.start_epoch = checkpoint['epoch'] + 1
-        self.model.load_state_dict(checkpoint['state_dict'])
-        self.criterion.load_state_dict(checkpoint['loss'])
-        self.optimizer.load_state_dict(checkpoint['optimizer'])
-        self.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
-        self.best_loss = checkpoint['best_loss']
-        for metric in self.lst_metrics:
-            self.best_metrics[metric] = checkpoint['best_{}'.format(metric)]
-        self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))

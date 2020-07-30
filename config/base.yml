@@ -1,6 +1,3 @@
-# 0 if using cpu. > 0 if using gpu
-n_gpu: 1
-
 # timezone, it will use to get run_id
 timezone: Asia/Ho_Chi_Minh
 
@@ -25,7 +22,7 @@ model:
 
 data:
   # folder will save data
-  data_dir: /home/hien/Documents/datasets
+  data_dir: /home/ubuntu/Documents/datasets
   # name of dataset: [peta, pa100k, ppe, ppe_two]
   name: peta
   # automatic download and extract model from my drive
@@ -98,7 +95,11 @@ clip_grad_norm_:
 # train on local
 # use_tqdm: use tqdm process bar when training.
 trainer:
+  # 0 if using cpu. > 0 if using gpu
+  n_gpu: 0
+  # maximum epoch
   epochs: 120
+  # saved log folder
   checkpoint_dir: saved/checkpoints
   log_dir: saved/logs
   output_dir: saved/outputs
@@ -108,6 +109,7 @@ trainer:
 # log folder will copy to log_dir_saved at end of epoch
 # use_tqdm: use tqdm process bar when training.
 trainer_colab:
+  n_gpu: 1
   epochs: 120
   checkpoint_dir: /content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints
   log_dir: saved/logs

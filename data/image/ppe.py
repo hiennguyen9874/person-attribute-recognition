@@ -104,10 +104,10 @@ class PPE(BaseDataSource):
         return False
 
 if __name__ == "__main__":
-    datasource = PPE(root_dir='/home/hien/Documents/datasets', download=True, extract=True)
+    from utils import read_config
+    config = read_config('config/base.yml')
+    datasource = PPE(root_dir=config['data']['data_dir'], download=True, extract=True)
     
     print(datasource.get_weight('train'))
-    print(datasource.get_weight('val'))
-    print(datasource.get_weight('test'))
     
 

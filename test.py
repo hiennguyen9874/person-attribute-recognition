@@ -24,7 +24,7 @@ def main(config):
     setup_logging(output_dir)
     logger = logging.getLogger('test')
 
-    use_gpu = config['n_gpu'] > 0 and torch.cuda.is_available()
+    use_gpu = cfg_trainer['n_gpu'] > 0 and torch.cuda.is_available()
     device = torch.device('cuda:0' if use_gpu else 'cpu')
     map_location = "cuda:0" if use_gpu else torch.device('cpu')
 

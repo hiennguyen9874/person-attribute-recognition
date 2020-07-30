@@ -62,14 +62,14 @@ class Peta(BaseDataSource):
         assert partition < 5, 'partition must in [0-5]'
         return self.data[phase][partition]
 
-    def get_attribute(self, phase = 'train'):
-        return self.attribute_name
-    
     def get_weight(self, phase = 'train', partition=0):
         assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
         assert partition < 5, 'partition must in [0-5]'
         return self.weight[phase][partition]
-    
+
+    def get_attribute(self):
+        return self.attribute_name
+
     def _exists(self, extract_dir):
         if os.path.exists(os.path.join(extract_dir, 'images')) \
             and os.path.exists(os.path.join(extract_dir, 'README')) \
@@ -78,10 +78,12 @@ class Peta(BaseDataSource):
         return False
 
 if __name__ == "__main__":
-    datasource = Peta(root_dir='/home/hien/Documents/datasets')
-    print(datasource.get_weight('test'))
+    from utils import read_config
+    config = read_config('config/base.yml')
+    datasource = Peta(root_dir=config['data']['data_dir'], download=True, extract=True)
+    print(len(datasource.get_attribute()))
+    print(np.expand_dims(datasource.get_weight('train'), axis=1))
     pass
-
 
 r'''
 ['accessoryHat',
@@ -119,5 +121,4 @@ r'''
 'personalLess60',
 'personalLarger60',
 'personalMale']
-
 '''

@@ -6,7 +6,7 @@ import sys
 sys.path.append('.')
 from tqdm import tqdm
 
-from utils import download_with_url, download_file_from_google_drive
+from utils import download_file_from_google_drive
 
 class BaseDataSource(object):
     google_drive_api = ''

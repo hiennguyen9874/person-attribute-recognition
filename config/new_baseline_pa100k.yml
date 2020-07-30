@@ -3,10 +3,9 @@ model:
   pooling: gem_pooling
   head: BNHead
   bn_where: after
-  batch_norm_bias: True
 
 data:
-  name: peta
+  name: pa_100k
   batch_size: 64
 
 loss:
@@ -20,9 +19,13 @@ freeze:
 lr_scheduler:
   enable: True
   name: WarmupCosineAnnealingLR
+  delay_iters: 20
+  eta_min_lr: 7.7e-07
+  warmup_factor: 0.01
+  warmup_iters: 10
 
 trainer:
-  epochs: 120
+  epochs: 50
   
 trainer_colab:
-  epochs: 120
+  epochs: 50

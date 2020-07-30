@@ -138,7 +138,9 @@ def main(config):
 
     model, _ = build_model(config['model'], num_classes=len(datasource.get_attribute()))
 
-    use_gpu = config['n_gpu'] > 0 and torch.cuda.is_available()
+    cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
+
+    use_gpu = cfg_trainer['n_gpu'] > 0 and torch.cuda.is_available()
     device = torch.device('cuda:0' if use_gpu else 'cpu')
     map_location = "cuda:0" if use_gpu else torch.device('cpu')
 

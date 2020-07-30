@@ -15,8 +15,7 @@ def build_losses(config, pos_ratio, use_gpu=True):
     elif cfg_loss['name'] == 'CEL_Sigmoid':
         return CEL_Sigmoid(pos_ratio, use_gpu=use_gpu), {}
     else:
-        raise KeyError('config[loss] error')
-
+        raise KeyError('config[loss][name] error')
 
 if __name__ == "__main__":
     target = torch.ones([10, 64], dtype=torch.float32) # 64 classes, batch size = 10
