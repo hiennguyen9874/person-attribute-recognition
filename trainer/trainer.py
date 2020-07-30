@@ -71,13 +71,18 @@ class Trainer(BaseTrainer):
             params_lr_scheduler=params_lr_scheduler,
             freeze_layers=False if self.freeze == None else True)
 
+
+        # send model to device
+        self.model.to(self.device)
+        self.criterion.to(self.device)
+
         # summary model
         summary(
             func=self.logger.info,
             model=self.model,
             input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
             batch_size=config['data']['batch_size'],
-            device='cpu',
+            device='cuda' if self.use_gpu else 'cpu',
             print_step=False)
 
         # resume model from last checkpoint
@@ -85,9 +90,6 @@ class Trainer(BaseTrainer):
             self._resume_checkpoint(config['resume'])
 
     def train(self):
-        # send model to device
-        self.model.to(self.device)
-        self.criterion.to(self.device)
         # begin train
         for epoch in range(self.start_epoch, self.epochs + 1):
             # freeze layer
