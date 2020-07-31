@@ -6,7 +6,7 @@ model:
 
 data:
   name: peta
-  batch_size: 32
+  batch_size: 64
 
 optimizer:
   name: adam

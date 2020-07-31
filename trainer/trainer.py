@@ -133,14 +133,14 @@ class Trainer(BaseTrainer):
 
             # save model
             save_best_loss = False
-            if self.best_loss == None or self.best_loss > self.valid_metrics.avg('loss'):
+            if self.best_loss == None or self.best_loss >= self.valid_metrics.avg('loss'):
                 self.best_loss = self.valid_metrics.avg('loss')
                 save_best_loss = True
 
             save_best = dict()
             for metric in self.lst_metrics:
                 save_best[metric] = False
-                if self.best_metrics[metric] == None or self.best_metrics[metric] < self.valid_metrics.avg(metric):
+                if self.best_metrics[metric] == None or self.best_metrics[metric] <= self.valid_metrics.avg(metric):
                     self.best_metrics[metric] = self.valid_metrics.avg(metric)
                     save_best[metric] = True
 
