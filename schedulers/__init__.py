@@ -46,6 +46,7 @@ def build_lr_scheduler(config, optimizer):
     
     elif cfg_lr_scheduler['name'] == 'WarmupCosineAnnealingLR':
         dict_paramsters = {
+            'max_iters': cfg_lr_scheduler['max_iters'],
             'delay_iters': cfg_lr_scheduler['delay_iters'],
             'eta_min_lr': cfg_lr_scheduler['eta_min_lr'],
             'warmup_factor': cfg_lr_scheduler['warmup_factor'],
@@ -55,7 +56,7 @@ def build_lr_scheduler(config, optimizer):
 
         return WarmupCosineAnnealingLR(
             optimizer,
-            max_iters=config['trainer']['epochs'],
+            max_iters=cfg_lr_scheduler['max_iters'],
             delay_iters=cfg_lr_scheduler['delay_iters'],
             eta_min_lr=cfg_lr_scheduler['eta_min_lr'],
             warmup_factor=cfg_lr_scheduler['warmup_factor'],

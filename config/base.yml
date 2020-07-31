@@ -80,6 +80,7 @@ lr_scheduler:
       steps: [40, 70]
       gamma: 0.1
     WarmupCosineAnnealingLR:
+      max_iters: 120
       delay_iters: 30
       eta_min_lr: 0.00000077
       warmup_factor: 0.01

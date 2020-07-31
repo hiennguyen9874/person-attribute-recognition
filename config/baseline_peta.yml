@@ -23,6 +23,7 @@ freeze:
 lr_scheduler:
   enable: True
   name: WarmupCosineAnnealingLR
+  eta_min_lr: 0.00000001
 
 trainer:
   epochs: 120
