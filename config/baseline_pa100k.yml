@@ -22,8 +22,11 @@ loss:
 
 lr_scheduler:
   enable: True
-  name: WarmupCosineAnnealingLR
-  eta_min_lr: 0.00000077
+  name: WarmupMultiStepLR
+  steps: [30, 60, 90]
+  gamma: 0.1
+  warmup_factor: 0.01
+  warmup_iters: 10
 
 trainer:
   epochs: 120
