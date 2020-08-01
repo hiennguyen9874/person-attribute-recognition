@@ -6,7 +6,7 @@ model:
 
 data:
   name: ppe_two
-  batch_size: 32
+  batch_size: 16
 
 optimizer:
   name: adam
@@ -18,14 +18,14 @@ loss:
 lr_scheduler:
   enable: True
   name: WarmupMultiStepLR
-  steps: [30, 60, 90]
+  steps: [30, 40, 50]
   gamma: 0.1
   warmup_factor: 0.01
   warmup_iters: 10
 
 
 trainer:
-  epochs: 120
+  epochs: 60
     
 trainer_colab:
-  epochs: 120
+  epochs: 60
