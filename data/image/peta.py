@@ -82,7 +82,7 @@ if __name__ == "__main__":
     config = read_config('config/base.yml')
     datasource = Peta(root_dir=config['data']['data_dir'], download=True, extract=True)
     print(len(datasource.get_attribute()))
-    print(np.expand_dims(datasource.get_weight('train'), axis=1))
+    print(np.expand_dims(datasource.get_weight('test'), axis=1))
     pass
 
 r'''
