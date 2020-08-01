@@ -6,7 +6,7 @@ model:
 
 data:
   name: ppe_two
-  batch_size: 32
+  batch_size: 16
 
 optimizer:
   name: adam
