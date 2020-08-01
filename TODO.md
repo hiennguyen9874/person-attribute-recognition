@@ -34,3 +34,6 @@
 - ~~So sanh cua hai ham loss khi su dung CEL_sigmoid va BCE~~
 
 - ~~print freeze~~
+
+- [RAP](https://arxiv.org/pdf/1603.07054.pdf)
+

@@ -9,6 +9,7 @@ __all__ = ['recognition_metrics', 'compute_accuracy_cuda']
 
 def recognition_metrics(labels, preds, threshold=0.5, eps = 1e-20):
     r""" https://en.wikipedia.org/wiki/Confusion_matrix
+    https://arxiv.org/pdf/1603.07054.pdf
     Args:
         labels (num_sampler, num_attribute): 2d numpy array binary
         preds (num_sampler, num_attribute): 2d numpy array float

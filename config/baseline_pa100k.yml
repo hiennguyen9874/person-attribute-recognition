@@ -6,7 +6,7 @@ model:
 
 data:
   name: pa_100k
-  batch_size: 32
+  batch_size: 64
 
 optimizer:
   name: adam

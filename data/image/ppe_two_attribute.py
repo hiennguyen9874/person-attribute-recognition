@@ -111,7 +111,7 @@ if __name__ == "__main__":
     # print('num image val', len(datasource.get_data('val')))
     # print('num image test', len(datasource.get_data('test')))
 
-    print(datasource.get_weight('train'))
-    print(datasource.get_weight('val'))
+    # print(datasource.get_weight('train'))
+    # print(datasource.get_weight('val'))
     print(datasource.get_weight('test'))
     

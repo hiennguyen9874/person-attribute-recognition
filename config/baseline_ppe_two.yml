@@ -15,14 +15,13 @@ optimizer:
 loss:
   name: CEL_Sigmoid
 
-freeze:
-  enable: True
-  layers: [backbone]
-  epochs: 10
-
 lr_scheduler:
   enable: True
-  name: WarmupCosineAnnealingLR
+  name: WarmupMultiStepLR
+  steps: [30, 60, 90]
+  gamma: 0.1
+  warmup_factor: 0.01
+  warmup_iters: 10
 
 
 trainer:
