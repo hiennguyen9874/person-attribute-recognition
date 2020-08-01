@@ -18,14 +18,13 @@ loss:
 lr_scheduler:
   enable: True
   name: WarmupMultiStepLR
-  steps: [30, 40, 50]
+  steps: [30, 60, 90]
   gamma: 0.1
   warmup_factor: 0.01
   warmup_iters: 10
 
-
 trainer:
-  epochs: 60
+  epochs: 120
     
 trainer_colab:
-  epochs: 60
+  epochs: 120
