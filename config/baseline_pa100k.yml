@@ -12,13 +12,13 @@ optimizer:
   name: adam
   lr: 0.00035
 
+loss:
+  name: CEL_Sigmoid
+
 freeze:
   enable: True
   layers: [backbone]
   epochs: 10
-
-loss:
-  name: CEL_Sigmoid
 
 lr_scheduler:
   enable: True

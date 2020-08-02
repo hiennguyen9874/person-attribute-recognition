@@ -15,6 +15,11 @@ optimizer:
 loss:
   name: CEL_Sigmoid
 
+freeze:
+  enable: True
+  layers: [backbone]
+  epochs: 10
+
 lr_scheduler:
   enable: True
   name: WarmupMultiStepLR
