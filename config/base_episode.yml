@@ -30,10 +30,16 @@ data:
   extract: True
   # using tqdm process bar when download and extract dataset file
   use_tqdm: False
-  num_attribute: 4
-  num_instance: 8
-  num_iterator: 500
-  selected_ratio: 0.5
+  train:
+    num_attribute: 4
+    num_instance: 8
+    num_iterator: 500
+    selected_ratio: 0.5
+  val:
+    num_attribute: 4
+    num_instance: 8
+    num_iterator: 100
+    selected_ratio: 0.5
 
 # optimizer support: [adam, sgd]
 optimizer:

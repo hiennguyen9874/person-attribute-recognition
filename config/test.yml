@@ -2,16 +2,24 @@ base: config/base_episode.yml
 
 model:
   backbone: resnet50
-  pooling: gem_pooling
+  pooling: avg_pooling
   head: BNHead
   bn_where: after
 
 data:
-  name: ppe_two
-  num_attribute: 2
-  num_instance: 16
-  num_iterator: 200
-  selected_ratio: 0.5
+  name: peta
+  num_workers: 4
+  pin_memory: True
+  train:
+    num_attribute: 4
+    num_instance: 16
+    num_iterator: 300
+    selected_ratio: 0.5
+  val:
+    num_attribute: 4
+    num_instance: 16
+    num_iterator: 100
+    selected_ratio: 0.5
 
 optimizer:
   name: adam
@@ -34,6 +42,7 @@ lr_scheduler:
   warmup_iters: 10
 
 trainer:
+  n_gpu: 1
   epochs: 120
     
 trainer_colab:

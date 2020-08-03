@@ -347,7 +347,7 @@ class Trainer_Episode(BaseTrainer):
             return row_format.format(*[key + ': ' + str(value) for key, value in params.items()])
 
         self.logger.info('Run id: %s' % (self.run_id))
-        self.logger.info('Dataset: %s, num_attribute: %d, num_instance: %d, num_iterator: %d, selected_ratio: %d' % (self.config['data']['name'], self.config['data']['num_attribute'], self.config['data']['num_instance'], self.config['data']['num_iterator'], self.config['data']['selected_ratio']))
+        self.logger.info('Dataset: %s, num_attribute: %d, num_instance: %d, num_iterator: %d, selected_ratio: %d' % (self.config['data']['name'], self.config['data']['train']['num_attribute'], self.config['data']['train']['num_instance'], self.config['data']['train']['num_iterator'], self.config['data']['train']['selected_ratio']))
         self.logger.info('Model: %s ' % (self.config['model']['name']) + __prams_to_str(params_model))
         if freeze_layers:
             self.logger.info('Freeze layer: %s, at first epoch %d' % (str(self.config['freeze']['layers']), self.config['freeze']['epochs']))
