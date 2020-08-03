@@ -126,30 +126,34 @@ class DataManger_Episode(object):
         sampler['train'] = RandomBalanceBatchSamplerAttribute(
             self.datasource.get_data('train'),
             self.datasource.get_attribute(),
-            num_attribute=config['num_attribute'],
-            num_instance=config['num_instance'],
-            num_iterator=config['num_iterator'],
-            selected_ratio=config['selected_ratio']
+            num_attribute=config['train']['num_attribute'],
+            num_instance=config['train']['num_instance'],
+            num_iterator=config['train']['num_iterator'],
+            selected_ratio=config['train']['selected_ratio']
         )
 
         sampler['val'] = RandomBalanceBatchSamplerAttribute(
-            self.datasource.get_data('train'),
+            self.datasource.get_data('val'),
             self.datasource.get_attribute(),
-            num_attribute=config['num_attribute'],
-            num_instance=config['num_instance'],
-            num_iterator=config['num_iterator'],
-            selected_ratio=config['selected_ratio']
+            num_attribute=config['val']['num_attribute'],
+            num_instance=config['val']['num_instance'],
+            num_iterator=config['val']['num_iterator'],
+            selected_ratio=config['val']['selected_ratio']
         )
 
         self.dataloader = dict()
         self.dataloader['train'] = DataLoader(
             dataset=dataset['train'],
-            batch_sampler=sampler['train']
+            batch_sampler=sampler['train'],
+            num_workers=config['num_workers'],
+            pin_memory=config['pin_memory']
         )
 
         self.dataloader['val'] = DataLoader(
             dataset=dataset['val'],
-            batch_sampler=sampler['val']
+            batch_sampler=sampler['val'],
+            num_workers=config['num_workers'],
+            pin_memory=config['pin_memory'],
         )
 
         self.dataloader['test'] = DataLoader(
