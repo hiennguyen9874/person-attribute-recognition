@@ -20,7 +20,8 @@ class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
         num_attribute,
         num_instance,
         num_iterator,
-        selected_ratio):
+        selected_ratio,
+        shuffle=True):
 
         assert num_attribute <= len(attribute_name), 'num of attribute in one batch must less than num of attribute in dataset'
         
@@ -30,6 +31,7 @@ class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
         self.pos_instance = int(num_instance * selected_ratio)
         self.neg_instance = num_instance - self.pos_instance
         self.num_iterator = num_iterator
+        self.shuffle = shuffle
 
         self.pos_dict = defaultdict(list)
         self.neg_dict = defaultdict(list)
@@ -42,6 +44,11 @@ class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
                     self.neg_dict[attribute].append(index)
 
     def __iter__(self):
+        if self.shuffle:
+            random.shuffle(self.attribute_name)
+            for attribute in self.attribute_name:
+                random.shuffle(self.pos_dict[attribute])
+                random.shuffle(self.neg_dict[attribute])
         for _ in range(self.num_iterator):
             selected_attribute = random.sample(self.attribute_name, self.num_attribute)
             batch = []
