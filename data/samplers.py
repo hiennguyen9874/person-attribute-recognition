@@ -26,7 +26,7 @@ class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
         assert num_attribute <= len(attribute_name), 'num of attribute in one batch must less than num of attribute in dataset'
         
         self.datasource = datasource
-        self.attribute_name = attribute_name
+        self.attribute_name = list(enumerate(attribute_name))
         self.num_attribute = num_attribute
         self.pos_instance = int(num_instance * selected_ratio)
         self.neg_instance = num_instance - self.pos_instance
@@ -46,13 +46,13 @@ class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
     def __iter__(self):
         if self.shuffle:
             random.shuffle(self.attribute_name)
-            for attribute in self.attribute_name:
+            for _, attribute in self.attribute_name:
                 random.shuffle(self.pos_dict[attribute])
                 random.shuffle(self.neg_dict[attribute])
         for _ in range(self.num_iterator):
             selected_attribute = random.sample(self.attribute_name, self.num_attribute)
             batch = []
-            for index, attribute in enumerate(selected_attribute):
+            for index, attribute in selected_attribute:
                 pos_idxs = np.random.choice(self.pos_dict[attribute], size=self.pos_instance, replace=True)
                 neg_idxs = np.random.choice(self.neg_dict[attribute], size=self.neg_instance, replace=True)
                 batch.extend(list(zip(pos_idxs, repeat(index))))
@@ -236,13 +236,13 @@ if __name__ == "__main__":
     from torch.utils.data.dataloader import DataLoader
     from torchvision import transforms
 
-    datasource = build_datasource('ppe_two', '/home/ubuntu/Documents/datasets')
+    datasource = build_datasource('peta', '/home/ubuntu/Documents/datasets')
     sampler = RandomBalanceBatchSamplerAttribute(
         datasource=datasource.get_data('train'),
         attribute_name=datasource.get_attribute(),
-        num_attribute=2,
-        num_instance=10,
-        num_iterator=500,
+        num_attribute=16,
+        num_instance=4,
+        num_iterator=100,
         selected_ratio=0.5)
 
     transform = transforms.Compose([
