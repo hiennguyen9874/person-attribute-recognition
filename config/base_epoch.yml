@@ -51,7 +51,7 @@ optimizer:
   sgd_dampening: 0
   sgd_nesterov: False
 
-# loss support: [BCEWithLogitsLoss, CEL_Sigmoid]
+# loss support: [BCEWithLogitsLoss, CEL_Sigmoid, Non_BCEWithLogitsLoss]
 loss:
   name: CEL_Sigmoid
 

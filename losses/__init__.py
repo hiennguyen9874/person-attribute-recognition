@@ -4,6 +4,7 @@ import torch
 import torch.nn as nn
 
 from losses.CE_loss import CEL_Sigmoid
+from losses.Singular_BCE import Singular_BCE
 
 def build_losses(config, pos_ratio, use_gpu=True):
     cfg_loss = config['loss']
@@ -14,6 +15,8 @@ def build_losses(config, pos_ratio, use_gpu=True):
         return nn.BCEWithLogitsLoss(), {}
     elif cfg_loss['name'] == 'CEL_Sigmoid':
         return CEL_Sigmoid(pos_ratio, use_gpu=use_gpu), {}
+    elif cfg_loss['name'] == 'Singular_BCE':
+        return Singular_BCE(), {}
     else:
         raise KeyError('config[loss][name] error')
 

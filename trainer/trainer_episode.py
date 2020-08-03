@@ -9,7 +9,7 @@ from torch.nn.utils import clip_grad_norm_
 
 from base import BaseTrainer
 from callbacks import Tqdm, FreezeLayers
-from data import DataManger
+from data import DataManger_Episode
 from evaluators import plot_loss_accuracy, compute_accuracy_cuda
 from losses import build_losses
 from models import build_model
@@ -17,10 +17,10 @@ from optimizers import build_optimizers
 from schedulers import build_lr_scheduler
 from utils import MetricTracker, summary
 
-class Trainer(BaseTrainer):
+class Trainer_Episode(BaseTrainer):
     def __init__(self, config):
-        super(Trainer, self).__init__(config)
-        self.datamanager = DataManger(config['data'])
+        super(Trainer_Episode, self).__init__(config)
+        self.datamanager = DataManger_Episode(config['data'])
 
         # model
         self.model, params_model = build_model(
@@ -71,19 +71,18 @@ class Trainer(BaseTrainer):
             params_lr_scheduler=params_lr_scheduler,
             freeze_layers=False if self.freeze == None else True)
 
-
         # send model to device
         self.model.to(self.device)
         self.criterion.to(self.device)
 
         # summary model
-        summary(
-            func=self.logger.info,
-            model=self.model,
-            input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
-            batch_size=config['data']['batch_size'],
-            device='cuda' if self.use_gpu else 'cpu',
-            print_step=False)
+        # summary(
+        #     func=self.logger.info,
+        #     model=self.model,
+        #     input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
+        #     batch_size=config['data']['batch_size'],
+        #     device='cuda' if self.use_gpu else 'cpu',
+        #     print_step=False)
 
         # resume model from last checkpoint
         if config['resume'] != '':
@@ -168,12 +167,12 @@ class Trainer(BaseTrainer):
         self.train_metrics.reset()
         if self.cfg_trainer['use_tqdm']:
             tqdm_callback = Tqdm(epoch, len(self.datamanager.get_dataloader('train')), phase='train')
-        for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('train')):
+        for batch_idx, (data, labels, attribute_idx) in enumerate(self.datamanager.get_dataloader('train')):
             # get time for log num iter per seconds
             if not self.cfg_trainer['use_tqdm']:
                 start_time = time.time()
             # push data to device
-            data, labels = data.to(self.device), labels.to(self.device)
+            data, labels, attribute_idx = data.to(self.device), labels.to(self.device), attribute_idx.to(self.device)
 
             # zero gradient
             self.optimizer.zero_grad()
@@ -182,7 +181,7 @@ class Trainer(BaseTrainer):
             out = self.model(data)
 
             # calculate loss and accuracy
-            loss = self.criterion(out, labels)
+            loss = self.criterion(out, labels, attribute_idx)
             
             # backward parameters
             loss.backward()
@@ -238,17 +237,17 @@ class Trainer(BaseTrainer):
         with torch.no_grad():
             if self.cfg_trainer['use_tqdm']:
                 tqdm_callback = Tqdm(epoch, len(self.datamanager.get_dataloader('val')), phase='val')
-            for batch_idx, (data, labels) in enumerate(self.datamanager.get_dataloader('val')):
+            for batch_idx, (data, labels, attribute_idx) in enumerate(self.datamanager.get_dataloader('val')):
                 if not self.cfg_trainer['use_tqdm']:
                     start_time = time.time()
                 # push data to device
-                data, labels = data.to(self.device), labels.to(self.device)
+                data, labels, attribute_idx = data.to(self.device), labels.to(self.device), attribute_idx.to(self.device)
                 
                 # forward batch
                 out = self.model(data)
 
                 # calculate loss and accuracy
-                loss = self.criterion(out, labels)
+                loss = self.criterion(out, labels, attribute_idx)
 
                 # calculate instance-based accuracy
                 preds = torch.sigmoid(out)
@@ -348,12 +347,22 @@ class Trainer(BaseTrainer):
             return row_format.format(*[key + ': ' + str(value) for key, value in params.items()])
 
         self.logger.info('Run id: %s' % (self.run_id))
-        self.logger.info('Dataset: %s, batch_size: %d ' % (self.config['data']['name'], self.config['data']['batch_size']))
+        self.logger.info('Dataset: %s, num_attribute: %d, num_instance: %d, num_iterator: %d, selected_ratio: %d' % (self.config['data']['name'], self.config['data']['num_attribute'], self.config['data']['num_instance'], self.config['data']['num_iterator'], self.config['data']['selected_ratio']))
         self.logger.info('Model: %s ' % (self.config['model']['name']) + __prams_to_str(params_model))
         if freeze_layers:
-            self.logger.info('Freeze layer: %s ,at first epoch %d' % (str(self.config['freeze']['layers']), self.config['freeze']['epochs']))
+            self.logger.info('Freeze layer: %s, at first epoch %d' % (str(self.config['freeze']['layers']), self.config['freeze']['epochs']))
         self.logger.info('Loss: %s ' % (self.config['loss']['name']) + __prams_to_str(params_loss))
         self.logger.info('Optimizer: %s ' % (self.config['optimizer']['name']) + __prams_to_str(params_optimizers))
         if params_lr_scheduler != None:
             self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
+
+if __name__ == "__main__":
+    from utils import read_config
+    
+    config = read_config('config/test.yml')
+    config.update({'resume': ''})
+    config.update({'colab': False})
+
+    trainer = Trainer_Episode(config)
+    trainer.train()
 
