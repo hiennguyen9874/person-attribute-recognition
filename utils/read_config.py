@@ -17,11 +17,11 @@ def update(d, u):
             d[k] = v
     return d
 
-def read_config(path_config: str, path_config_base='config/base.yml'):
+def read_config(path_config: str):
     r""" read config yml file, return to dict
     """
-    base_config = yaml.safe_load(open(path_config_base))
     new_config = yaml.safe_load(open(path_config))
+    base_config = yaml.safe_load(open(new_config['base']))
     all_config = update(base_config, new_config)
     if all_config['lr_scheduler']['enable']:
         for key, value in all_config['lr_scheduler']['default'][all_config['lr_scheduler']['name']].items():

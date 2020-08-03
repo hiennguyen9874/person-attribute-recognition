@@ -1,4 +1,4 @@
-base: config/base_epoch.yml
+base: config/base_episode.yml
 
 model:
   backbone: resnet50
@@ -8,14 +8,17 @@ model:
 
 data:
   name: ppe_two
-  batch_size: 16
+  num_attribute: 2
+  num_instance: 16
+  num_iterator: 200
+  selected_ratio: 0.5
 
 optimizer:
   name: adam
   lr: 0.00035
 
 loss:
-  name: CEL_Sigmoid
+  name: Singular_BCE
 
 freeze:
   enable: True
@@ -35,7 +38,6 @@ trainer:
     
 trainer_colab:
   epochs: 120
-
 
 # note:
 # mkdir -p /home/ubuntu/Documents/datasets/ppe/raw && cp /content/drive/My\ Drive/Private_Datasets/ppe.zip /home/ubuntu/Documents/datasets/ppe/raw/

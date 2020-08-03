@@ -1,3 +1,5 @@
+base: config/base_epoch.yml
+
 model:
   backbone: osnet
   pooling: gem_pooling

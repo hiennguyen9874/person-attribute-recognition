@@ -7,7 +7,7 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-from data import DataManger, build_datasource
+from data import DataManger_Epoch, build_datasource
 from utils import read_config
 
 def imread(path):

@@ -1,9 +1,59 @@
+import sys
+sys.path.append('.')
+
 import torch
 import random
 import copy
 import numpy as np
+
 from tqdm import tqdm
+from itertools import cycle, repeat
 from collections import defaultdict
+
+__all__ = ['RandomBalanceBatchSamplerAttribute']
+
+class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
+    def __init__(
+        self,
+        datasource,
+        attribute_name,
+        num_attribute,
+        num_instance,
+        num_iterator,
+        selected_ratio):
+
+        assert num_attribute <= len(attribute_name), 'num of attribute in one batch must less than num of attribute in dataset'
+        
+        self.datasource = datasource
+        self.attribute_name = attribute_name
+        self.num_attribute = num_attribute
+        self.pos_instance = int(num_instance * selected_ratio)
+        self.neg_instance = num_instance - self.pos_instance
+        self.num_iterator = num_iterator
+
+        self.pos_dict = defaultdict(list)
+        self.neg_dict = defaultdict(list)
+
+        for index, (_, label) in enumerate(self.datasource):
+            for i, attribute in enumerate(attribute_name):
+                if label[i] == True:
+                    self.pos_dict[attribute].append(index)
+                else:
+                    self.neg_dict[attribute].append(index)
+
+    def __iter__(self):
+        for _ in range(self.num_iterator):
+            selected_attribute = random.sample(self.attribute_name, self.num_attribute)
+            batch = []
+            for index, attribute in enumerate(selected_attribute):
+                pos_idxs = np.random.choice(self.pos_dict[attribute], size=self.pos_instance, replace=True)
+                neg_idxs = np.random.choice(self.neg_dict[attribute], size=self.neg_instance, replace=True)
+                batch.extend(list(zip(pos_idxs, repeat(index))))
+                batch.extend(list(zip(neg_idxs, repeat(index))))
+            yield batch
+
+    def __len__(self):
+        return self.num_iterator
 
 class SubsetIdentitySampler(torch.utils.data.Sampler):
     def __init__(self, datasource, batch_size, shuffle = True, index_dict=None):
@@ -172,4 +222,29 @@ class RandomBalanceBatchSampler(torch.utils.data.BatchSampler):
             left_index_dict[person_id].extend(left_index)
             right_index_dict[person_id].extend(right_index)
         return RandomBalanceBatchSampler(self.datasource, self.batch_size, self.num_instances, self.num_iterators, left_index_dict), RandomBalanceBatchSampler(self.datasource, self.batch_size, self.num_instances, num_iterators_val, right_index_dict)
-        
+
+if __name__ == "__main__":
+    from data import ImageDataset, Episode_ImageDataset
+    from data.image import build_datasource
+    from torch.utils.data.dataloader import DataLoader
+    from torchvision import transforms
+
+    datasource = build_datasource('ppe_two', '/home/ubuntu/Documents/datasets')
+    sampler = RandomBalanceBatchSamplerAttribute(
+        datasource=datasource.get_data('train'),
+        attribute_name=datasource.get_attribute(),
+        num_attribute=2,
+        num_instance=10,
+        num_iterator=500,
+        selected_ratio=0.5)
+
+    transform = transforms.Compose([
+        transforms.Resize(size=datasource.get_image_size()),
+        transforms.ToTensor(),
+        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    ])
+
+    dataset = Episode_ImageDataset(datasource.get_data('train'), attribute_name=datasource.get_attribute(), transform=transform)
+    dataloader = DataLoader(dataset, batch_sampler=sampler)
+    for data, label, attribute_name in dataloader:
+        pass

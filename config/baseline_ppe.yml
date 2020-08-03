@@ -1,3 +1,5 @@
+base: config/base_epoch.yml
+
 model:
   backbone: resnet50
   pooling: gem_pooling
