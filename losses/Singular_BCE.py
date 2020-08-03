@@ -6,7 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class Singular_BCE(nn.Module):
-    def __init__(self, reduction='sum'):
+    def __init__(self, reduction='mean'):
         super(Singular_BCE, self).__init__()
         self.reduction = reduction
 
