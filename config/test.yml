@@ -2,7 +2,7 @@ base: config/base_episode.yml
 
 model:
   backbone: resnet50
-  pooling: avg_pooling
+  pooling: gem_pooling
   head: BNHead
   bn_where: after
 
@@ -11,13 +11,13 @@ data:
   num_workers: 4
   pin_memory: True
   train:
-    num_attribute: 4
-    num_instance: 16
-    num_iterator: 300
+    num_attribute: 16
+    num_instance: 4
+    num_iterator: 500
     selected_ratio: 0.5
   val:
-    num_attribute: 4
-    num_instance: 16
+    num_attribute: 16
+    num_instance: 4
     num_iterator: 100
     selected_ratio: 0.5
 
