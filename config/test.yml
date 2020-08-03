@@ -21,14 +21,18 @@ data:
 
 optimizer:
   name: sgd
-  lr: 0.1
+  lr: 0.01
+  specified_lr:
+    enable: True
+    lr: 0.1
+    layers: [head]
 
 loss:
   name: Singular_BCE
-  reduction: sum
+  reduction: mean
 
 freeze:
-  enable: True
+  enable: False
   layers: [backbone]
   epochs: 10
 
