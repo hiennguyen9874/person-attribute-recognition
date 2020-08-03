@@ -13,7 +13,7 @@ data:
   train:
     num_attribute: 16
     num_instance: 4
-    num_iterator: 300
+    num_iterator: 500
     selected_ratio: 0.5
   val:
     num_attribute: 16
@@ -23,10 +23,11 @@ data:
 
 optimizer:
   name: adam
-  lr: 0.00035
+  lr: 0.01
 
 loss:
   name: Singular_BCE
+  reduction: mean
 
 freeze:
   enable: True
