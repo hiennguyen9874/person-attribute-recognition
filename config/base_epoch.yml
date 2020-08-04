@@ -2,7 +2,7 @@
 timezone: Asia/Ho_Chi_Minh
 
 # training type
-type: episode
+type: epoch
 
 model:
   name: baseline
