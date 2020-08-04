@@ -1,6 +1,9 @@
 # timezone, it will use to get run_id
 timezone: Asia/Ho_Chi_Minh
 
+# training type
+type: epoch
+
 model:
   name: baseline
   # backbone support: [osnet, resnet50, resnet101, resnet50_nl, resnet101_nl, resnet50_ibn_a,
