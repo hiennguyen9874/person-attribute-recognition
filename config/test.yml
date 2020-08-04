@@ -32,7 +32,7 @@ loss:
   reduction: mean
 
 freeze:
-  enable: False
+  enable: True
   layers: [backbone]
   epochs: 10
 
@@ -41,7 +41,7 @@ lr_scheduler:
   name: ReduceLROnPlateau
   factor: 0.1
   patience: 5
-  min_lr: 0.0000001
+  min_lr: 0.00000001
 
 # clipping gradient
 clip_grad_norm_:
@@ -49,10 +49,10 @@ clip_grad_norm_:
   max_norm: 10.0
 
 trainer:
-  epochs: 60
+  epochs: 120
     
 trainer_colab:
-  epochs: 60
+  epochs: 120
 
 # note:
 # mkdir -p /home/ubuntu/Documents/datasets/ppe/raw && cp /content/drive/My\ Drive/Private_Datasets/ppe.zip /home/ubuntu/Documents/datasets/ppe/raw/
