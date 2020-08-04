@@ -79,7 +79,7 @@ class Peta(BaseDataSource):
 
 if __name__ == "__main__":
     from utils import read_config
-    config = read_config('config/base.yml')
+    config = read_config('config/base_epoch.yml')
     datasource = Peta(root_dir=config['data']['data_dir'], download=True, extract=True)
     print(len(datasource.get_attribute()))
     print(np.expand_dims(datasource.get_weight('test'), axis=1))
