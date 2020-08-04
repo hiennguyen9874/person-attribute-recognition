@@ -16,7 +16,7 @@ def build_losses(config, pos_ratio, use_gpu=True):
     elif cfg_loss['name'] == 'CEL_Sigmoid':
         return CEL_Sigmoid(pos_ratio, use_gpu=use_gpu), {}
     elif cfg_loss['name'] == 'Singular_BCE':
-        return Singular_BCE(), {}
+        return Singular_BCE(reduction=cfg_loss['reduction']), {}
     else:
         raise KeyError('config[loss][name] error')
 
