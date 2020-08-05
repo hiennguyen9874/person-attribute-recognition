@@ -14,9 +14,9 @@ def build_losses(config, pos_ratio, use_gpu=True):
     elif cfg_loss['name'] == 'Non_BCEWithLogitsLoss':
         return nn.BCEWithLogitsLoss(), {}
     elif cfg_loss['name'] == 'CEL_Sigmoid':
-        return CEL_Sigmoid(pos_ratio, use_gpu=use_gpu), {}
+        return CEL_Sigmoid(pos_ratio, use_gpu=use_gpu, reduction=cfg_loss['reduction']), {'reduction': cfg_loss['reduction']}
     elif cfg_loss['name'] == 'Singular_BCE':
-        return Singular_BCE(reduction=cfg_loss['reduction']), {}
+        return Singular_BCE(reduction=cfg_loss['reduction']), {'reduction': cfg_loss['reduction']}
     else:
         raise KeyError('config[loss][name] error')
 
@@ -30,3 +30,5 @@ if __name__ == "__main__":
     out1 = criterion1(output, target)
     out2 = criterion2(output, target)
     pass
+
+

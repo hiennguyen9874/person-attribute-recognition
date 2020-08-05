@@ -1,4 +1,4 @@
-from .datamanager import DataManger_Epoch, DataManger_Episode
+from .datamanager import *
 from .datasets import *
 from .transforms import *
 from .image import build_datasource

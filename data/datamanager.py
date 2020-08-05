@@ -4,10 +4,12 @@ sys.path.append('.')
 from torchvision import transforms
 from torch.utils.data.dataloader import DataLoader
 
-from data.datasets import ImageDataset, Episode_ImageDataset
+from data.datasets import Epoch_ImageDataset, Episode_ImageDataset
 from data.image import build_datasource
 from data.transforms import RandomErasing
 from data.samplers import RandomBalanceBatchSamplerAttribute
+
+__all__ = ['DataManger_Epoch', 'DataManger_Episode']
 
 class DataManger_Epoch(object):
     def __init__(self, config, phase='train'):
@@ -46,7 +48,7 @@ class DataManger_Epoch(object):
 
         dataset = dict()
         for _phase in self.datasource.get_phase():
-            dataset[_phase] = ImageDataset(self.datasource.get_data(_phase), transform=transform[_phase])
+            dataset[_phase] = Epoch_ImageDataset(self.datasource.get_data(_phase), transform=transform[_phase])
         
         self.dataloader = dict()
         self.dataloader['train'] = DataLoader(

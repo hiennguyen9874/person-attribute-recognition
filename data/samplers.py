@@ -231,7 +231,7 @@ class RandomBalanceBatchSampler(torch.utils.data.BatchSampler):
         return RandomBalanceBatchSampler(self.datasource, self.batch_size, self.num_instances, self.num_iterators, left_index_dict), RandomBalanceBatchSampler(self.datasource, self.batch_size, self.num_instances, num_iterators_val, right_index_dict)
 
 if __name__ == "__main__":
-    from data import ImageDataset, Episode_ImageDataset
+    from data import Epoch_ImageDataset, Episode_ImageDataset
     from data.image import build_datasource
     from torch.utils.data.dataloader import DataLoader
     from torchvision import transforms

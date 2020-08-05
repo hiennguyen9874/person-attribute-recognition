@@ -64,7 +64,7 @@ optimizer:
 # loss support: [Singular_BCE]
 loss:
   name: Singular_BCE
-  reduction: sum
+  reduction: mean
 
 # freeze <layers> at first <epochs>.
 freeze:

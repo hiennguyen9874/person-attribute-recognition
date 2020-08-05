@@ -4,13 +4,13 @@ import torchvision.datasets as datasets
 
 from PIL import Image
 
-__all__ = ['ImageDataset', 'Episode_ImageDataset']
+__all__ = ['Epoch_ImageDataset', 'Episode_ImageDataset']
 
 def imread(path):
     image = Image.open(path)
     return image
 
-class ImageDataset(torch.utils.data.Dataset):
+class Epoch_ImageDataset(torch.utils.data.Dataset):
     def __init__(self, data, transform=None):
         self.data = data
         self.transform = transform
