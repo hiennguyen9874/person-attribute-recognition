@@ -7,7 +7,7 @@ model:
   bn_where: before
 
 data:
-  name: peta
+  name: ppe_two
 
 optimizer:
   name: adam
