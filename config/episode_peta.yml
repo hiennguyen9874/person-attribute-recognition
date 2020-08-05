@@ -11,7 +11,7 @@ data:
   train:
     num_attribute: 16
     num_instance: 4
-    num_iterator: 300
+    num_iterator: 500
     selected_ratio: 0.5
   val:
     num_attribute: 16
@@ -29,7 +29,7 @@ optimizer:
 
 loss:
   name: Singular_BCE
-  reduction: sum
+  reduction: mean
 
 freeze:
   enable: True
@@ -41,7 +41,7 @@ lr_scheduler:
   name: ReduceLROnPlateau
   factor: 0.1
   patience: 5
-  min_lr: 0
+  min_lr: 0.00000001
 
 # clipping gradient
 clip_grad_norm_:
@@ -56,3 +56,4 @@ trainer_colab:
 
 # note:
 # mkdir -p /home/ubuntu/Documents/datasets/ppe/raw && cp /content/drive/My\ Drive/Private_Datasets/ppe.zip /home/ubuntu/Documents/datasets/ppe/raw/
+
