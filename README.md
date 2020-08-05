@@ -65,7 +65,7 @@
 
 | backbone          	| bn after linear 	| Head          	| Loss              	|   mA  	| Accuracy 	| Precision 	| Recall 	| F1-Score 	|
 |-------------------	|:---------------:	|---------------	|-------------------	|:-----:	|:--------:	|:---------:	|:------:	|:--------:	|
-| resnet50          	|     &check;     	| BNHead        	| CEL_Sigmoid       	|  65.64 	|   84.63  	|   88.61   	|  88.80 	|   87.35  	|
+| resnet50          	|     &check;     	| BNHead        	| CEL_Sigmoid       	|  63.62 	|   85.44  	|   88.28   	|  90.51 	|   88.08  	|
 
 
 ### PA-100K

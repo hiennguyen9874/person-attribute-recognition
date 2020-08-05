@@ -76,13 +76,13 @@ class Trainer_Episode(BaseTrainer):
         self.criterion.to(self.device)
 
         # summary model
-        # summary(
-        #     func=self.logger.info,
-        #     model=self.model,
-        #     input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
-        #     batch_size=config['data']['batch_size'],
-        #     device='cuda' if self.use_gpu else 'cpu',
-        #     print_step=False)
+        summary(
+            func=self.logger.info,
+            model=self.model,
+            input_size=(3, self.datamanager.datasource.get_image_size()[0], self.datamanager.datasource.get_image_size()[1]),
+            batch_size=config['data']['train']['num_attribute']*config['data']['train']['num_instance'],
+            device='cuda' if self.use_gpu else 'cpu',
+            print_step=False)
 
         # resume model from last checkpoint
         if config['resume'] != '':

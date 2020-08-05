@@ -122,5 +122,5 @@ def download_with_url(api, file_id, destination, name_file, use_tqdm=True):
                 if use_tqdm:
                     pbar.update(CHUNK_SIZE)
                 f.write(chunk)
-        os.rename(partfile, destination)
+    os.rename(partfile, destination)
     return filename
