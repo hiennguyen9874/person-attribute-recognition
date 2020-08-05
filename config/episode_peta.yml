@@ -11,7 +11,7 @@ data:
   train:
     num_attribute: 16
     num_instance: 4
-    num_iterator: 500
+    num_iterator: 700
     selected_ratio: 0.5
   val:
     num_attribute: 16
