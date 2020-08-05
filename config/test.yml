@@ -29,7 +29,7 @@ optimizer:
 
 loss:
   name: Singular_BCE
-  reduction: sum
+  reduction: mean
 
 freeze:
   enable: True
