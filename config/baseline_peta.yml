@@ -28,10 +28,9 @@ freeze:
 
 lr_scheduler:
   enable: True
-  name: ReduceLROnPlateau
-  factor: 0.1
-  patience: 5
-  min_lr: 0
+  name: MultiStepLR
+  steps: [30, 50, 70, 90, 110]
+  gamma: 0.1
 
 # clipping gradient
 clip_grad_norm_:
