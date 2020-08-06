@@ -19,7 +19,7 @@ optimizer:
     layers: [head]
 
 loss:
-  name: Non_BCEWithLogitsLoss
+  name: CEL_Sigmoid
 
 freeze:
   enable: True
