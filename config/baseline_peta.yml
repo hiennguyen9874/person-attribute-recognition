@@ -8,7 +8,7 @@ model:
 
 data:
   name: peta
-  batch_size: 32
+  batch_size: 64
 
 optimizer:
   name: adam
@@ -29,11 +29,6 @@ lr_scheduler:
   gamma: 0.1
   warmup_factor: 0.01
   warmup_iters: 10
-
-# clipping gradient
-clip_grad_norm_:
-  enable: True
-  max_norm: 10.0
 
 trainer:
   epochs: 120
