@@ -123,8 +123,8 @@ trainer:
 trainer_colab:
   n_gpu: 1
   epochs: 120
-  checkpoint_dir: /content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints
+  checkpoint_dir: /content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/checkpoints
   log_dir: saved/logs
-  log_dir_saved: /content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs
-  output_dir: /content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/outputs
+  log_dir_saved: /content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/logs
+  output_dir: /content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/outputs
   use_tqdm: False

@@ -33,7 +33,6 @@ lr_scheduler:
   patience: 5
   min_lr: 0
 
-# clipping gradient
 clip_grad_norm_:
   enable: True
   max_norm: 10.0
