@@ -64,4 +64,5 @@ class Baseline(nn.Module):
 if __name__ == "__main__":
     model = Baseline(26, 'resnet50', True, 'gem_pooling', 'BNHead')
     summary(print, model, (3, 256, 128), 32, 'cpu', False)
+    pass
 
