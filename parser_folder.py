@@ -60,10 +60,11 @@ if __name__ == "__main__":
                 saved_info['info']['Freeze layer'] = 0
             all_saved_info.append(saved_info)
     
-    rmdir(saved_folder)
+    # rmdir(saved_folder)
     for x in tqdm(all_saved_info):
         source = x['path']
         des = os.path.join(saved_folder, x['info']['Dataset'], x['info']['Model'],  x['info']['Loss'], 'Freeze layer'.replace(' ', '') + '-' + str(x['info']['Freeze layer']), x['info']['Optimizer'], x['info']['Lr scheduler'], x['id'])
-        os.makedirs(des, exist_ok=True)
-        copytree(source, des)
-    
+        if not os.path.exists(des):
+            os.makedirs(des, exist_ok=True)
+            copytree(source, des)
+
