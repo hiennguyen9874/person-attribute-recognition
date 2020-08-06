@@ -10,12 +10,12 @@ data:
   name: peta
   train:
     num_attribute: 16
-    num_instance: 4
+    num_instance: 8
     num_iterator: 700
     selected_ratio: 0.5
   val:
     num_attribute: 16
-    num_instance: 4
+    num_instance: 8
     num_iterator: 100
     selected_ratio: 0.5
 
@@ -40,8 +40,8 @@ lr_scheduler:
   enable: True
   name: ReduceLROnPlateau
   factor: 0.1
-  patience: 5
-  min_lr: 0.00000001
+  patience: 6
+  min_lr: 0
 
 clip_grad_norm_:
   enable: True
@@ -52,7 +52,3 @@ trainer:
     
 trainer_colab:
   epochs: 80
-
-# note:
-# mkdir -p /home/ubuntu/Documents/datasets/ppe/raw && cp /content/drive/My\ Drive/Private_Datasets/ppe.zip /home/ubuntu/Documents/datasets/ppe/raw/
-
