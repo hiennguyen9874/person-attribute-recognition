@@ -1,4 +1,4 @@
-base: config/base_episode.yml
+base: config/base_epoch.yml
 
 model:
   backbone: resnet50
@@ -7,17 +7,8 @@ model:
   bn_where: after
 
 data:
-  name: peta
-  train:
-    num_attribute: 16
-    num_instance: 4
-    num_iterator: 500
-    selected_ratio: 0.5
-  val:
-    num_attribute: 16
-    num_instance: 4
-    num_iterator: 100
-    selected_ratio: 0.5
+  name: pa_100k
+  batch_size: 64
 
 optimizer:
   name: sgd
@@ -28,8 +19,7 @@ optimizer:
     layers: [head]
 
 loss:
-  name: Singular_BCE
-  reduction: mean
+  name: CEL_Sigmoid
 
 freeze:
   enable: True
@@ -49,10 +39,7 @@ clip_grad_norm_:
   max_norm: 10.0
 
 trainer:
-  epochs: 80
-    
+  epochs: 120
+  
 trainer_colab:
-  epochs: 80
-
-# note:
-# mkdir -p /home/ubuntu/Documents/datasets/ppe/raw && cp /content/drive/My\ Drive/Private_Datasets/ppe.zip /home/ubuntu/Documents/datasets/ppe/raw/
+  epochs: 120
