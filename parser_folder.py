@@ -22,8 +22,8 @@ def copytree(src, dst, symlinks=False, ignore=None):
                 shutil.copy2(s, d)
 
 if __name__ == "__main__":
-    log_dir = '/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/logs'
-    saved_folder = '/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/saved'
+    log_dir = '/content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/logs'
+    saved_folder = '/content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/saved'
 
     all_saved_info = list()
     for f1 in [f.name for f in os.scandir(log_dir) if f.is_dir()]:
