@@ -71,7 +71,7 @@ class DataManger_Epoch(object):
 
         self.dataloader['test'] = DataLoader(
             dataset['test'],
-            batch_size=32,
+            batch_size=128,
             shuffle=False,
             drop_last=False
         )
