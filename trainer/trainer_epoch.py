@@ -30,7 +30,7 @@ class Trainer_Epoch(BaseTrainer):
 
         # losses
         pos_ratio = torch.tensor(self.datamanager.datasource.get_weight('train'))
-        self.criterion, params_loss = build_losses(config, pos_ratio=pos_ratio)
+        self.criterion, params_loss = build_losses(config, pos_ratio=pos_ratio, num_attribute=len(self.datamanager.datasource.get_attribute()))
 
         # optimizer
         self.optimizer, params_optimizers = build_optimizers(config, self.model)
