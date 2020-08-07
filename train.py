@@ -6,12 +6,13 @@ from utils import read_config
 def main(config):
     if config['type'].lower() == 'epoch':
         trainer = Trainer_Epoch(config)
-        trainer.train()
     elif config['type'].lower() == 'episode':
         trainer = Trainer_Episode(config)
-        trainer.train()
     else:
         raise KeyError('type error')
+    
+    trainer.train()
+    trainer.test()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')

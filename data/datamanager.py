@@ -14,6 +14,7 @@ __all__ = ['DataManger_Epoch', 'DataManger_Episode']
 class DataManger_Epoch(object):
     def __init__(self, config, phase='train'):
         super().__init__()
+        self.config = config
         self.data_name = config['name']
 
         self.datasource = build_datasource(
@@ -80,11 +81,15 @@ class DataManger_Epoch(object):
         if phase not in self.datasource.get_phase():
             raise ValueError("Error phase paramaster, phase in %s" % str(self.datasource.get_phase()))
         return self.dataloader[phase]
+    
+    def get_batch_size(self):
+        return self.config['batch_size']
 
 
 class DataManger_Episode(object):
     def __init__(self, config):
         super().__init__()
+        self.config = config
         self.data_name = config['name']
 
         self.datasource = build_datasource(
@@ -169,3 +174,9 @@ class DataManger_Episode(object):
         if phase not in self.datasource.get_phase():
             raise ValueError("Error phase paramaster, phase in %s" % str(self.datasource.get_phase()))
         return self.dataloader[phase]
+
+    def get_batch_size(self):
+        return self.config['train']['num_attribute']*self.config['train']['num_instance']
+    
+    def get_image_size(self):
+        return self.datasource.get_image_size()[0], self.datasource.get_image_size()[1]
