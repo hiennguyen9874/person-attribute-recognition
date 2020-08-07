@@ -1,11 +1,10 @@
+import os
 import time
 import torch
 import logging
 
 import sys
 sys.path.append('.')
-
-from torch.nn.utils import clip_grad_norm_
 
 from base import BaseTrainer
 from callbacks import Tqdm, FreezeLayers
