@@ -9,13 +9,13 @@ model:
 data:
   name: peta
   train:
-    num_attribute: 16
-    num_instance: 8
+    num_attribute: 4
+    num_instance: 32
     num_iterator: 700
     selected_ratio: 0.5
   val:
-    num_attribute: 16
-    num_instance: 8
+    num_attribute: 4
+    num_instance: 32
     num_iterator: 100
     selected_ratio: 0.5
 
