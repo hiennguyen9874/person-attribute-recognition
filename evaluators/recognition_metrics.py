@@ -5,7 +5,7 @@ import torch
 import numpy as np
 from easydict import EasyDict
 
-__all__ = ['recognition_metrics', 'compute_accuracy_cuda']
+__all__ = ['recognition_metrics', 'compute_accuracy_cuda', 'log_test']
 
 def recognition_metrics(labels, preds, threshold=0.5, eps = 1e-20):
     r""" https://en.wikipedia.org/wiki/Confusion_matrix
@@ -97,6 +97,35 @@ def compute_accuracy_cuda(labels, preds, threshold=0.5, eps=1e-20):
     _f1_score = 2 * torch.mul(_precision, _recall) / (torch.add(_precision, _recall) + eps)
 
     return torch.mean(mean_accuracy).item(), torch.mean(_accuracy).item(), torch.mean(_f1_score).item()
+
+def log_test(logger_func, attribute_name: list, labels, preds):
+    result_label, result_instance = recognition_metrics(labels, preds)
+
+    logger_func('instance-based metrics:')
+    logger_func('accuracy: %0.4f' % result_instance.accuracy)
+    logger_func('precision: %0.4f' % result_instance.precision)
+    logger_func('recall: %0.4f' % result_instance.recall)
+    logger_func('f1_score: %0.4f' % result_instance.f1_score)
+
+    logger_func('class-based metrics:')
+    result = np.stack([result_label.accuracy, result_label.mean_accuracy, result_label.precision, result_label.recall, result_label.f1_score], axis=0)
+    result = np.around(result*100, 2)
+    result = result.transpose()
+    row_format ="{:>17}" * 6
+    logger_func(row_format.format('attribute', 'accuracy', 'mA', 'precision', 'recall', 'f1_score'))
+    logger_func(row_format.format(*['-']*6))
+    for i in range(len(attribute_name)):
+        logger_func(row_format.format(attribute_name[i], *result[i].tolist()))
+
+    logger_func(row_format.format(*['-']*6))
+    logger_func(row_format.format(
+        'mean',
+        round(np.mean(result_label.accuracy)*100, 2),
+        round(np.mean(result_label.mean_accuracy)*100, 2),
+        round(np.mean(result_label.precision)*100, 2),
+        round(np.mean(result_label.recall)*100, 2),
+        round(np.mean(result_label.f1_score)*100, 2)))
+
 
 if __name__ == "__main__":
     pass
