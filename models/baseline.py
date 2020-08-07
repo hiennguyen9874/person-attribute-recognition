@@ -4,8 +4,6 @@ import torch.nn as nn
 import sys
 sys.path.append('.')
 
-from torch.nn import init
-
 from utils import summary
 from models.pooling import build_pooling
 from models.head import build_head

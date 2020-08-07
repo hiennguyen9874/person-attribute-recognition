@@ -6,7 +6,7 @@ sys.path.append('.')
 
 from torch.nn.utils import clip_grad_norm_
 
-from data.datamanager import DataManger_Episode
+from data import DataManger_Episode
 from callbacks import Tqdm
 from evaluators import compute_accuracy_cuda
 from trainer import Trainer

@@ -99,6 +99,8 @@ def compute_accuracy_cuda(labels, preds, threshold=0.5, eps=1e-20):
     return torch.mean(mean_accuracy).item(), torch.mean(_accuracy).item(), torch.mean(_f1_score).item()
 
 def log_test(logger_func, attribute_name: list, labels, preds):
+    r""" log test from result
+    """
     result_label, result_instance = recognition_metrics(labels, preds)
 
     logger_func('instance-based metrics:')
