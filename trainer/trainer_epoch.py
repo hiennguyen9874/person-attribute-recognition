@@ -14,7 +14,7 @@ from trainer import Trainer
 class Trainer_Epoch(Trainer):
     def __init__(self, config):
         datamanager = DataManger_Epoch(config['data'])
-        super(Trainer_Episode, self).__init__(config, datamanager)
+        super(Trainer_Epoch, self).__init__(config, datamanager)
 
     def _train_epoch(self, epoch):
         r""" Training step
