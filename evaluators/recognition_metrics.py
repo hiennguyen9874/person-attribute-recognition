@@ -14,7 +14,7 @@ from models import build_model
 from data import DataManger_Epoch, DataManger_Episode
 from logger import setup_logging
 from utils import read_config, rmdir, summary, array_interweave
-from evaluators import recognition_metrics, log_test
+from evaluators import recognition_metrics
 
 __all__ = ['recognition_metrics', 'compute_accuracy_cuda', 'log_test']
 
