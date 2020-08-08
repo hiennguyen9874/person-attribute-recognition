@@ -56,6 +56,7 @@ class Peta(BaseDataSource):
             self.weight['val'].append(np.mean(label[_val], axis=0))
             self.weight['test'].append(np.mean(label[_test], axis=0))
             # self.weight_trainval.append(np.mean(label[_trainval], axis=0))
+        self._check_file_exits()
 
     def get_data(self, phase='train', partition=0):
         assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'
