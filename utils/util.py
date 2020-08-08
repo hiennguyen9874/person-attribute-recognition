@@ -14,7 +14,7 @@ from PIL import Image
 from pathlib import Path
 from collections import OrderedDict
 
-__all__ = ['imread', 'read_json', 'write_json', 'rmdir', 'config_to_str', 'array_interweave']
+__all__ = ['imread', 'read_json', 'write_json', 'rmdir', 'config_to_str', 'array_interweave', 'neq']
 
 def imread(path):
     image = Image.open(path)
@@ -48,6 +48,9 @@ def array_interweave(a, b):
     c[0::2] = a
     c[1::2] = b
     return c
+
+def neq(x, y, z):
+    return (x != y or z) or y != z
 
 if __name__ == "__main__":
     print(json.dumps(read_config('config/test.yml'), indent=4))
