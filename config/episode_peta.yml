@@ -9,13 +9,13 @@ model:
 data:
   name: peta
   train:
-    num_attribute: 16
-    num_instance: 8
+    num_attribute: 8
+    num_instance: 16
     num_iterator: 700
     selected_ratio: 0.5
   val:
-    num_attribute: 16
-    num_instance: 8
+    num_attribute: 8
+    num_instance: 16
     num_iterator: 100
     selected_ratio: 0.5
 
@@ -48,7 +48,7 @@ clip_grad_norm_:
   max_norm: 10.0
 
 trainer:
-  epochs: 80
+  epochs: 120
     
 trainer_colab:
-  epochs: 80
+  epochs: 120
