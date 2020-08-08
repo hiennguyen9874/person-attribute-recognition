@@ -48,6 +48,8 @@ class PA_100K(BaseDataSource):
         for phase in ['train', 'val', 'test']:
             self.data[phase] = list(zip(image_name[phase], label[phase]))
             self.weight[phase] = np.mean(label[phase], axis=0).astype(np.float32)
+        
+        self._check_file_exits()
 
     def get_data(self, phase='train'):
         assert phase in ['train', 'val', 'test'], 'phase must in [train, val, test]'

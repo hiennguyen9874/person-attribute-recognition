@@ -80,7 +80,3 @@ class Wider(BaseDataSource):
 
 if __name__ == "__main__":
     datasource = Wider(root_dir='/datasets', download=False, extract=True)
-    
-    for path, label in datasource.get_data('val'):
-        if not os.path.exists(path):
-            raise FileExistsError

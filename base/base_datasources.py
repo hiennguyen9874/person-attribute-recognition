@@ -86,3 +86,10 @@ class BaseDataSource(object):
     
     def get_phase(self):
         return self.phase
+    
+    def _check_file_exits(self):
+        for phase in self.phase:
+            for path, label in self.get_data(phase):
+                if not os.path.exists(path):
+                    raise FileExistsError
+                

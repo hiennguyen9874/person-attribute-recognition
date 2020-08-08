@@ -43,6 +43,7 @@ class PPE(BaseDataSource):
             for _, _attribute_label in self.data[phase]:
                 self.weight[phase] += _attribute_label
             self.weight[phase] = np.divide(self.weight[phase], int(len(self.data[phase])))
+        self._check_file_exits()
 
     def _processes_dir(self, data_dir):
         all_attribute = set()
