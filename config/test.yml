@@ -7,7 +7,7 @@ model:
   bn_where: after
 
 data:
-  name: wider
+  name: peta
   train:
     num_attribute: 4
     num_instance: 32

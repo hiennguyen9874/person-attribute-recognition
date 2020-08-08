@@ -1,6 +1,5 @@
 import torch
 from .baseline import Baseline
-from .util import *
 
 def build_model(config, num_classes, device=torch.device('cpu')):
     cfg_model = config['model']

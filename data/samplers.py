@@ -245,13 +245,6 @@ if __name__ == "__main__":
         num_iterator=100,
         selected_ratio=0.5)
 
-    transform = transforms.Compose([
-        transforms.Resize(size=datasource.get_image_size()),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ])
+    for attribute in datasource.get_attribute():
+        print('%s, pos: %d, neg: %d' % (attribute, len(sampler.pos_dict[attribute]), len(sampler.neg_dict[attribute])))
 
-    dataset = Episode_ImageDataset(datasource.get_data('train'), attribute_name=datasource.get_attribute(), transform=transform)
-    dataloader = DataLoader(dataset, batch_sampler=sampler)
-    for data, label, attribute_name in dataloader:
-        pass
