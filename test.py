@@ -10,7 +10,7 @@ from models import build_model
 from data import DataManger_Epoch, DataManger_Episode
 from logger import setup_logging
 from utils import read_config, rmdir, summary
-from evaluators import recognition_metrics
+from evaluators import recognition_metrics, log_test
 
 def main(config):
     cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
@@ -110,31 +110,7 @@ def main(config):
     # plt.show()
 
     result_label, result_instance = recognition_metrics(labels, preds)
-
-    logger.info('instance-based metrics:')
-    logger.info('accuracy: %0.4f' % result_instance.accuracy)
-    logger.info('precision: %0.4f' % result_instance.precision)
-    logger.info('recall: %0.4f' % result_instance.recall)
-    logger.info('f1_score: %0.4f' % result_instance.f1_score)
-    
-    logger.info('class-based metrics:')
-    result = np.stack([result_label.accuracy, result_label.mean_accuracy, result_label.precision, result_label.recall, result_label.f1_score], axis=0)
-    result = np.around(result*100, 2)
-    result = result.transpose()
-    row_format ="{:>17}" * 6
-    logger.info(row_format.format('attribute', 'accuracy', 'mA', 'precision', 'recall', 'f1_score'))
-    logger.info(row_format.format(*['-']*6))
-    for i in range(len(datamanager.datasource.get_attribute())):
-        logger.info(row_format.format(datamanager.datasource.get_attribute()[i], *result[i].tolist()))
-    
-    logger.info(row_format.format(*['-']*6))
-    logger.info(row_format.format(
-        'mean',
-        round(np.mean(result_label.accuracy)*100, 2),
-        round(np.mean(result_label.mean_accuracy)*100, 2),
-        round(np.mean(result_label.precision)*100, 2),
-        round(np.mean(result_label.recall)*100, 2),
-        round(np.mean(result_label.f1_score)*100, 2)))
+    log_test(logger.info, datamanager.datasource.get_attribute(), result_label, result_instance)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
