@@ -29,7 +29,7 @@ optimizer:
 
 loss:
   name: Singular_BCE
-  reduction: attribute
+  reduction: mean
 
 freeze:
   enable: True
@@ -48,7 +48,7 @@ clip_grad_norm_:
   max_norm: 10.0
 
 trainer:
-  epochs: 80
+  epochs: 100
     
 trainer_colab:
-  epochs: 80
+  epochs: 100

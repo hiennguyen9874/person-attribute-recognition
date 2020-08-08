@@ -206,8 +206,10 @@ class Trainer(BaseTrainer):
         labels = torch.cat(labels, dim=0)
         preds = preds.cpu().numpy()
         labels = labels.cpu().numpy()
+        
+        result_label, result_instance = recognition_metrics(labels, preds)
 
-        log_test(logger.info, self.datamanager.datasource.get_attribute(), labels, preds)
+        log_test(logger.info, self.datamanager.datasource.get_attribute(), result_label, result_instance)
     
     def _save_checkpoint(self, epoch, save_best_loss, save_best_metrics):
         r""" Save model to file
