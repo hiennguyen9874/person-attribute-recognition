@@ -6,10 +6,10 @@ import sys
 sys.path.append('.')
 from tqdm import tqdm
 
-from utils import download_file_from_google_drive
+from utils import download_file_from_google_drive, download_with_url
 
 class BaseDataSource(object):
-    google_drive_api = ''
+    google_drive_api = 'AIzaSyBEp1hj-WxRxAezSd5sGfPmWnLbuxuxSvI'
     
     def __init__(
         self,
@@ -70,8 +70,8 @@ class BaseDataSource(object):
                 raise FileExistsError('please download file %s into %s' % (self.file_name, os.path.join(self.root_dir, self.dataset_dir, 'raw')))
         else:
             print("Downloading...")
-            # download_with_url(self.google_drive_api, dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), self.file_name, use_tqdm)
-            download_file_from_google_drive(dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), use_tqdm)
+            download_with_url(self.google_drive_api, dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), self.file_name, use_tqdm)
+            # download_file_from_google_drive(dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), use_tqdm)
             print("Downloaded!")
     
     def get_data(self, phase='train'):

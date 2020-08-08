@@ -85,6 +85,8 @@ class DataManger_Epoch(object):
     def get_batch_size(self):
         return self.config['batch_size']
 
+    def get_image_size(self):
+        return self.datasource.get_image_size()[0], self.datasource.get_image_size()[1]
 
 class DataManger_Episode(object):
     def __init__(self, config):
