@@ -38,21 +38,23 @@ class Wider(BaseDataSource):
                 raise ValueError
 
         self.attribute_name = list(attribute_train.values())
-        pass
         
-
     def _processes_dir(self, path_json_file, data_dir):
+        folder_name = path_json_file.split('/')[-1].split('.')[0].split('_')[-1]
         wider_attribute = read_json(path_json_file)
         attribute_name = wider_attribute['attribute_id_map']
         data = list()
         weight = np.zeros(len(attribute_name))
         for value in wider_attribute['images']:
-            path = value['file_name'].split('/')[-2:]
+            path = value['file_name'].split('/')[-1]
+            path = os.path.join(data_dir, folder_name, path)
+            if not os.path.exists(path):
+                raise FileExistsError('{}'.format(path))
             attribute = np.array(value['attribute'])
             attribute[attribute == -1] = 0
             attribute = attribute.astype(np.float32)
             weight += attribute
-            data.append((os.path.join(data_dir, *path), attribute))
+            data.append((path, attribute))
         return data, attribute_name, np.divide(weight, int(len(data)))
     
     def get_attribute(self):
@@ -78,4 +80,7 @@ class Wider(BaseDataSource):
 
 if __name__ == "__main__":
     datasource = Wider(root_dir='/datasets', download=False, extract=True)
-    print(datasource.get_weight('test'))
+    
+    for path, label in datasource.get_data('val'):
+        if not os.path.exists(path):
+            raise FileExistsError
