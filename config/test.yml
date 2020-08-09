@@ -9,13 +9,13 @@ model:
 data:
   name: peta
   train:
-    num_attribute: 4
-    num_instance: 32
+    num_attribute: 8
+    num_instance: 16
     num_iterator: 700
     selected_ratio: 0.5
   val:
-    num_attribute: 4
-    num_instance: 32
+    num_attribute: 8
+    num_instance: 16
     num_iterator: 100
     selected_ratio: 0.5
 
@@ -40,7 +40,7 @@ lr_scheduler:
   enable: True
   name: ReduceLROnPlateau
   factor: 0.1
-  patience: 6
+  patience: 10
   min_lr: 0
 
 clip_grad_norm_:
@@ -48,8 +48,7 @@ clip_grad_norm_:
   max_norm: 10.0
 
 trainer:
-  n_gpu: 1
-  epochs: 100
+  epochs: 200
     
 trainer_colab:
-  epochs: 100
+  epochs: 200
