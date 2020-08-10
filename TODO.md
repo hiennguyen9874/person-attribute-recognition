@@ -37,3 +37,4 @@
 
 - [RAP](https://arxiv.org/pdf/1603.07054.pdf)
 
+- https://github.com/TylerYep/torch-summary

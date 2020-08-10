@@ -19,7 +19,7 @@ class GeneralizedMeanPooling(nn.Module):
                      H and W can be either a ``int``, or ``None`` which means the size will
                      be the same as that of the input.
     """
-    def __init__(self, norm, output_size=1, eps=1e-6):
+    def __init__(self, norm, output_size=1, eps=1e-6, **kwargs):
         super(GeneralizedMeanPooling, self).__init__()
         assert norm > 0
         self.p = float(norm)
@@ -38,7 +38,7 @@ class GeneralizedMeanPooling(nn.Module):
 class GeneralizedMeanPoolingP(GeneralizedMeanPooling):
     r""" Same, but norm is trainable
     """
-    def __init__(self, norm=3.0, output_size=1, eps=1e-6):
+    def __init__(self, norm=3.0, output_size=1, eps=1e-6, **kwargs):
         super(GeneralizedMeanPoolingP, self).__init__(norm, output_size, eps)
         self.p = nn.Parameter(torch.ones(1, dtype=torch.float32) * norm)
 

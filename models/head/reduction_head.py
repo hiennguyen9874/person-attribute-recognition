@@ -6,7 +6,7 @@ from models.util import get_norm
 from models.weight_init import weights_init_classifier, weights_init_kaiming
 
 class ReductionHead(nn.Module):
-    def __init__(self, in_features, hidden_feature, out_features, bias_freeze, bn_where='after'):
+    def __init__(self, in_features, hidden_feature, out_features, bias_freeze, bn_where='after', pooling_size=1):
         assert bn_where in ['before', 'after'], 'bn_where must be before or after'
         super(ReductionHead, self).__init__()
         self.bn_where = bn_where
@@ -20,7 +20,7 @@ class ReductionHead(nn.Module):
             self.bnneck = get_norm(hidden_feature, '2d',  bias_freeze)
         else:
             self.bnneck = get_norm(out_features, '1d',  bias_freeze)
-        self.linear = nn.Linear(hidden_feature, out_features)
+        self.linear = nn.Linear(hidden_feature*pooling_size*pooling_size, out_features)
 
         self.linear.apply(weights_init_classifier)
         self.bottleneck.apply(weights_init_kaiming)

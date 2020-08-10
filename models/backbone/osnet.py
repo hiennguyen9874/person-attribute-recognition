@@ -256,5 +256,5 @@ def osnet(**kwargs):
 
 if __name__ == "__main__":
     model = OSNet(num_classes=26, pooling='avg_pooling')
-    summary(print, model, input_size=(3, 256, 128), batch_size=32, device='cpu', print_step=False)
+    summary(print, model, input_size=(3, 256, 128), batch_size=32, device='cpu', )
     pass
