@@ -239,9 +239,3 @@ def resnet101(pretrained=False, progress=True, **kwargs):
     """
     return _resnet('resnet101', Bottleneck, [3, 4, 23, 3], pretrained, progress,
                    **kwargs)
-
-if __name__ == "__main__":
-    model = resnet50(pretrained=True)
-    out = model(torch.rand(32, 3, 256, 128))
-    print(out.size())
-    summary(print, model, (3, 256, 128), 32, 'cpu', False)

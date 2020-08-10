@@ -9,6 +9,3 @@ class COLOR:
    BOLD = '\033[1m'
    UNDERLINE = '\033[4m'
    END = '\033[0m'
-
-if __name__ == "__main__":
-    print(COLOR.GREEN + 'Hello World !' + COLOR.END)

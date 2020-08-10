@@ -52,5 +52,3 @@ def array_interweave(a, b):
 def neq(x, y, z):
     return (x != y or z) or y != z
 
-if __name__ == "__main__":
-    print(json.dumps(read_config('config/test.yml'), indent=4))

@@ -29,10 +29,3 @@ class AvgPooling2d(nn.Module):
     def forward(self, x):
         x = self.pooling(x)
         return x
-
-if __name__ == "__main__":
-    input = torch.rand((32, 2048, 16, 8))
-    pooling = FastGlobalAvgPool2d(flatten=False)
-    out = pooling(input)
-    out2 = nn.AdaptiveAvgPool2d(1)(input)
-    pass

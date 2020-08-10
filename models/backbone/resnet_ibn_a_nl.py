@@ -257,12 +257,3 @@ def resnet101_ibn_a_nl(pretrained=False, progress=True, **kwargs):
     if pretrained:
         model.load_state_dict(load_state_dict_from_url(model_urls['resnet101_ibn_a'], progress=progress), strict=False)
     return model
-
-
-if __name__ == "__main__":
-    batch = torch.rand((4, 3, 256, 128))
-    model = resnet50_ibn_a_nl(True)
-    out = model(batch)
-    summary(print, model, (3, 256, 128), 32, 'cpu', False)
-    # summary(print, torchvision.models.resnet50(True), (3, 256, 128), 32, 'cpu', False)
-    pass

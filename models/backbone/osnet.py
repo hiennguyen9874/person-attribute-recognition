@@ -254,7 +254,3 @@ class OSNet(nn.Module):
 def osnet(**kwargs):
     return OSNet(channels=[64, 256, 384, 512])
 
-if __name__ == "__main__":
-    model = OSNet(num_classes=26, pooling='avg_pooling')
-    summary(print, model, input_size=(3, 256, 128), batch_size=32, device='cpu', )
-    pass

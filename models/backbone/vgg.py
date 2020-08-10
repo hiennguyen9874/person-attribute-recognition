@@ -173,10 +173,3 @@ def vgg19_bn(pretrained=False, progress=True, **kwargs):
     """
     return _vgg('vgg19_bn', 'E', True, pretrained, progress, **kwargs)
 
-
-if __name__ == "__main__":
-    model = vgg16(pretrained=True)
-    out = model(torch.rand(32, 3, 256, 128))
-    print(out.size())
-    summary(print, model, (3, 256, 128), 32, 'cpu', True)
-

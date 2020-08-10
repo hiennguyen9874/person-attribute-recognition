@@ -217,6 +217,3 @@ def resnet101_ibn_a(pretrained=False, progress=True, **kwargs):
     if pretrained:
         model.load_state_dict(load_state_dict_from_url(model_urls['resnet101_ibn_a'], progress=progress), strict=False)
     return model
-
-if __name__ == "__main__":
-     summary(print, resnet50_ibn_a(pretrained=True), (3, 256, 128), 32, 'cpu', False)

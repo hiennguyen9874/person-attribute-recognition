@@ -27,6 +27,3 @@ __backbones = {
 def build_backbone(name, pretrained=True, progress=True):
     assert name in __backbones.keys(), 'name of backbone must in %s' % str(__backbones.keys())
     return __backbones[name][0](pretrained=pretrained, progress=progress), __backbones[name][1]
-
-if __name__ == "__main__":
-    build_backbone('test')

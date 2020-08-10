@@ -115,10 +115,3 @@ def summary(func, model, input_size, batch_size=-1, device="cuda", print_step=Tr
     func("Estimated Total Size (MB): %0.2f" % total_size)
     func("================================================================")
     # return summary
-
-if __name__ == "__main__":
-    import torch
-    from torchvision import models
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    vgg = models.vgg16().to(device)
-    summary(print, vgg, (3, 224, 224), print_step=False)
