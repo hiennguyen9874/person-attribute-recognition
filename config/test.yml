@@ -10,13 +10,13 @@ data:
   name: peta
   train:
     num_attribute: 8
-    num_positive: 8
-    num_negative: 8
+    num_positive: 6
+    num_negative: 10
     num_iterator: 700
   val:
     num_attribute: 8
-    num_positive: 8
-    num_negative: 8
+    num_positive: 6
+    num_negative: 10
     num_iterator: 100
 
 optimizer:
