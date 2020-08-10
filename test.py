@@ -7,7 +7,7 @@ import numpy as np
 from tqdm import tqdm
 
 from models import build_model
-from data import DataManger_Epoch, DataManger_Episode
+from data import build_datamanager
 from logger import setup_logging
 from utils import read_config, rmdir, summary
 from evaluators import recognition_metrics, log_test
@@ -25,12 +25,7 @@ def main(config):
     device = torch.device('cuda:0' if use_gpu else 'cpu')
     map_location = "cuda:0" if use_gpu else torch.device('cpu')
 
-    if config['type'].lower() == 'epoch':
-        datamanager = DataManger_Epoch(config['data'])
-    elif config['type'].lower() == 'episode':
-        datamanager = DataManger_Episode(config['data'])
-    else:
-        raise KeyError
+    datamanager, _ = build_datamanager(config['type'], config)
     
     model, _ = build_model(config, num_classes=len(datamanager.datasource.get_attribute()))
 

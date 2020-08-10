@@ -11,7 +11,7 @@ from tqdm import tqdm
 from easydict import EasyDict
 
 from models import build_model
-from data import DataManger_Epoch, DataManger_Episode
+from data import build_datamanager
 from logger import setup_logging
 from utils import read_config, rmdir, summary, array_interweave, COLOR
 from evaluators import recognition_metrics
@@ -252,8 +252,8 @@ if __name__ == "__main__":
     config2.update({'resume': resume2})
     config2.update({'colab': True})
     
-    datamanager1 = DataManger_Epoch(config1['data'])
-    datamanager2 = DataManger_Episode(config2['data'])
+    datamanager1, _ = build_datamanager(config1['type'], config1['data'])
+    datamanager2, _ = build_datamanager(config2['type'], config2['data'])
 
     weight = datamanager1.datasource.get_weight('test')
 

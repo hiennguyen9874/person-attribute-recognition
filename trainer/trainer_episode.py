@@ -6,15 +6,13 @@ sys.path.append('.')
 
 from torch.nn.utils import clip_grad_norm_
 
-from data import DataManger_Episode
 from callbacks import Tqdm
 from evaluators import compute_accuracy_cuda
 from trainer import Trainer
 
 class Trainer_Episode(Trainer):
     def __init__(self, config):
-        datamanager = DataManger_Episode(config['data'])
-        super(Trainer_Episode, self).__init__(config, datamanager)
+        super(Trainer_Episode, self).__init__(config)
         
     def _train_epoch(self, epoch):
         r""" Training step
@@ -138,30 +136,3 @@ class Trainer_Episode(Trainer):
         if self.cfg_trainer['use_tqdm']:
             tqdm_callback.on_epoch_end()
         return self.valid_metrics.result()
-
-    def _print_config(
-        self,
-        params_model=None,
-        params_loss=None,
-        params_optimizers=None,
-        params_lr_scheduler=None,
-        freeze_layers=False):
-        
-        r""" print config into log file
-        """
-        def __prams_to_str(params: dict):
-            if params == None:
-                return ''
-            row_format ="{:>4}  " * len(params)
-            return row_format.format(*[key + ': ' + str(value) for key, value in params.items()])
-
-        self.logger.info('Run id: %s' % (self.run_id))
-        self.logger.info('Dataset: %s, num_attribute: %d, num_positive: %d, num_negative: %d, num_iterator: %d' % (self.config['data']['name'], self.config['data']['train']['num_attribute'], self.config['data']['train']['num_positive'], self.config['data']['train']['num_negative'], self.config['data']['train']['num_iterator']))
-        self.logger.info('Model: %s ' % (self.config['model']['name']) + __prams_to_str(params_model))
-        if freeze_layers:
-            self.logger.info('Freeze layer: %s, at first epoch %d' % (str(self.config['freeze']['layers']), self.config['freeze']['epochs']))
-        self.logger.info('Loss: %s ' % (self.config['loss']['name']) + __prams_to_str(params_loss))
-        self.logger.info('Optimizer: %s ' % (self.config['optimizer']['name']) + __prams_to_str(params_optimizers))
-        if params_lr_scheduler != None:
-            self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
-
