@@ -1,4 +1,4 @@
-base: config/base_episode.yml
+base: config/base_epoch.yml
 
 model:
   backbone: vgg16_bn
@@ -8,17 +8,8 @@ model:
   bn_where: after
 
 data:
-  name: peta
-  train:
-    num_attribute: 4
-    num_instance: 32
-    num_iterator: 700
-    selected_ratio: 0.5
-  val:
-    num_attribute: 4
-    num_instance: 32
-    num_iterator: 100
-    selected_ratio: 0.5
+  name: pa_100k
+  batch_size: 32
 
 optimizer:
   name: sgd
@@ -29,8 +20,7 @@ optimizer:
     layers: [head]
 
 loss:
-  name: Singular_BCE
-  reduction: mean
+  name: CEL_Sigmoid
 
 freeze:
   enable: True
@@ -41,16 +31,15 @@ lr_scheduler:
   enable: True
   name: ReduceLROnPlateau
   factor: 0.1
-  patience: 6
-  min_lr: 0
+  patience: 5
+  min_lr: 0.00000001
 
 clip_grad_norm_:
   enable: True
   max_norm: 10.0
 
 trainer:
-  n_gpu: 1
-  epochs: 100
-    
+  epochs: 120
+  
 trainer_colab:
-  epochs: 100
+  epochs: 120

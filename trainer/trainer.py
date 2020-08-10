@@ -8,7 +8,7 @@ sys.path.append('.')
 
 from base import BaseTrainer
 from callbacks import Tqdm, FreezeLayers
-from evaluators import plot_loss_accuracy, log_test
+from evaluators import plot_loss_accuracy, log_test, recognition_metrics
 from losses import build_losses
 from models import build_model
 from optimizers import build_optimizers
