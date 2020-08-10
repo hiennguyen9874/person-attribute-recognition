@@ -19,6 +19,7 @@ class Baseline(nn.Module):
         backbone='resnet50',
         pretrained=True,
         pooling='avg_pooling',
+        pooling_size=1,
         head='BNHead',
         bn_where='after',
         batch_norm_bias=True,
@@ -29,8 +30,8 @@ class Baseline(nn.Module):
         self.num_classes = num_classes
         
         self.backbone, feature_dim = build_backbone(backbone, pretrained=pretrained, progress=use_tqdm)
-        self.global_pooling = build_pooling(pooling)
-        self.head = build_head(head, feature_dim, self.num_classes, bias_freeze=not batch_norm_bias, bn_where=bn_where)
+        self.global_pooling = build_pooling(pooling, pooling_size)
+        self.head = build_head(head, feature_dim, self.num_classes, bias_freeze=not batch_norm_bias, bn_where=bn_where, pooling_size=pooling_size)
 
     def forward(self, x):
         x = self.backbone(x)
@@ -60,7 +61,7 @@ class Baseline(nn.Module):
         return heatmaps
 
 if __name__ == "__main__":
-    model = Baseline(26, 'resnet50', True, 'gem_pooling', 'BNHead')
-    summary(print, model, (3, 256, 128), 32, 'cpu', False)
+    model = Baseline(26, 'vgg16_bn', True, 'avg_pooling', 7, 'ReductionHead', 'after')
+    summary(print, model, (3, 256, 128), 32, 'cpu', True)
     pass
 

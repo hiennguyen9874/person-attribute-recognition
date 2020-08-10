@@ -1,8 +1,9 @@
 base: config/base_episode.yml
 
 model:
-  backbone: resnet50
+  backbone: vgg16_bn
   pooling: gem_pooling
+  pooling_size: 7
   head: BNHead
   bn_where: after
 

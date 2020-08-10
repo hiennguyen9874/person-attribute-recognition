@@ -170,3 +170,5 @@ outputs/
 
 *.out
 *,out
+
+draft.*

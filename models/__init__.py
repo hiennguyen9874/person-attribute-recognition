@@ -10,6 +10,7 @@ def build_model(config, num_classes, device=torch.device('cpu')):
             'backbone': cfg_model['backbone'],
             'pretrained': cfg_model['pretrained'],
             'pooling': cfg_model['pooling'],
+            'pooling_size': cfg_model['pooling_size'],
             'batch_norm_bias': cfg_model['batch_norm_bias'],
             'head': cfg_model['head'],
             'bn_where': cfg_model['bn_where']}
@@ -19,6 +20,7 @@ def build_model(config, num_classes, device=torch.device('cpu')):
             backbone=cfg_model['backbone'],
             pretrained=cfg_model['pretrained'],
             pooling=cfg_model['pooling'],
+            pooling_size=cfg_model['pooling_size'],
             head=cfg_model['head'],
             bn_where=cfg_model['bn_where'],
             batch_norm_bias=cfg_model['batch_norm_bias'],

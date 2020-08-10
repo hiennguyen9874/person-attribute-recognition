@@ -14,6 +14,7 @@ model:
   pretrained: True
   # global pooling support: [avg_pooling, gem_pooling]
   pooling: gem_pooling
+  pooling_size: 1
   # head support: [BNHead, ReductionHead]
   head: BNHead
   # bn_where before or after of liner layer

@@ -241,4 +241,7 @@ def resnet101(pretrained=False, progress=True, **kwargs):
                    **kwargs)
 
 if __name__ == "__main__":
-    summary(print, resnet50(pretrained=True), (3, 256, 128), 32, 'cpu', False)
+    model = resnet50(pretrained=True)
+    out = model(torch.rand(32, 3, 256, 128))
+    print(out.size())
+    summary(print, model, (3, 256, 128), 32, 'cpu', False)
