@@ -141,7 +141,7 @@ class DataManger_Episode(BaseDataManger):
             num_attribute=config['val']['num_attribute'],
             num_positive=config['val']['num_positive'],
             num_negative=config['val']['num_negative'],
-            num_iterator=config['train']['num_iterator']
+            num_iterator=config['val']['num_iterator']
         )
 
         self.dataloader['train'] = DataLoader(
