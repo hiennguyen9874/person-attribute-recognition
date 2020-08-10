@@ -141,7 +141,6 @@ def log_test(logger_func, attribute_name: list, result_label, result_instance):
         round(np.mean(result_label.recall)*100, 2),
         round(np.mean(result_label.f1_score)*100, 2)))
 
-
 def compare_class_based(logger_func, attribute_name, result_label1, result_label2):
     
     logger_func('class-based metrics:')
@@ -222,24 +221,26 @@ if __name__ == "__main__":
     config2 = "config/episode_peta.yml"
 
     resume1 = "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth"
-    resume2 = "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0804_125045/model_best_accuracy.pth"
+    resume2 = "/content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/checkpoints/0809_231322/model_best_accuracy.pth"
 
     config1 = read_config(config1)
     config1.update({'resume': resume1})
     config1.update({'colab': True})
 
-    config2 = read_config(config2)
-    config2.update({'resume': resume2})
-    config2.update({'colab': True})
+    # config2 = read_config(config2)
+    # config2.update({'resume': resume2})
+    # config2.update({'colab': True})
     
     datamanager1 = DataManger_Epoch(config1['data'])
-    datamanager2 = DataManger_Episode(config2['data'])
+    # datamanager2 = DataManger_Episode(config2['data'])
 
     # model1
     result_label1, result_instance1 = test(config1, datamanager1, print)
 
     # model 2
-    result_label2, result_instance2 = test(config2, datamanager2, print)
+    # result_label2, result_instance2 = test(config2, datamanager2, print)
 
-    compare_class_based(print, datamanager1.datasource.get_attribute(), result_label1, result_label2)
+    # compare_class_based(print, datamanager1.datasource.get_attribute(), result_label1, result_label2)
+
+    log_test(print, datamanager1.datasource.get_attribute(), result_label1, result_instance1)
 
