@@ -130,18 +130,18 @@ class DataManger_Episode(BaseDataManger):
             self.datasource.get_data('train'),
             self.datasource.get_attribute(),
             num_attribute=config['train']['num_attribute'],
-            num_instance=config['train']['num_instance'],
-            num_iterator=config['train']['num_iterator'],
-            selected_ratio=config['train']['selected_ratio']
+            num_positive=config['train']['num_positive'],
+            num_negative=config['train']['num_negative'],
+            num_iterator=config['train']['num_iterator']
         )
 
         sampler['val'] = RandomBalanceBatchSamplerAttribute(
             self.datasource.get_data('val'),
             self.datasource.get_attribute(),
             num_attribute=config['val']['num_attribute'],
-            num_instance=config['val']['num_instance'],
-            num_iterator=config['val']['num_iterator'],
-            selected_ratio=config['val']['selected_ratio']
+            num_positive=config['val']['num_positive'],
+            num_negative=config['val']['num_negative'],
+            num_iterator=config['train']['num_iterator']
         )
 
         self.dataloader['train'] = DataLoader(
@@ -166,5 +166,5 @@ class DataManger_Episode(BaseDataManger):
         )
         
     def get_batch_size(self):
-        return self.config['train']['num_attribute']*self.config['train']['num_instance']
+        return self.config['train']['num_attribute']*(self.config['train']['num_positive'] + self.config['train']['num_negative'])
     

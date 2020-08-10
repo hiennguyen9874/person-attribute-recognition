@@ -37,15 +37,15 @@ data:
   num_workers: 4
   pin_memory: True
   train:
-    num_attribute: 16
-    num_instance: 4
-    num_iterator: 500
-    selected_ratio: 0.5
+    num_attribute: 8
+    num_positive: 8
+    num_negative: 8
+    num_iterator: 700
   val:
-    num_attribute: 16
-    num_instance: 4
+    num_attribute: 8
+    num_positive: 8
+    num_negative: 8
     num_iterator: 100
-    selected_ratio: 0.5
 
 # optimizer support: [adam, sgd]
 optimizer:
