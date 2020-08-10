@@ -209,7 +209,7 @@ class Trainer(BaseTrainer):
         
         result_label, result_instance = recognition_metrics(labels, preds)
 
-        log_test(logger.info, self.datamanager.datasource.get_attribute(), result_label, result_instance)
+        log_test(logger.info, self.datamanager.datasource.get_attribute(), self.datamanager.datasource.get_weight('test'), result_label, result_instance)
     
     def _save_checkpoint(self, epoch, save_best_loss, save_best_metrics):
         r""" Save model to file
@@ -257,7 +257,6 @@ class Trainer(BaseTrainer):
             self.best_metrics[metric] = checkpoint['best_{}'.format(metric)]
         self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))
 
-    
     def _print_config(
         self,
         params_model=None,

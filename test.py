@@ -110,7 +110,7 @@ def main(config):
     # plt.show()
 
     result_label, result_instance = recognition_metrics(labels, preds)
-    log_test(logger.info, datamanager.datasource.get_attribute(), result_label, result_instance)
+    log_test(logger.info, datamanager.datasource.get_attribute(), datamanager.datasource.get_weight('test'), result_label, result_instance)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
