@@ -7,7 +7,7 @@ import torch.nn as nn
 from losses.CE_loss import CEL_Sigmoid
 from losses.Singular_BCE import Singular_BCE
 
-def build_losses(config, pos_ratio, num_attribute, use_gpu=True):
+def build_losses(config, pos_ratio, num_attribute, use_gpu=True, **kwargs):
     cfg_loss = config['loss']
     if cfg_loss['name'] == 'BCEWithLogitsLoss':
         pos_weight = torch.exp(-1 * pos_ratio)
