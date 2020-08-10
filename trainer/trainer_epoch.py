@@ -164,14 +164,3 @@ class Trainer_Epoch(Trainer):
         self.logger.info('Optimizer: %s ' % (self.config['optimizer']['name']) + __prams_to_str(params_optimizers))
         if params_lr_scheduler != None:
             self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
-
-if __name__ == "__main__":
-    from utils import read_config
-
-    config = read_config('config/test.yml')
-    config.update({'resume': ''})
-    config.update({'colab': False})
-
-    trainer = Trainer_Epoch(config)
-    # trainer.train()
-    trainer.test()

@@ -32,12 +32,3 @@ class CEL_Sigmoid(nn.Module):
             loss = (loss * weight)
         loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
         return loss
-
-if __name__ == "__main__":
-    target = torch.ones([10, 64], dtype=torch.float32).cuda() # 64 classes, batch size = 10
-    output = torch.full([10, 64], 1.5).cuda() # A prediction (logit)
-    pos_weight = torch.ones([64]).cuda() # All weights are equal to 1
-    criterion1 = CEL_Sigmoid(pos_weight)
-    temp = torch.ones(1).cuda()
-    out = criterion1(output, target)
-    pass

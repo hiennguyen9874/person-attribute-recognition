@@ -30,6 +30,3 @@ class FreezeLayers(object):
             self._freeze()
         if epoch == self.freeze_epochs:
             self._unfreeze()
-
-if __name__ == "__main__":
-    pass

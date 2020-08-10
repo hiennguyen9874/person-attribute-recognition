@@ -41,9 +41,3 @@ class GeneralizedMeanPoolingP(GeneralizedMeanPooling):
     def __init__(self, norm=3.0, output_size=1, eps=1e-6, **kwargs):
         super(GeneralizedMeanPoolingP, self).__init__(norm, output_size, eps)
         self.p = nn.Parameter(torch.ones(1, dtype=torch.float32) * norm)
-
-if __name__ == "__main__":
-    input = torch.rand((32, 2048, 16, 8))
-    pooling = GeneralizedMeanPoolingP()
-    out = pooling(input)
-    pass

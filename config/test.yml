@@ -1,9 +1,8 @@
 base: config/base_episode.yml
 
 model:
-  backbone: vgg16_bn
+  backbone: resnet50
   pooling: gem_pooling
-  pooling_size: 7
   head: BNHead
   bn_where: after
 
@@ -41,7 +40,7 @@ lr_scheduler:
   enable: True
   name: ReduceLROnPlateau
   factor: 0.1
-  patience: 10
+  patience: 6
   min_lr: 0
 
 clip_grad_norm_:

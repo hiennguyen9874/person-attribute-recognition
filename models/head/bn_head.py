@@ -34,9 +34,3 @@ class BNHead(nn.Module):
             x = self.bnneck(x)
         return x
 
-    
-if __name__ == "__main__":
-    model1 = BNHead(2048, 26, False, 'before')
-
-    batch = torch.rand((4, 2048, 1, 1))
-    out1 = model1(batch)

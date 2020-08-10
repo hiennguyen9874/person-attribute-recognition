@@ -316,7 +316,3 @@ def resnet101_nl(pretrained=False, progress=True, **kwargs):
         progress (bool): If True, displays a progress bar of the download to stderr
     """
     return _resnet('resnet101', Bottleneck, [3, 4, 23, 3], [0, 2, 9, 0], pretrained, progress, **kwargs)
-
-if __name__ == "__main__":
-    summary(print, resnet50_nl(True), (3, 256, 128), 32, 'cpu', False)
-    pass

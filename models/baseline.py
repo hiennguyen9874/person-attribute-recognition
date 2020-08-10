@@ -60,8 +60,3 @@ class Baseline(nn.Module):
             return x, heatmaps
         return heatmaps
 
-if __name__ == "__main__":
-    model = Baseline(26, 'vgg16_bn', True, 'avg_pooling', 7, 'ReductionHead', 'after')
-    summary(print, model, (3, 256, 128), 32, 'cpu', True)
-    pass
-

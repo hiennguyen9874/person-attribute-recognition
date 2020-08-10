@@ -28,7 +28,3 @@ def read_config(path_config: str):
             if key not in all_config['lr_scheduler']:
                 all_config['lr_scheduler'][key] = value
     return all_config
-
-if __name__ == "__main__":
-    config = read_config('config/test.yml')
-    print(json.dumps(config, indent = 4))

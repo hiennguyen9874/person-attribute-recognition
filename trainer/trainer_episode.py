@@ -165,13 +165,3 @@ class Trainer_Episode(Trainer):
         if params_lr_scheduler != None:
             self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
 
-if __name__ == "__main__":
-    from utils import read_config
-
-    config = read_config('config/test.yml')
-    config.update({'resume': ''})
-    config.update({'colab': False})
-
-    trainer = Trainer_Episode(config)
-    # trainer.train()
-    trainer.test()
