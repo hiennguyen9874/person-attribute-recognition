@@ -11,7 +11,7 @@ from base import BaseDataSource
 from utils import read_json, neq
 
 class Wider(BaseDataSource):
-    dataset_id = '1kOvsPFZasjpRewOJfevMhuY3JoIr770U'
+    dataset_id = '1whFSGBMLm-92SQ6JXEAJwM49XrmQhUd5'
 
     def __init__(self, root_dir='datasets', download=True, extract=True, use_tqdm=True, validation_split=0.1):
         dataset_dir = 'wider'
