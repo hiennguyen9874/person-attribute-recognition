@@ -1,9 +1,8 @@
 import sys
 sys.path.append('.')
 
-import torch
-import random
 import copy
+import torch
 import numpy as np
 
 from tqdm import tqdm
@@ -45,14 +44,14 @@ class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
 
     def __iter__(self):
         if self.shuffle:
-            random.shuffle(self.attribute_name)
+            np.random.shuffle(self.attribute_name)
             for _, attribute in self.attribute_name:
-                random.shuffle(self.pos_dict[attribute])
-                random.shuffle(self.neg_dict[attribute])
+                np.random.shuffle(self.pos_dict[attribute])
+                np.random.shuffle(self.neg_dict[attribute])
         for _ in range(self.num_iterator):
-            selected_attribute = random.sample(self.attribute_name, self.num_attribute)
+            selected_attribute = np.random.choice(len(self.attribute_name), size=self.num_attribute, replace=True)
             batch = []
-            for index, attribute in selected_attribute:
+            for index, attribute in self.attribute_name[selected_attribute]:
                 pos_idxs = np.random.choice(self.pos_dict[attribute], size=self.num_positive, replace=True)
                 neg_idxs = np.random.choice(self.neg_dict[attribute], size=self.num_negative, replace=True)
                 batch.extend(list(zip(pos_idxs, repeat(index))))
@@ -85,7 +84,7 @@ class SubsetIdentitySampler(torch.utils.data.Sampler):
 
     def __iter__(self):
         if self.shuffle:
-            random.shuffle(self.list_index)
+            np.random.shuffle(self.list_index)
         return iter(self.list_index)
 
     def __len__(self):
@@ -103,7 +102,7 @@ class SubsetIdentitySampler(torch.utils.data.Sampler):
         right_index_dict = defaultdict(list)
         for person_id in self.index_dict.keys():
             idx_full = self.index_dict[person_id]
-            random.shuffle(idx_full)
+            np.random.shuffle(idx_full)
             left_index = idx_full[validation_count:]
             right_index = idx_full[0:validation_count]
             left_index_dict[person_id].extend(left_index)
@@ -155,7 +154,7 @@ class RandomIdentitySampler(torch.utils.data.Sampler):
             if len(idxs) < self.num_instances:
                 idxs = np.random.choice(idxs, size=self.num_instances, replace=True)
             
-            random.shuffle(idxs)
+            np.random.shuffle(idxs)
             batch_idxs = []
             for idx in idxs:
                 batch_idxs.append(idx)
@@ -166,7 +165,7 @@ class RandomIdentitySampler(torch.utils.data.Sampler):
         avai_pids = copy.deepcopy(self.person_ids)
         batch = []
         while len(avai_pids) >= self.num_pids_per_batch:
-            selected_pids = random.sample(avai_pids, self.num_pids_per_batch)
+            selected_pids = np.random.choice(avai_pids, self.num_pids_per_batch)
             for person_id in selected_pids:
                 batch.extend(batch_idx_dict[person_id].pop(0))
                 if len(batch_idx_dict[person_id]) == 0:
@@ -212,9 +211,9 @@ class RandomBalanceBatchSampler(torch.utils.data.BatchSampler):
 
     def __iter__(self):
         for _ in range(self.num_iterators):
-            selected_pids = random.sample(self.person_ids, self.num_pids_per_batch)
+            selected_pids = np.random.choice(len(self.person_ids), size=self.num_pids_per_batch, replace=True)
             batch = []
-            for person_id in selected_pids:
+            for person_id in self.person_ids[selected_pids]:
                 idxs = np.random.choice(self.index_dict[person_id], size=self.num_instances, replace=True)
                 batch.extend(idxs)
             yield batch
