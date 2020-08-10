@@ -13,7 +13,7 @@ from easydict import EasyDict
 from models import build_model
 from data import DataManger_Epoch, DataManger_Episode
 from logger import setup_logging
-from utils import read_config, rmdir, summary, array_interweave
+from utils import read_config, rmdir, summary, array_interweave, COLOR
 from evaluators import recognition_metrics
 
 __all__ = ['recognition_metrics', 'compute_accuracy_cuda', 'log_test']
@@ -109,7 +109,7 @@ def compute_accuracy_cuda(labels, preds, threshold=0.5, eps=1e-20):
 
     return torch.mean(mean_accuracy).item(), torch.mean(_accuracy).item(), torch.mean(_f1_score).item()
 
-def log_test(logger_func, attribute_name: list, result_label, result_instance):
+def log_test(logger_func, attribute_name: list, weight, result_label, result_instance):
     r""" log test from result
     """
     logger_func('instance-based metrics:')
@@ -122,28 +122,28 @@ def log_test(logger_func, attribute_name: list, result_label, result_instance):
     result = np.stack([result_label.accuracy, result_label.mean_accuracy, result_label.precision, result_label.recall, result_label.f1_score], axis=0)
     result = np.around(result*100, 2)
     result = result.transpose()
-    row_format ="{:>20}" * 6
+    row_format ="{:>20}" + "{:>10}"*6
     
-    logger_func(row_format.format('attribute', 'accuracy', 'mA', 'precision', 'recall', 'f1_score'))
+    logger_func(row_format.format('attribute', 'weight', 'accuracy', 'mA', 'precision', 'recall', 'f1_score'))
     
-    logger_func(row_format.format(*['-']*6))
+    logger_func(row_format.format(*['-']*7))
     
     for i in range(len(attribute_name)):
-        logger_func(row_format.format(attribute_name[i], *result[i].tolist()))
+        logger_func(row_format.format(attribute_name[i], np.around(weight[i]*100, 2), *result[i].tolist()))
 
-    logger_func(row_format.format(*['-']*6))
+    logger_func(row_format.format(*['-']*7))
     
     logger_func(row_format.format(
         'mean',
+        '-',
         round(np.mean(result_label.accuracy)*100, 2),
         round(np.mean(result_label.mean_accuracy)*100, 2),
         round(np.mean(result_label.precision)*100, 2),
         round(np.mean(result_label.recall)*100, 2),
         round(np.mean(result_label.f1_score)*100, 2)))
 
-def compare_class_based(logger_func, attribute_name, result_label1, result_label2):
-    
-    logger_func('class-based metrics:')
+def compare_class_based(logger_func, attribute_name, weight, result_label1, result_label2, color=COLOR.BOLD):
+    # logger_func('class-based metrics:')
     result1 = np.stack([result_label1.accuracy, result_label1.mean_accuracy, result_label1.precision, result_label1.recall, result_label1.f1_score], axis=0)
     result1 = np.around(result1*100, 2)
     result1 = result1.transpose()
@@ -152,20 +152,41 @@ def compare_class_based(logger_func, attribute_name, result_label1, result_label
     result2 = np.around(result2*100, 2)
     result2 = result2.transpose()
 
-    row_format = "{:>22}"*6
-    logger_func(row_format.format('attribute', 'accuracy', 'mA', 'precision', 'recall', 'f1_score'))
-    # logger_func(row_format.format('attribute', 'accuracy', 'accuracy', 'mA', 'mA', 'precision', 'precision', 'recall', 'recall', 'f1_score', 'f1_score'))
+    row_format = "{:>20}{:>12}{:>15}{:>12}{:>20}{:>14}{:>18}"
+    logger_func(row_format.format('attribute', 'weight', 'accuracy', 'mA', 'precision', 'recall', 'f1_score'))
     
-    logger_func(row_format.format(*['-']*6))
+    logger_func(row_format.format(*['-']*7))
 
-    row_format = "{:>20}" + "{:>20}|{:>5}"*5
     for i in range(len(attribute_name)):
-        logger_func(row_format.format(attribute_name[i], *array_interweave(result1[i], result2[i]).tolist()))
+        row_format = "{:>20}" + "{:>12}"
+        for j in range(5):
+            if result1[i][j] > result2[i][j]:
+                row_format += color + "{:>10}" + COLOR.END +"|{:>5}"
+            elif result1[i][j] < result2[i][j]:
+                row_format += "{:>10}|" + color + "{:>5}" + COLOR.END
+            else:
+                row_format += color + "{:>10}" + COLOR.END + "|" + color + "{:>5}" + COLOR.END
+        logger_func(row_format.format(attribute_name[i], np.around(weight[i]*100, 2), *array_interweave(result1[i], result2[i]).tolist()))
 
-    logger_func(row_format.format(*['-']*11))
+    row_format = "{:>20}" + "{:>12}" + "{:>10}|{:>5}"*5
+    logger_func(row_format.format(*['-']*12))
     
+    mean_result1 = np.around(np.mean(np.array([result_label1.accuracy, result_label1.mean_accuracy, result_label1.precision, result_label1.recall, result_label1.f1_score]), axis=1)*100, 2)
+    
+    mean_result2 = np.around(np.mean(np.array([result_label2.accuracy, result_label2.mean_accuracy, result_label2.precision, result_label2.recall, result_label2.f1_score]), axis=1)*100, 2)
+    
+    row_format = "{:>20}" + "{:>12}"
+    for i in range(5):
+        if mean_result1[i] > mean_result2[i]:
+            row_format += color + "{:>10}" + COLOR.END +"|{:>5}"
+        elif mean_result1[i] < mean_result2[i]:
+            row_format += "{:>10}|" + color + "{:>5}" + COLOR.END
+        else:
+            row_format += color + "{:>10}" + COLOR.END + "|" + color + "{:>5}" + COLOR.END
+
     logger_func(row_format.format(
         'mean',
+        '-',
         round(np.mean(result_label1.accuracy)*100, 2),
         round(np.mean(result_label2.accuracy)*100, 2),
         round(np.mean(result_label1.mean_accuracy)*100, 2),
@@ -227,20 +248,20 @@ if __name__ == "__main__":
     config1.update({'resume': resume1})
     config1.update({'colab': True})
 
-    # config2 = read_config(config2)
-    # config2.update({'resume': resume2})
-    # config2.update({'colab': True})
+    config2 = read_config(config2)
+    config2.update({'resume': resume2})
+    config2.update({'colab': True})
     
     datamanager1 = DataManger_Epoch(config1['data'])
-    # datamanager2 = DataManger_Episode(config2['data'])
+    datamanager2 = DataManger_Episode(config2['data'])
+
+    weight = datamanager1.datasource.get_weight('test')
 
     # model1
     result_label1, result_instance1 = test(config1, datamanager1, print)
 
     # model 2
-    # result_label2, result_instance2 = test(config2, datamanager2, print)
+    result_label2, result_instance2 = test(config2, datamanager2, print)
 
-    # compare_class_based(print, datamanager1.datasource.get_attribute(), result_label1, result_label2)
-
-    log_test(print, datamanager1.datasource.get_attribute(), result_label1, result_instance1)
+    compare_class_based(print, datamanager1.datasource.get_attribute(), weight, result_label1, result_label2, COLOR.BLUE)
 

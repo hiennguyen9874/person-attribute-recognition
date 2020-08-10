@@ -1,3 +1,4 @@
+import os
 import argparse
 
 from trainer import Trainer_Epoch, Trainer_Episode
@@ -12,6 +13,7 @@ def main(config):
         raise KeyError('type error')
     
     trainer.train()
+    trainer._resume_checkpoint(os.path.join(trainer.checkpoint_dir, 'model_best_{}.pth'.format('accuracy')))
     trainer.test()
 
 if __name__ == "__main__":
