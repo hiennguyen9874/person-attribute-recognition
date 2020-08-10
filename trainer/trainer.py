@@ -8,6 +8,7 @@ sys.path.append('.')
 
 from base import BaseTrainer
 from callbacks import Tqdm, FreezeLayers
+from data import build_datamanager
 from evaluators import plot_loss_accuracy, log_test, recognition_metrics
 from losses import build_losses
 from models import build_model
@@ -20,10 +21,10 @@ from base import BaseTrainer
 class Trainer(BaseTrainer):
     r""" Trainer for person attribute recognition
     """
-    def __init__(self, config, datamanager):
+    def __init__(self, config):
         super(Trainer, self).__init__(config)
         # Datamanager
-        self.datamanager = datamanager
+        self.datamanager, params_data = build_datamanager(config['type'], config['data'])
 
         # model
         self.model, params_model = build_model(
@@ -68,11 +69,13 @@ class Trainer(BaseTrainer):
         
         # print config
         self._print_config(
+            params_data=params_data,
             params_model=params_model,
             params_loss=params_loss,
             params_optimizers=params_optimizers,
             params_lr_scheduler=params_lr_scheduler,
-            freeze_layers=False if self.freeze == None else True)
+            freeze_layers=False if self.freeze == None else True,
+            clip_grad_norm_=self.config['clip_grad_norm_']['enable'])
 
         # send model to device
         self.model.to(self.device)
@@ -259,12 +262,30 @@ class Trainer(BaseTrainer):
 
     def _print_config(
         self,
+        params_data=None,
         params_model=None,
         params_loss=None,
         params_optimizers=None,
         params_lr_scheduler=None,
-        freeze_layers=False):
+        freeze_layers=False,
+        clip_grad_norm_=False):
         
         r""" print config into log file
         """
-        raise NotImplementedError
+        def __prams_to_str(params: dict):
+            if params == None:
+                return ''
+            row_format ="{:>4},  " * len(params)
+            return row_format.format(*[key + ': ' + str(value) for key, value in params.items()])
+
+        self.logger.info('Run id: %s' % (self.run_id))
+        self.logger.info('Data: ' + __prams_to_str(params_data))
+        self.logger.info('Model: %s ' % (self.config['model']['name']) + __prams_to_str(params_model))
+        if freeze_layers:
+            self.logger.info('Freeze layer: %s, at first epoch %d' % (str(self.config['freeze']['layers']), self.config['freeze']['epochs']))
+        self.logger.info('Loss: %s ' % (self.config['loss']['name']) + __prams_to_str(params_loss))
+        self.logger.info('Optimizer: %s ' % (self.config['optimizer']['name']) + __prams_to_str(params_optimizers))
+        if params_lr_scheduler != None:
+            self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
+        if clip_grad_norm_:
+            self.logger.info('clip_grad_norm_, max_norm: %f' % self.config['clip_grad_norm_']['max_norm'])

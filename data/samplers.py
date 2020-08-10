@@ -1,16 +1,13 @@
 import sys
 sys.path.append('.')
 
-import torch
-import random
 import copy
+import torch
 import numpy as np
 
 from tqdm import tqdm
 from itertools import repeat
 from collections import defaultdict
-
-__all__ = ['RandomBalanceBatchSamplerAttribute']
 
 class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
     def __init__(
@@ -21,7 +18,8 @@ class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
         num_positive,
         num_negative,
         num_iterator,
-        shuffle=True):
+        shuffle=True,
+        **kwargs):
 
         assert num_attribute <= len(attribute_name), 'num of attribute in one batch must less than num of attribute in dataset'
         
@@ -45,14 +43,70 @@ class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
 
     def __iter__(self):
         if self.shuffle:
-            random.shuffle(self.attribute_name)
+            np.random.shuffle(self.attribute_name)
             for _, attribute in self.attribute_name:
-                random.shuffle(self.pos_dict[attribute])
-                random.shuffle(self.neg_dict[attribute])
+                np.random.shuffle(self.pos_dict[attribute])
+                np.random.shuffle(self.neg_dict[attribute])
         for _ in range(self.num_iterator):
-            selected_attribute = random.sample(self.attribute_name, self.num_attribute)
+            idx_selected_attribute = np.random.choice(len(self.attribute_name), size=self.num_attribute, replace=True)
             batch = []
-            for index, attribute in selected_attribute:
+            for idx in idx_selected_attribute:
+                index, attribute = self.attribute_name[idx]
+                pos_idxs = np.random.choice(self.pos_dict[attribute], size=self.num_positive, replace=True)
+                neg_idxs = np.random.choice(self.neg_dict[attribute], size=self.num_negative, replace=True)
+                batch.extend(list(zip(pos_idxs, repeat(index))))
+                batch.extend(list(zip(neg_idxs, repeat(index))))
+            yield batch
+
+    def __len__(self):
+        return self.num_iterator
+
+class RandomBatchSamplerAttribute(torch.utils.data.Sampler):
+    def __init__(
+        self,
+        datasource,
+        weight,
+        attribute_name,
+        num_attribute,
+        num_positive,
+        num_negative,
+        num_iterator,
+        shuffle=True,
+        **kwargs):
+
+        assert num_attribute <= len(attribute_name), 'num of attribute in one batch must less than num of attribute in dataset'
+        
+        self.datasource = datasource
+        self.weight = torch.exp(1-torch.tensor(weight))
+        self.attribute_name = list(enumerate(attribute_name))
+        self.num_attribute = num_attribute
+        self.num_positive = num_positive
+        self.num_negative = num_negative
+        self.num_iterator = num_iterator
+        self.shuffle = shuffle
+
+        self.pos_dict = defaultdict(list)
+        self.neg_dict = defaultdict(list)
+
+        for index, (_, label) in enumerate(self.datasource):
+            for i, attribute in enumerate(attribute_name):
+                if label[i] == True:
+                    self.pos_dict[attribute].append(index)
+                else:
+                    self.neg_dict[attribute].append(index)
+
+    def __iter__(self):
+        if self.shuffle:
+            np.random.shuffle(self.attribute_name)
+            for _, attribute in self.attribute_name:
+                np.random.shuffle(self.pos_dict[attribute])
+                np.random.shuffle(self.neg_dict[attribute])
+        for _ in range(self.num_iterator):
+            # idx_selected_attribute = np.random.choice(len(self.attribute_name), size=self.num_attribute, replace=True)
+            idx_selected_attribute = torch.multinomial(self.weight, self.num_attribute, replacement=True)
+            batch = []
+            for idx in idx_selected_attribute:
+                index, attribute = self.attribute_name[idx]
                 pos_idxs = np.random.choice(self.pos_dict[attribute], size=self.num_positive, replace=True)
                 neg_idxs = np.random.choice(self.neg_dict[attribute], size=self.num_negative, replace=True)
                 batch.extend(list(zip(pos_idxs, repeat(index))))
@@ -63,7 +117,7 @@ class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
         return self.num_iterator
 
 class SubsetIdentitySampler(torch.utils.data.Sampler):
-    def __init__(self, datasource, batch_size, shuffle = True, index_dict=None):
+    def __init__(self, datasource, batch_size, shuffle = True, index_dict=None, **kwargs):
         self.datasource = datasource
         self.batch_size = batch_size
         self.shuffle = shuffle
@@ -85,7 +139,7 @@ class SubsetIdentitySampler(torch.utils.data.Sampler):
 
     def __iter__(self):
         if self.shuffle:
-            random.shuffle(self.list_index)
+            np.random.shuffle(self.list_index)
         return iter(self.list_index)
 
     def __len__(self):
@@ -103,7 +157,7 @@ class SubsetIdentitySampler(torch.utils.data.Sampler):
         right_index_dict = defaultdict(list)
         for person_id in self.index_dict.keys():
             idx_full = self.index_dict[person_id]
-            random.shuffle(idx_full)
+            np.random.shuffle(idx_full)
             left_index = idx_full[validation_count:]
             right_index = idx_full[0:validation_count]
             left_index_dict[person_id].extend(left_index)
@@ -113,7 +167,7 @@ class SubsetIdentitySampler(torch.utils.data.Sampler):
 class RandomIdentitySampler(torch.utils.data.Sampler):
     ''' https://github.com/KaiyangZhou/deep-person-reid/blob/master/torchreid/data/sampler.py
     '''
-    def __init__(self, datasource, batch_size=1, num_instances=1, index_dict=None):
+    def __init__(self, datasource, batch_size=1, num_instances=1, index_dict=None, **kwargs):
         self.datasource = datasource
 
         if batch_size <= num_instances:
@@ -155,7 +209,7 @@ class RandomIdentitySampler(torch.utils.data.Sampler):
             if len(idxs) < self.num_instances:
                 idxs = np.random.choice(idxs, size=self.num_instances, replace=True)
             
-            random.shuffle(idxs)
+            np.random.shuffle(idxs)
             batch_idxs = []
             for idx in idxs:
                 batch_idxs.append(idx)
@@ -166,11 +220,11 @@ class RandomIdentitySampler(torch.utils.data.Sampler):
         avai_pids = copy.deepcopy(self.person_ids)
         batch = []
         while len(avai_pids) >= self.num_pids_per_batch:
-            selected_pids = random.sample(avai_pids, self.num_pids_per_batch)
-            for person_id in selected_pids:
-                batch.extend(batch_idx_dict[person_id].pop(0))
-                if len(batch_idx_dict[person_id]) == 0:
-                    avai_pids.remove(person_id)
+            idx_selected_pids = np.random.choice(len(avai_pids), self.num_pids_per_batch)
+            for idx in idx_selected_pids:
+                batch.extend(batch_idx_dict[avai_pids[idx]].pop(0))
+                if len(batch_idx_dict[avai_pids[idx]]) == 0:
+                    avai_pids.remove(avai_pids[idx])
         return iter(batch)
 
     def split(self, rate=0.5):
@@ -184,8 +238,8 @@ class RandomIdentitySampler(torch.utils.data.Sampler):
             right_index_dict[person_id] = right_index
         return RandomIdentitySampler(self.datasource, self.batch_size, self.num_instances, left_index_dict), RandomIdentitySampler(self.datasource, self.batch_size, self.num_instances, right_index_dict)
 
-class RandomBalanceBatchSampler(torch.utils.data.BatchSampler):
-    def __init__(self, datasource, batch_size=1, num_instances=1, num_iterators = 1, index_dict=None):
+class RandomBalanceBatchSampler(torch.utils.data.Sampler):
+    def __init__(self, datasource, batch_size=1, num_instances=1, num_iterators = 1, index_dict=None, **kwargs):
         self.datasource = datasource
 
         if batch_size <= num_instances:
@@ -212,10 +266,10 @@ class RandomBalanceBatchSampler(torch.utils.data.BatchSampler):
 
     def __iter__(self):
         for _ in range(self.num_iterators):
-            selected_pids = random.sample(self.person_ids, self.num_pids_per_batch)
+            idx_selected_pids = np.random.choice(len(self.person_ids), size=self.num_pids_per_batch, replace=True)
             batch = []
-            for person_id in selected_pids:
-                idxs = np.random.choice(self.index_dict[person_id], size=self.num_instances, replace=True)
+            for idx in idx_selected_pids:
+                idxs = np.random.choice(self.index_dict[self.person_ids[idx]], size=self.num_instances, replace=True)
                 batch.extend(idxs)
             yield batch
 
@@ -229,3 +283,13 @@ class RandomBalanceBatchSampler(torch.utils.data.BatchSampler):
             left_index_dict[person_id].extend(left_index)
             right_index_dict[person_id].extend(right_index)
         return RandomBalanceBatchSampler(self.datasource, self.batch_size, self.num_instances, self.num_iterators, left_index_dict), RandomBalanceBatchSampler(self.datasource, self.batch_size, self.num_instances, num_iterators_val, right_index_dict)
+
+__samplers__ = {
+    'RandomBalanceBatchSamplerAttribute': RandomBalanceBatchSamplerAttribute,
+    'RandomBatchSamplerAttribute': RandomBatchSamplerAttribute
+}
+
+def build_sampler(name, **kwargs):
+    assert name in __samplers__.keys(), 'name of sampler must in %s' % str(__samplers__.keys())
+    return __samplers__[name](**kwargs)
+

@@ -34,6 +34,7 @@ data:
   extract: True
   # using tqdm process bar when download and extract dataset file
   use_tqdm: False
+  sampler: RandomBalanceBatchSamplerAttribute
   num_workers: 4
   pin_memory: True
   train:
