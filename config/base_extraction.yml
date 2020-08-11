@@ -16,4 +16,4 @@ model:
 data:
   size: [256, 128]
   # pickle file, list of attribute saved in here. get it from datasource.saved_attribute()
-  path_attribute: attribute.pkl
+  path_attribute: peta_attribute.pkl
