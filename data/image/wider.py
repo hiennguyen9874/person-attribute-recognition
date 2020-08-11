@@ -1,5 +1,5 @@
 import os
-from threading import active_count
+import pickle
 import numpy as np
 
 from collections import defaultdict
@@ -77,6 +77,10 @@ class Wider(BaseDataSource):
             and os.path.exists(os.path.join(extract_dir, 'Wider-data', 'wiger_attribute_test.json')):
             return True
         return False
+    
+    def save_attribute(self, path='attribute.pkl'):
+        with open(path, 'wb') as f:
+            pickle.dump(self.get_attribute(), f)
 
 if __name__ == "__main__":
     datasource = Wider(root_dir='/datasets', download=False, extract=True)

@@ -42,7 +42,7 @@
 
 ## Config
 - Using config file in [config](config) folder.
-- Add new config file based on [config/base.yml](config/base.yml).
+- Add new config file based on [config/base_epoch.yml](config/base.yml) or [config/base_episode.yml](config/base_episode.yml).
 
 ## Result
 
@@ -50,7 +50,7 @@
 
 | backbone          	| bn after linear 	| Head          	| Loss              	|   mA  	| Accuracy 	| Precision 	| Recall 	| F1-Score 	|
 |-------------------	|:---------------:	|---------------	|-------------------	|:-----:	|:--------:	|:---------:	|:------:	|:--------:	|
-| resnet50          	|     &check;     	| BNHead        	| CEL_Sigmoid       	|  86.39 	|   79.98  	|   87.26   	|  87.10 	|   86.94  	|
+| resnet50          	|     &check;     	| BNHead        	| CEL_Sigmoid       	|  84.79 	|   80.07  	|   88.28   	|  86.24 	|   86.98  	|
 | resnet50          	|     &check;     	| BNHead        	| BCEWithLogitsLoss 	|  79.47 	|   76.33  	|   87.22   	|  82.38 	|   84.33  	|
 | resnet50_ibn_a_nl 	|     &check;     	| BNHead        	| CEL_Sigmoid       	|  83.49 	|   79.60  	|   88.89   	|  85.14 	|   86.65  	|
 | osnet             	|     &check;     	| ReductionHead 	| CEL_Sigmoid       	|  77.67 	|   73.44  	|   84.17   	|  80.60 	|   81.97  	|
@@ -72,6 +72,4 @@
 
 | backbone          	| bn after linear 	| Head          	| Loss              	|   mA  	| Accuracy 	| Precision 	| Recall 	| F1-Score 	|
 |-------------------	|:---------------:	|---------------	|-------------------	|:-----:	|:--------:	|:---------:	|:------:	|:--------:	|
-| resnet50          	|     &check;     	| BNHead        	| CEL_Sigmoid       	|  78.91 	|   78.48  	|   87.65   	|  86.24 	|   86.53  	|
-
-
+| resnet50          	|     &check;     	| BNHead        	| CEL_Sigmoid       	|  79.50 	|   78.89  	|   88.17   	|  86.28 	|   86.80  	|

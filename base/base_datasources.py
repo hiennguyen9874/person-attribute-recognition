@@ -1,6 +1,7 @@
 import os
 import zipfile
 import tarfile
+import pickle
 
 import sys
 sys.path.append('.')

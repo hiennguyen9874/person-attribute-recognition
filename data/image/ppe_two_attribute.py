@@ -104,6 +104,10 @@ class PPE_Two(BaseDataSource):
             return True
         return False
 
+    def save_attribute(self, path='attribute.pkl'):
+        with open(path, 'wb') as f:
+            pickle.dump(self.get_attribute(), f)
+
 if __name__ == "__main__":
     from utils import read_config
     config = read_config('config/base.yml')
