@@ -5,7 +5,7 @@ from torchvision import transforms
 from torch.utils.data.dataloader import DataLoader
 
 from data.image import build_datasource
-from data.datasets import Epoch_ImageDataset, Episode_ImageDataset
+from data.datasets import ImageDataset
 from data.transforms import RandomErasing
 from data.samplers import build_sampler
 
@@ -62,7 +62,7 @@ class DataManger_Epoch(BaseDataManger):
 
         dataset = dict()
         for _phase in self.datasource.get_phase():
-            dataset[_phase] = Epoch_ImageDataset(self.datasource.get_data(_phase), transform=transform[_phase])
+            dataset[_phase] = ImageDataset(self.datasource.get_data(_phase), transform=transform[_phase])
         
         self.dataloader['train'] = DataLoader(
             dataset=dataset['train'],
@@ -70,22 +70,25 @@ class DataManger_Epoch(BaseDataManger):
             shuffle=config['shuffle'],
             num_workers=config['num_workers'],
             pin_memory=config['pin_memory'],
-            drop_last=config['drop_last']
+            drop_last=False
         )
 
         self.dataloader['val'] = DataLoader(
             dataset=dataset['val'],
-            batch_size=config['batch_size'],
+            batch_size=128,
             shuffle=False,
             num_workers=config['num_workers'],
             pin_memory=config['pin_memory'],
-            drop_last=config['drop_last']
+            drop_last=False
         )
 
         self.dataloader['test'] = DataLoader(
-            dataset['test'],
+            dataset=dataset['test'],
             batch_size=128,
             shuffle=False,
+            drop_last=False,
+            num_workers=config['num_workers'],
+            pin_memory=config['pin_memory'],
             drop_last=False
         )
     
@@ -120,7 +123,7 @@ class DataManger_Episode(BaseDataManger):
 
         dataset = dict()
         for _phase in self.datasource.get_phase():
-            dataset[_phase] = Episode_ImageDataset(
+            dataset[_phase] = ImageDataset(
                 self.datasource.get_data(_phase),
                 self.datasource.get_attribute(),
                 transform=transform[_phase])
@@ -137,17 +140,6 @@ class DataManger_Episode(BaseDataManger):
             num_iterator=config['train']['num_iterator']
         )
 
-        sampler['val'] = build_sampler(
-            name=config['sampler'],
-            datasource=self.datasource.get_data('val'),
-            weight=self.datasource.get_weight('train'),
-            attribute_name=self.datasource.get_attribute(),
-            num_attribute=config['val']['num_attribute'],
-            num_positive=config['val']['num_positive'],
-            num_negative=config['val']['num_negative'],
-            num_iterator=config['val']['num_iterator']
-        )
-
         self.dataloader['train'] = DataLoader(
             dataset=dataset['train'],
             batch_sampler=sampler['train'],
@@ -157,15 +149,19 @@ class DataManger_Episode(BaseDataManger):
 
         self.dataloader['val'] = DataLoader(
             dataset=dataset['val'],
-            batch_sampler=sampler['val'],
+            batch_size=128,
+            shuffle=False,
             num_workers=config['num_workers'],
             pin_memory=config['pin_memory'],
+            drop_last=False
         )
 
         self.dataloader['test'] = DataLoader(
-            dataset['test'],
+            dataset=dataset['test'],
             batch_size=128,
             shuffle=False,
+            num_workers=config['num_workers'],
+            pin_memory=config['pin_memory'],
             drop_last=False
         )
         
@@ -183,8 +179,7 @@ def build_datamanager(train_type, config, **kwargs):
             'batch_size': config['batch_size'],
             'shuffle': config['shuffle'],
             'num_workers': config['num_workers'],
-            'pin_memory': config['pin_memory'],
-            'drop_last': config['drop_last']
+            'pin_memory': config['pin_memory']
         })
         return DataManger_Epoch(config, **kwargs), dict_paramsters
     
@@ -192,13 +187,12 @@ def build_datamanager(train_type, config, **kwargs):
         dict_paramsters.update({
             'sampler': config['sampler'],
         })
-        for x in ['train', 'val']:
-            dict_paramsters.update({
-                x+'_num_attribute': config[x]['num_attribute'],
-                x+'_num_positive': config[x]['num_positive'],
-                x+'_num_negative': config[x]['num_negative'],
-                x+'_num_iterator': config[x]['num_iterator']
-            })
+        dict_paramsters.update({
+            'num_attribute': config['num_attribute'],
+            'num_positive': config['num_positive'],
+            'num_negative': config['num_negative'],
+            'num_iterator': config['num_iterator']
+        })
         dict_paramsters.update({
             'num_workers': config['num_workers'],
             'pin_memory': config['pin_memory']
