@@ -1,8 +1,12 @@
-import numpy as np
-import scipy.io
+
 import os
 import sys
 sys.path.append('.')
+
+import pickle
+import numpy as np
+
+import scipy.io
 
 from base import BaseDataSource
 
@@ -85,11 +89,14 @@ class PA_100K(BaseDataSource):
         arr.append([[0], [1]]) # 19
         return [list(itertools.chain(*ele)) for ele in itertools.product(*arr)]
 
+    def save_attribute(self, path='attribute.pkl'):
+        with open(path, 'wb') as f:
+            pickle.dump(self.get_attribute(), f)
+
 if __name__ == "__main__":
-    from utils import read_config
-    config = read_config('config/base.yml')
-    datasource = PA_100K(root_dir=config['data']['data_dir'], download=True, extract=True)
-    print(np.expand_dims(datasource.get_weight('train'), axis=1))
+    datasource = PA_100K(root_dir='/datasets', download=True, extract=True)
+    # print(np.expand_dims(datasource.get_weight('train'), axis=1))
+    datasource.save_attribute('pa100k_attribute.pkl')
     pass
 
 '''

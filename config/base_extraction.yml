@@ -1,0 +1,19 @@
+resume: saved/checkpoints/0731_232453/model_best_accuracy.pth
+
+n_gpu: 0
+
+model:
+  name: baseline
+  backbone: resnet50
+  pretrained: False
+  pooling: gem_pooling
+  pooling_size: 1
+  head: BNHead
+  bn_where: after
+  batch_norm_bias: True
+  use_tqdm: False
+
+data:
+  size: [256, 128]
+  # pickle file, list of attribute saved in here. get it from datasource.saved_attribute()
+  path_attribute: attribute.pkl

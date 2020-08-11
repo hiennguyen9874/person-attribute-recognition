@@ -1,4 +1,5 @@
 import os
+import pickle
 import scipy.io
 import numpy as np
 
@@ -78,12 +79,17 @@ class Peta(BaseDataSource):
             return True
         return False
 
+    def save_attribute(self, path='attribute.pkl'):
+        with open(path, 'wb') as f:
+            pickle.dump(self.get_attribute(), f)
+
 if __name__ == "__main__":
     from utils import read_config
     config = read_config('config/base_epoch.yml')
     datasource = Peta(root_dir=config['data']['data_dir'], download=True, extract=True)
-    print(len(datasource.get_attribute()))
-    print(np.expand_dims(datasource.get_weight('test'), axis=1))
+    # print(len(datasource.get_attribute()))
+    # print(np.expand_dims(datasource.get_weight('test'), axis=1))
+    datasource.save_attribute('peta_attribute.pkl')
     pass
 
 r'''
