@@ -289,3 +289,4 @@ class Trainer(BaseTrainer):
             self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
         if clip_grad_norm_:
             self.logger.info('clip_grad_norm_, max_norm: %f' % self.config['clip_grad_norm_']['max_norm'])
+

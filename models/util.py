@@ -11,3 +11,4 @@ def get_norm(in_features, type_norm='2d', bias_freeze=False):
     if bias_freeze:
         norm.bias.requires_grad_(False)
     return norm
+
