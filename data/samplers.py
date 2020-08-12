@@ -426,7 +426,7 @@ def build_sampler(name, config, phase, datasource, weight, attribute_name, **kwa
     elif name == 'RandomBatchSamplerAttributeWeight':
         dict_params.update({
             phase+'_num_attribute': config[phase]['num_attribute'],
-            phase+'num_sampler': config[phase]['num_sampler'],
+            phase+'_num_sampler': config[phase]['num_sampler'],
             phase+'_num_iterator': config[phase]['num_iterator']
         })
         return RandomBatchSamplerAttributeWeight(
