@@ -25,7 +25,7 @@ def main(config):
     device = torch.device('cuda:0' if use_gpu else 'cpu')
     map_location = "cuda:0" if use_gpu else torch.device('cpu')
 
-    datamanager, _ = build_datamanager(config['type'], config)
+    datamanager, _ = build_datamanager(config['type'], config['data'])
     
     model, _ = build_model(config, num_classes=len(datamanager.datasource.get_attribute()))
 
