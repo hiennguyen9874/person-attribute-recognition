@@ -10,13 +10,13 @@ data:
   name: peta
   train:
     num_attribute: 8
-    num_positive: 6
-    num_negative: 10
+    num_positive: 10
+    num_negative: 6
     num_iterator: 700
   val:
     num_attribute: 8
-    num_positive: 6
-    num_negative: 10
+    num_positive: 10
+    num_negative: 6
     num_iterator: 100
 
 optimizer:
@@ -48,7 +48,7 @@ clip_grad_norm_:
   max_norm: 10.0
 
 trainer:
-  epochs: 200
+  epochs: 120
     
 trainer_colab:
-  epochs: 200
+  epochs: 120
