@@ -9,7 +9,7 @@ from tqdm import tqdm
 from models import build_model
 from data import build_datamanager
 from logger import setup_logging
-from utils import read_config, rmdir, summary
+from utils import read_config, rmdir
 from evaluators import recognition_metrics, log_test
 
 def main(config):

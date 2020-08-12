@@ -4,18 +4,19 @@
 # ==============================================================================
 """Aggregates multiple tensorbaord runs"""
 
-from tensorflow.core.util.event_pb2 import Event
-from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
-import ast
-import argparse
 import os
 import re
-from collections import defaultdict
-from pathlib import Path
+import ast
+import argparse
 
 import pandas as pd
 import numpy as np
 import tensorflow.compat.v1 as tf
+
+from collections import defaultdict
+from pathlib import Path
+from tensorflow.core.util.event_pb2 import Event
+from tensorboard.backend.event_processing.event_accumulator import EventAccumulator
 # tf.disable_v2_behavior()
 
 __all__ = ['aggregate', 'aggregate1']
@@ -142,6 +143,3 @@ def aggregate1(dpath, list_dname, output_path=None):
         ret[key] = data_frame
     return ret
 
-if __name__ == '__main__':
-    path = os.path.join('saved', 'logs')
-    aggregate1(path, ['0710_120633'])
