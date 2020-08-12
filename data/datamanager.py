@@ -174,6 +174,11 @@ class DataManger_Episode(BaseDataManger):
     
 
 def build_datamanager(train_type, config, **kwargs):
+    r""" get datamanager based type of train
+    Return:
+        - datamanager
+        - list params of data
+    """
     dict_paramsters = {
         'dataset': config['name']
     }

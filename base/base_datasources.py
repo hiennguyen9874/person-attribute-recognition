@@ -81,14 +81,18 @@ class BaseDataSource(object):
         raise NotImplementedError
 
     def get_image_size(self):
-        r""" get size of image to resize when training
+        r""" get size of image. resize image to fixed size before feed into model
         """
         return self.image_size
     
     def get_phase(self):
+        r""" get list of phase.
+        """
         return self.phase
     
     def _check_file_exits(self):
+        r""" check all image in datasource exists
+        """
         for phase in self.phase:
             for path, label in self.get_data(phase):
                 if not os.path.exists(path):
