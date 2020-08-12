@@ -132,4 +132,3 @@ if __name__ == "__main__":
         list_dname=[run_id],
         path_folder=os.path.join(log_dir, run_id),
         title=run_id + ': ' + config['model']['name'] + ", " + config['loss']['name'] + ", " + config['data']['name'])
-
