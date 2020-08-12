@@ -9,7 +9,20 @@ from tqdm import tqdm
 from itertools import repeat
 from collections import defaultdict
 
+
+r""" Person attribute recognition sampler
+"""
 class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
+    r""" Episode sampler, random uniform 'n' attribute, each attribute, random 'k' positive sampler and 'l' negative sampler
+    Args:
+        datasource (list of tuple): data from data.image.get_data()
+        attribute_name: list of attribute in dataset
+        num_attribute: num of attribute in one episode
+        num_positive: num of positive sampler in each attribute
+        num_negative: num of negative sampler in each attribute
+        num_iterator: num of iterator in each epoch.
+        shuffle: shuffle data before sampler
+    """
     def __init__(
         self,
         datasource,
@@ -62,6 +75,18 @@ class RandomBalanceBatchSamplerAttribute(torch.utils.data.Sampler):
         return self.num_iterator
 
 class RandomBatchSamplerAttribute(torch.utils.data.Sampler):
+    r""" Episode sampler, random attribute from multinomial distribution, 
+        each attribute, random 'k' positive sampler and 'l' negative sampler.
+    Args:
+        datasource (list of tuple): data from data.image.get_data()
+        weight (np.array): weight of training set.
+        attribute_name: list of attribute in dataset
+        num_attribute: num of attribute in one episode
+        num_positive: num of positive sampler in each attribute
+        num_negative: num of negative sampler in each attribute
+        num_iterator: num of iterator in each epoch.
+        shuffle: shuffle data before sampler
+    """
     def __init__(
         self,
         datasource,
@@ -116,6 +141,11 @@ class RandomBatchSamplerAttribute(torch.utils.data.Sampler):
     def __len__(self):
         return self.num_iterator
 
+
+
+
+r""" Person re-identification sampler
+"""
 class SubsetIdentitySampler(torch.utils.data.Sampler):
     def __init__(self, datasource, batch_size, shuffle = True, index_dict=None, **kwargs):
         self.datasource = datasource
@@ -165,8 +195,8 @@ class SubsetIdentitySampler(torch.utils.data.Sampler):
         return SubsetIdentitySampler(self.datasource, self.batch_size, self.shuffle, left_index_dict), SubsetIdentitySampler(self.datasource, self.batch_size,  self.shuffle, right_index_dict)
 
 class RandomIdentitySampler(torch.utils.data.Sampler):
-    ''' https://github.com/KaiyangZhou/deep-person-reid/blob/master/torchreid/data/sampler.py
-    '''
+    r""" https://github.com/KaiyangZhou/deep-person-reid/blob/master/torchreid/data/sampler.py
+    """
     def __init__(self, datasource, batch_size=1, num_instances=1, index_dict=None, **kwargs):
         self.datasource = datasource
 
@@ -284,6 +314,10 @@ class RandomBalanceBatchSampler(torch.utils.data.Sampler):
             right_index_dict[person_id].extend(right_index)
         return RandomBalanceBatchSampler(self.datasource, self.batch_size, self.num_instances, self.num_iterators, left_index_dict), RandomBalanceBatchSampler(self.datasource, self.batch_size, self.num_instances, num_iterators_val, right_index_dict)
 
+
+
+r""" build_sampler function
+"""
 __samplers__ = {
     'RandomBalanceBatchSamplerAttribute': RandomBalanceBatchSamplerAttribute,
     'RandomBatchSamplerAttribute': RandomBatchSamplerAttribute

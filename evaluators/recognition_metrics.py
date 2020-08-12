@@ -111,6 +111,11 @@ def compute_accuracy_cuda(labels, preds, threshold=0.5, eps=1e-20):
 
 def log_test(logger_func, attribute_name: list, weight, result_label, result_instance):
     r""" log test from result
+    Args:
+        logger_func: logger.info or print
+        attribute_name: list of attribute in dataset
+        weight: weight of test dataset
+        result_label, result_instance: from recognition_metrics
     """
     logger_func('instance-based metrics:')
     logger_func('accuracy: %0.4f' % result_instance.accuracy)
@@ -143,6 +148,14 @@ def log_test(logger_func, attribute_name: list, weight, result_label, result_ins
         round(np.mean(result_label.f1_score)*100, 2)))
 
 def compare_class_based(logger_func, attribute_name, weight, result_label1, result_label2, color=COLOR.BOLD):
+    r""" log result and the difference between result_label1 and result_label2
+    Args:
+        logger_func: logger.info or print
+        attribute_name: list of attribute
+        weight: weight of each attribute in testset
+        result_label1, result_label2
+        color: result higher will colored
+    """
     # logger_func('class-based metrics:')
     result1 = np.stack([result_label1.accuracy, result_label1.mean_accuracy, result_label1.precision, result_label1.recall, result_label1.f1_score], axis=0)
     result1 = np.around(result1*100, 2)
