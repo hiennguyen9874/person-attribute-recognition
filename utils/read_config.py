@@ -17,7 +17,7 @@ def update(d, u):
             d[k] = v
     return d
 
-def read_config(path_config: str, base=False):
+def read_config(path_config: str, base=True):
     r""" read config yml file, return to dict
     """
     new_config = yaml.safe_load(open(path_config))
