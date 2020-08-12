@@ -48,7 +48,6 @@ clip_grad_norm_:
   max_norm: 10.0
 
 trainer:
-  n_gpu: 1
   epochs: 200
     
 trainer_colab:
