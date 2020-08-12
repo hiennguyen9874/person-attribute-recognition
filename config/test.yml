@@ -8,7 +8,6 @@ model:
 
 data:
   name: peta
-  sampler: RandomBatchSamplerAttribute
   train:
     num_attribute: 8
     num_positive: 6
