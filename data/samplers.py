@@ -174,8 +174,8 @@ class RandomBatchSamplerAttributeWeight(torch.utils.data.Sampler):
         self.num_iterator = num_iterator
         self.shuffle = shuffle
 
-        weight1 = np.exp(1-weight)
-        weight2 = np.exp(weight)
+        weight1 = np.exp(weight)
+        weight2 = np.exp(1-weight)
         self.num_positive = (num_sampler*weight1/(weight1+weight2)).astype(int)
         self.num_negative = num_sampler - self.num_positive
 
