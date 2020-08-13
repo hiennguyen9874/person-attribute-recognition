@@ -126,26 +126,23 @@ class DataManger_Episode(BaseDataManger):
                 transform=transform[_phase])
 
         sampler = dict()
-        sampler['train'] = build_sampler(
+        self.params_sampler = dict()
+        sampler['train'], self.params_sampler['train'] = build_sampler(
             name=config['sampler'],
+            config=config,
+            phase='train',
             datasource=self.datasource.get_data('train'),
             weight=self.datasource.get_weight('train'),
-            attribute_name=self.datasource.get_attribute(),
-            num_attribute=config['train']['num_attribute'],
-            num_positive=config['train']['num_positive'],
-            num_negative=config['train']['num_negative'],
-            num_iterator=config['train']['num_iterator']
+            attribute_name=self.datasource.get_attribute()
         )
 
-        sampler['val'] = build_sampler(
+        sampler['val'], self.params_sampler['val'] = build_sampler(
             name=config['sampler'],
+            config=config,
+            phase='val',
             datasource=self.datasource.get_data('val'),
             weight=self.datasource.get_weight('train'),
-            attribute_name=self.datasource.get_attribute(),
-            num_attribute=config['val']['num_attribute'],
-            num_positive=config['val']['num_positive'],
-            num_negative=config['val']['num_negative'],
-            num_iterator=config['val']['num_iterator']
+            attribute_name=self.datasource.get_attribute()
         )
 
         self.dataloader['train'] = DataLoader(
@@ -172,6 +169,8 @@ class DataManger_Episode(BaseDataManger):
     def get_batch_size(self):
         return self.config['train']['num_attribute']*(self.config['train']['num_positive'] + self.config['train']['num_negative'])
     
+    def get_params_sampler(self):
+        return self.params_sampler
 
 def build_datamanager(train_type, config, **kwargs):
     r""" get datamanager based type of train
@@ -194,20 +193,16 @@ def build_datamanager(train_type, config, **kwargs):
         return DataManger_Epoch(config, **kwargs), dict_paramsters
     
     elif train_type == 'episode':
+        datamanager = DataManger_Episode(config, **kwargs)
         dict_paramsters.update({
             'sampler': config['sampler'],
         })
         for x in ['train', 'val']:
-            dict_paramsters.update({
-                x+'_num_attribute': config[x]['num_attribute'],
-                x+'_num_positive': config[x]['num_positive'],
-                x+'_num_negative': config[x]['num_negative'],
-                x+'_num_iterator': config[x]['num_iterator']
-            })
+            dict_paramsters.update(datamanager.params_sampler[x])
         dict_paramsters.update({
             'num_workers': config['num_workers'],
             'pin_memory': config['pin_memory']
         })
-        return DataManger_Episode(config, **kwargs), dict_paramsters
+        return datamanager, dict_paramsters
     else:
         raise KeyError('type error')
