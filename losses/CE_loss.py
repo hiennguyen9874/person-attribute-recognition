@@ -5,7 +5,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 class CEL_Sigmoid(nn.Module):
     r""" https://arxiv.org/pdf/2005.11909.pdf
     """
