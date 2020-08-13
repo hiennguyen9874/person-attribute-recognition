@@ -169,12 +169,15 @@ class RandomBatchSamplerAttributeWeight(torch.utils.data.Sampler):
         assert num_attribute <= len(attribute_name), 'num of attribute in one batch must less than num of attribute in dataset'
         
         self.datasource = datasource
-        self.weight = weight
         self.attribute_name = list(enumerate(attribute_name))
         self.num_attribute = num_attribute
-        self.num_sampler = num_sampler
         self.num_iterator = num_iterator
         self.shuffle = shuffle
+
+        weight1 = np.exp(1-weight)
+        weight2 = np.exp(weight)
+        self.num_positive = (num_sampler*weight1/(weight1+weight2)).astype(int)
+        self.num_negative = num_sampler - self.num_positive
 
         self.pos_dict = defaultdict(list)
         self.neg_dict = defaultdict(list)
@@ -197,17 +200,14 @@ class RandomBatchSamplerAttributeWeight(torch.utils.data.Sampler):
             batch = []
             for idx in idx_selected_attribute:
                 index, attribute = self.attribute_name[idx]
-                weight1 = np.exp(1-self.weight[idx])
-                weight2 = np.exp(self.weight[idx])
-                pos_idxs = np.random.choice(self.pos_dict[attribute], size=int(self.num_sampler*weight1/(weight1+weight2)), replace=True)
-                neg_idxs = np.random.choice(self.neg_dict[attribute], size=16-int(self.num_sampler*weight1/(weight1+weight2)), replace=True)
+                pos_idxs = np.random.choice(self.pos_dict[attribute], size=self.num_positive[idx], replace=True)
+                neg_idxs = np.random.choice(self.neg_dict[attribute], size=self.num_negative[idx], replace=True)
                 batch.extend(list(zip(pos_idxs, repeat(index))))
                 batch.extend(list(zip(neg_idxs, repeat(index))))
             yield batch
 
     def __len__(self):
         return self.num_iterator
-
 
 
 r""" Person re-identification sampler
