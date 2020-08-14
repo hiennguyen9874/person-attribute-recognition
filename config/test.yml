@@ -8,14 +8,15 @@ model:
 
 data:
   name: peta
-  sampler: RandomBatchSamplerAttributeWeight
   train:
     num_attribute: 8
-    num_sampler: 16
+    num_positive: 8
+    num_negative: 8
     num_iterator: 700
   val:
     num_attribute: 8
-    num_sampler: 16
+    num_positive: 8
+    num_negative: 8
     num_iterator: 100
 
 optimizer:
