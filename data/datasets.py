@@ -1,33 +1,17 @@
+import sys
+sys.path.append('.')
 import torch
 import torchvision.datasets as datasets
 
 from PIL import Image
 
-__all__ = ['Epoch_ImageDataset', 'Episode_ImageDataset']
+from utils import imread
 
-def imread(path):
-    image = Image.open(path)
-    return image
+__all__ = ['ImageDataset']
 
-class Epoch_ImageDataset(torch.utils.data.Dataset):
+class ImageDataset(torch.utils.data.Dataset):
     def __init__(self, data, transform=None):
         self.data = data
-        self.transform = transform
-        
-    def __getitem__(self, index):
-        img_path, label = self.data[index]
-        img = imread(img_path)
-        if self.transform is not None:
-            img = self.transform(img)
-        return img, label
-    
-    def __len__(self):
-        return len(self.data)
-
-class Episode_ImageDataset(torch.utils.data.Dataset):
-    def __init__(self, data, attribute_name, transform=None):
-        self.data = data
-        self.attribute_name = attribute_name
         self.transform = transform
         
     def __getitem__(self, index):

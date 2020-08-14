@@ -5,7 +5,7 @@ from torchvision import transforms
 from torch.utils.data.dataloader import DataLoader
 
 from data.image import build_datasource
-from data.datasets import Epoch_ImageDataset, Episode_ImageDataset
+from data.datasets import ImageDataset
 from data.transforms import RandomErasing
 from data.samplers import build_sampler
 
@@ -62,7 +62,7 @@ class DataManger_Epoch(BaseDataManger):
 
         dataset = dict()
         for _phase in self.datasource.get_phase():
-            dataset[_phase] = Epoch_ImageDataset(self.datasource.get_data(_phase), transform=transform[_phase])
+            dataset[_phase] = ImageDataset(self.datasource.get_data(_phase), transform=transform[_phase])
         
         self.dataloader['train'] = DataLoader(
             dataset=dataset['train'],
@@ -120,7 +120,7 @@ class DataManger_Episode(BaseDataManger):
 
         dataset = dict()
         for _phase in self.datasource.get_phase():
-            dataset[_phase] = Episode_ImageDataset(
+            dataset[_phase] = ImageDataset(
                 self.datasource.get_data(_phase),
                 self.datasource.get_attribute(),
                 transform=transform[_phase])
