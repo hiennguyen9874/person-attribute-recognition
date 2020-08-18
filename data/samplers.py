@@ -103,7 +103,10 @@ class RandomBatchSamplerAttribute(torch.utils.data.Sampler):
         assert num_attribute <= len(attribute_name), 'num of attribute in one batch must less than num of attribute in dataset'
         
         self.datasource = datasource
+        
         self.weight = torch.exp(1-torch.tensor(weight))
+        self.weight = self.weight / torch.sum(weight)
+
         self.attribute_name = list(enumerate(attribute_name))
         self.num_attribute = num_attribute
         self.num_positive = num_positive
@@ -128,7 +131,6 @@ class RandomBatchSamplerAttribute(torch.utils.data.Sampler):
                 np.random.shuffle(self.pos_dict[attribute])
                 np.random.shuffle(self.neg_dict[attribute])
         for _ in range(self.num_iterator):
-            # idx_selected_attribute = np.random.choice(len(self.attribute_name), size=self.num_attribute, replace=True)
             idx_selected_attribute = torch.multinomial(self.weight, self.num_attribute, replacement=True)
             batch = []
             for idx in idx_selected_attribute:
