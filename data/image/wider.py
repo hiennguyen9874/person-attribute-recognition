@@ -1,11 +1,11 @@
 import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
 import pickle
 import numpy as np
 
 from collections import defaultdict
 
-import sys
-sys.path.append('.')
 
 from base import BaseDataSource
 from utils import read_json, neq

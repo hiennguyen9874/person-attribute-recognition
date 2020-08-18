@@ -1,10 +1,10 @@
 import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+
 import time
 import torch
 import logging
-
-import sys
-sys.path.append('.')
 
 from base import BaseTrainer
 from callbacks import Tqdm, FreezeLayers

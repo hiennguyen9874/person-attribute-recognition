@@ -1,5 +1,6 @@
+import os
 import sys
-sys.path.append('.')
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
 
 from models.head.bn_head import BNHead
 from models.head.reduction_head import ReductionHead

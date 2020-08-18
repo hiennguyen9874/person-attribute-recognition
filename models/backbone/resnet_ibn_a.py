@@ -1,7 +1,10 @@
+
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
+
 import math
 import warnings
-import sys
-sys.path.append('.')
 
 import torch
 import torch.nn as nn

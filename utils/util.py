@@ -1,9 +1,8 @@
 import os
-import json
-
 import sys
-sys.path.append('.')
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
+import json
 import shutil
 
 import numpy as np

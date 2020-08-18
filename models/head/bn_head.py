@@ -1,8 +1,10 @@
-import torch
-from torch import mode
-import torch.nn as nn
+
+import os
 import sys
-sys.path.append('.')
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
+
+import torch
+import torch.nn as nn
 
 from models.util import get_norm
 from models.weight_init import weights_init_classifier, weights_init_kaiming

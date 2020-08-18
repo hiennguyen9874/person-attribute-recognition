@@ -1,33 +1,43 @@
 import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
 import pickle
 import scipy.io
 import numpy as np
 
-import sys
-sys.path.append('.')
 
 from collections import defaultdict
 
 from base import BaseDataSource
 
 class Peta(BaseDataSource):
-    r''' 
+    r''' Peta Dataset
         http://mmlab.ie.cuhk.edu.hk/projects/PETA.html
         https://github.com/dangweili/pedestrian-attribute-recognition-pytorch
+        https://github.com/valencebond/Strong_Baseline_of_Pedestrian_Attribute_Recognition/blob/master/dataset/preprocess/format_peta.py
     '''
-    dataset_id = '1Z2o5RyyCXBBGdEUey-Wi1ImFDFUTIVEo'
+    url = {
+        'PETA-New.zip': '1Z2o5RyyCXBBGdEUey-Wi1ImFDFUTIVEo'
+    }
+    file_path = {
+        'PETA-New.zip': '/content/drive/Shared drives/REID/HIEN/Datasets/PETA-New.zip',
+    }
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]
 
-    def __init__(self, root_dir='datasets', download=True, extract=True, use_tqdm=True, validation_split=0.1):
+    def __init__(self, root_dir='datasets', download=True, extract=True, use_tqdm=True, **kwargs):
         super(Peta, self).__init__(
             root_dir, 
             dataset_dir = 'peta', 
-            file_name = 'PETA-New.zip', 
             image_size = (256, 192))
         if download:
-            self._download(dataset_id=self.dataset_id, use_tqdm=use_tqdm)
-        if extract:
-            self._extract(use_tqdm=use_tqdm)
+            for key, value in self.url.items():
+                try:
+                    self._download(file_name=key, file_path=self.file_path[key], use_tqdm=use_tqdm)
+                except:
+                    self._download(file_name=key, dataset_id=value, use_tqdm=use_tqdm)
+        if extract: 
+            for key, value in self.url.items():
+                self._extract(file_name=key, use_tqdm=use_tqdm)
         
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
         

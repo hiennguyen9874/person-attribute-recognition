@@ -1,8 +1,9 @@
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+
 import torch
 import torch.nn as nn
-
-import sys
-sys.path.append('.')
 
 from utils import summary
 from models.pooling import build_pooling

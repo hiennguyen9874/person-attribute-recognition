@@ -1,10 +1,12 @@
 import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-import sys
-sys.path.append('.')
+
 
 __all__ = ['plot_loss_accuracy']
 

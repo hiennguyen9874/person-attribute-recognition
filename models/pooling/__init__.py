@@ -1,5 +1,6 @@
+import os
 import sys
-sys.path.append('.')
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
 
 from models.pooling.gem_pooling import GeneralizedMeanPoolingP
 from models.pooling.avg_pooling import AvgPooling2d
