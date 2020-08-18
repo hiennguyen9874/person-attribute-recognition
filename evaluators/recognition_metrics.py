@@ -1,10 +1,10 @@
-import sys
-sys.path.append('.')
-
-import argparse
 import os
-import logging
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+
 import torch
+import logging
+import argparse
 import numpy as np
 
 from tqdm import tqdm

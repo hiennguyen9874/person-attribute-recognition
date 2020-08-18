@@ -2,9 +2,6 @@ import os
 import shutil
 import argparse
 
-import sys
-sys.path.append('.')
-
 from tqdm  import tqdm
 
 from utils import rmdir

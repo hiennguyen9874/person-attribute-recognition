@@ -1,5 +1,6 @@
+import os
 import sys
-sys.path.append('.')
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
 from torchvision import transforms
 from torch.utils.data.dataloader import DataLoader
@@ -122,7 +123,6 @@ class DataManger_Episode(BaseDataManger):
         for _phase in self.datasource.get_phase():
             dataset[_phase] = ImageDataset(
                 self.datasource.get_data(_phase),
-                self.datasource.get_attribute(),
                 transform=transform[_phase])
 
         sampler = dict()

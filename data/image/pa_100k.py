@@ -1,7 +1,7 @@
 
 import os
 import sys
-sys.path.append('.')
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
 
 import pickle
 import numpy as np
@@ -13,7 +13,12 @@ from base import BaseDataSource
 class PA_100K(BaseDataSource):
     r''' https://github.com/xh-liu/HydraPlus-Net/blob/master/README.md
     '''
-    dataset_id = '1Jfb3I8BK4oOX3eepaiYyd4fHoMNkgTaz'
+    url = {
+        'PETA-New.zip': '1Jfb3I8BK4oOX3eepaiYyd4fHoMNkgTaz'
+    }
+    file_path = {
+        'PA-100K.zip': '/content/drive/Shared drives/REID/HIEN/Datasets/PA-100K.zip',
+    }
     group_order = [7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 9, 10, 11, 12, 1, 2, 3, 0, 4, 5, 6]
 
     def __init__(
@@ -29,9 +34,14 @@ class PA_100K(BaseDataSource):
             image_size=(256, 128))
         
         if download:
-            self._download(self.dataset_id, use_tqdm=use_tqdm)
-        if extract:
-            self._extract(use_tqdm=use_tqdm)
+            for key, value in self.url.items():
+                try:
+                    self._download(file_name=key, file_path=self.file_path[key], use_tqdm=use_tqdm)
+                except:
+                    self._download(file_name=key, dataset_id=value, use_tqdm=use_tqdm)
+        if extract: 
+            for key, value in self.url.items():
+                self._extract(file_name=key, use_tqdm=use_tqdm)
             
         f = scipy.io.loadmat(os.path.join(self.data_dir, 'annotation.mat'))
         image_name = dict()

@@ -1,5 +1,6 @@
+import os
 import sys
-sys.path.append('.')
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
 
 import torch
 import torch.nn as nn
@@ -9,12 +10,10 @@ from utils import summary
 
 __all__ = ['resnet50', 'resnet101']
 
-
 model_urls = {
     'resnet50': 'https://download.pytorch.org/models/resnet50-19c8e357.pth',
     'resnet101': 'https://download.pytorch.org/models/resnet101-5d3b4d8f.pth',
 }
-
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
     """3x3 convolution with padding"""

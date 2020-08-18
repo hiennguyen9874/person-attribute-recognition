@@ -18,6 +18,7 @@ data:
     num_positive: 8
     num_negative: 8
     num_iterator: 100
+  use_tqdm: True
 
 optimizer:
   name: sgd

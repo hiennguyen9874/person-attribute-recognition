@@ -1,8 +1,10 @@
+
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+
 import time
 import torch
-
-import sys
-sys.path.append('.')
 
 from torch.nn.utils import clip_grad_norm_
 

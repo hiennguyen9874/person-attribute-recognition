@@ -1,9 +1,10 @@
+import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
+
 import torch.nn as nn
 from torch.nn import init
 from torch.nn import functional as F
-
-import sys
-sys.path.append('.')
 
 from utils import summary
 

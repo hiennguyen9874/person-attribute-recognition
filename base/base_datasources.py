@@ -1,42 +1,40 @@
 import os
+import sys
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+
 import zipfile
 import tarfile
-import pickle
 
-import sys
-sys.path.append('.')
 from tqdm import tqdm
+from shutil import copyfile
 
 from utils import download_file_from_google_drive, download_with_url
 
-class BaseDataSource(object):
-    google_drive_api = 'AIzaSyBEp1hj-WxRxAezSd5sGfPmWnLbuxuxSvI'
-    
+class BaseDataSource(object):    
     def __init__(
         self,
         root_dir,
         dataset_dir,
-        file_name,
         image_size=(256, 128),
-        phase=['train', 'val', 'test']):
+        phase=['train', 'val', 'test'],
+        **kwargs):
         
         self.phase = phase
         self.root_dir = root_dir
         self.dataset_dir = dataset_dir
-        self.file_name = file_name
         self.data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
         self.image_size = image_size
         
     def _exists(self, extract_dir):
         raise NotImplementedError
     
-    def _extract(self, use_tqdm=True):
+    def _extract(self, file_name, use_tqdm=True):
         r""" extract compressed file
         Args:
             use_tqdm (boolean): use tqdm process bar when extracting
         """
-        file_path = os.path.join(self.root_dir, self.dataset_dir, 'raw', self.file_name)
-        extract_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
+        file_path = os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name)
+        extract_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(file_name.split('.')[:-1]))
         if self._exists(extract_dir):
             return
         print("Extracting...")
@@ -44,7 +42,7 @@ class BaseDataSource(object):
             tar = tarfile.open(file_path)
             os.makedirs(extract_dir, exist_ok=True)
             if use_tqdm:
-                for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers())):
+                for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers()), desc=file_name):
                     tar.extract(member=member, path=extract_dir)
             else:
                 tar.extractall(path=extract_dir)
@@ -52,29 +50,47 @@ class BaseDataSource(object):
         except:
             zip_ref = zipfile.ZipFile(file_path, 'r')
             if use_tqdm:
-                for member in tqdm(iterable=zip_ref.infolist(), total=len(zip_ref.infolist())):
+                for member in tqdm(iterable=zip_ref.infolist(), total=len(zip_ref.infolist()), desc=file_name):
                     zip_ref.extract(member=member, path=extract_dir)
             else:
                 zip_ref.extractall(path=extract_dir)
             zip_ref.close()
         print("Extracted!")
     
-    def _download(self, dataset_id=None, use_tqdm=True):
+    def _download(self, file_name, url=None, dataset_id=None, file_path=None, use_tqdm=True):
         r""" download file from google drive.
         Args:
             dataset_id (str): id of file on google drive. guide to get it (https://www.wonderplugin.com/wordpress-tutorials/how-to-apply-for-a-google-drive-api-key/)
             use_tqdm (boolean): use tqdm process bar when downloading
         """
         os.makedirs(os.path.join(self.root_dir, self.dataset_dir, 'raw'), exist_ok=True)
-        if dataset_id == None:
-            if not os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'raw', self.file_name)):
-                raise FileExistsError('please download file %s into %s' % (self.file_name, os.path.join(self.root_dir, self.dataset_dir, 'raw')))
-        else:
+        if dataset_id != None:
             print("Downloading...")
-            download_with_url(self.google_drive_api, dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), self.file_name, use_tqdm)
-            # download_file_from_google_drive(dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), use_tqdm)
+            try:
+                try:
+                    download_file_from_google_drive(dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), use_tqdm)
+                except:
+                    url = "https://www.googleapis.com/drive/v3/files/" + dataset_id + "?alt=media&key=AIzaSyBEp1hj-WxRxAezSd5sGfPmWnLbuxuxSvI"
+                    download_with_url(url, os.path.join(self.root_dir, self.dataset_dir, 'raw'), file_name, use_tqdm)
+            except:
+                try:
+                    if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name)):
+                        os.remove(os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name))
+                    download_file_from_google_drive(dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), use_tqdm)
+                except:
+                    if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name)):
+                        os.remove(os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name))
+                    url = "https://www.googleapis.com/drive/v3/files/" + dataset_id + "?alt=media&key=AIzaSyBEp1hj-WxRxAezSd5sGfPmWnLbuxuxSvI"
+                    download_with_url(url, os.path.join(self.root_dir, self.dataset_dir, 'raw'), file_name, use_tqdm)
             print("Downloaded!")
-    
+        elif url != None:
+            download_with_url(url, os.path.join(self.root_dir, self.dataset_dir, 'raw'), file_name, use_tqdm)
+        elif file_path != None:
+            copyfile(file_path, os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name))
+        else:
+            if not os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name)):
+                raise FileExistsError('please download file %s into %s' % (file_name, os.path.join(self.root_dir, self.dataset_dir, 'raw')))
+
     def get_data(self, phase='train'):
         r""" get data, must return list of (image_path, label)
         """
@@ -97,4 +113,3 @@ class BaseDataSource(object):
             for path, label in self.get_data(phase):
                 if not os.path.exists(path):
                     raise FileExistsError
-                
