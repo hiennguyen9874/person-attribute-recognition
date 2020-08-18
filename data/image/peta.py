@@ -41,8 +41,8 @@ class Peta(BaseDataSource):
         
         if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', 'PETA.mat')):
             data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
-        elif os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(file_path[0].split('.')[:-1]), 'PETA.mat'))
-            data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(file_path[0].split('.')[:-1]))
+        elif os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(list(self.file_path.keys())[0].split('.')[:-1]), 'PETA.mat')):
+            data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(list(self.file_path.keys())[0].split('.')[:-1]))
 
         f = scipy.io.loadmat(os.path.join(data_dir, 'PETA.mat'))
         
