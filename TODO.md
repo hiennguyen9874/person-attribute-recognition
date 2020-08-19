@@ -38,3 +38,7 @@
 - [RAP](https://arxiv.org/pdf/1603.07054.pdf)
 
 - https://github.com/TylerYep/torch-summary
+
+- https://github.com/lukemelas/EfficientNet-PyTorch, https://towardsdatascience.com/complete-architectural-details-of-all-efficientnet-models-5fd5b736142, https://amaarora.github.io/2020/08/13/efficientnet.html
+
+- SimCLR: https://arxiv.org/pdf/2002.05709.pdf

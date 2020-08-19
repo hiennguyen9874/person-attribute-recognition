@@ -213,16 +213,25 @@ class RandomBatchSamplerAttributeWeight(torch.utils.data.Sampler):
         return self.num_iterator
 
 class RandomBatchSamplerAttributeWeight1(torch.utils.data.Sampler):
-    r""" Episode sampler, random attribute based weight, 
-        each attribute, random 'k' positive sampler and 'l' negative sampler.
+    r""" Episode sampler, random attribute based uniform distribution, 
+        each attribute, random 'k' positive sampler and 'l' negative sampler based weight of attribute.
+
     Args:
+
         datasource (list of tuple): data from data.image.get_data()
+
         weight (np.array): weight of training set.
+
         attribute_name: list of attribute in dataset
+
         num_attribute: num of attribute in one episode
+
         num_positive: num of positive sampler in each attribute
+
         num_negative: num of negative sampler in each attribute
+
         num_iterator: num of iterator in each epoch.
+
         shuffle: shuffle data before sampler
     """
     def __init__(

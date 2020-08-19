@@ -8,6 +8,7 @@ model:
 
 data:
   name: peta
+  image_size: [256, 192]
 
 optimizer:
   name: adam

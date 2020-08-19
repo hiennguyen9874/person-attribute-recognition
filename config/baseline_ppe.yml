@@ -8,6 +8,7 @@ model:
 
 data:
   name: ppe
+  image_size: [256, 256]
   batch_size: 32
 
 optimizer:

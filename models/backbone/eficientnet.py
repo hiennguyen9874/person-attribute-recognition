@@ -15,36 +15,23 @@ except ImportError as e:
     pip_install('efficientnet_pytorch')
     from efficientnet_pytorch import EfficientNet
 
-class Stem(nn.Module):
-    def __init__(self, in_channels):
-        pass
-
-
-class Module1(nn.Module):
-    def __init__(self, in_chanels, out_channels, activation):
-        super(Module1, self).__init__()
-        self.depthwise = nn.Conv2d(in_channels=in_chanels, out_channels=out_channels, kernel_size=3, stride=1, padding=1, groups=out_channels)
-        self.batch_norm = nn.BatchNorm2d(out_channels)
-        self.activation = activation
-
-class Module2(nn.Module):
-    def __init__(self):
-        pass
-
-
 class Efficient(nn.Module):
     def __init__(self, name='efficientnet-b5', advprop=True):
         super(Efficient, self).__init__()
+        self.name = name
         self.model = EfficientNet.from_pretrained(name, advprop=advprop)
         
     def forward(self, x):
         return self.model.extract_features(x)
     
-    def get_outchannels(self):
+    def get_out_channels(self):
         return self.model._bn1.num_features
+    
+    def get_image_size(self):
+        return EfficientNet.get_image_size(self.name)
 
 if __name__ == "__main__":
-    model = Efficient('efficientnet-b1')
-    summary(model, (3, 256, 128))
-    model = nn.Linear()
-
+    name = 'efficientnet-b5'
+    model = EfficientNet.from_pretrained(name, advprop=True)
+    print("Input image size: ", EfficientNet.get_image_size(name))
+    # summary(model, input_data=(3, EfficientNet.get_image_size(name), EfficientNet.get_image_size(name)//2))

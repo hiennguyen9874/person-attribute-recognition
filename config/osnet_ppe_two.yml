@@ -8,6 +8,7 @@ model:
 
 data:
   name: ppe_two
+  image_size: [256, 256]
 
 optimizer:
   name: adam
