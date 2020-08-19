@@ -31,10 +31,15 @@ class Efficient(nn.Module):
     def __init__(self, name='efficientnet-b5', advprop=True):
         super(Efficient, self).__init__()
         self.model = EfficientNet.from_pretrained(name, advprop=advprop)
-    
+        
     def forward(self, x):
         return self.model.extract_features(x)
+    
+    def get_outchannels(self):
+        return self.model._bn1.num_features
 
 if __name__ == "__main__":
-    model = Efficient()
+    model = Efficient('efficientnet-b1')
     summary(model, (3, 256, 128))
+    model = nn.Linear()
+
