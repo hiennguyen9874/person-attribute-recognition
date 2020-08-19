@@ -212,6 +212,73 @@ class RandomBatchSamplerAttributeWeight(torch.utils.data.Sampler):
     def __len__(self):
         return self.num_iterator
 
+class RandomBatchSamplerAttributeWeight1(torch.utils.data.Sampler):
+    r""" Episode sampler, random attribute based weight, 
+        each attribute, random 'k' positive sampler and 'l' negative sampler.
+    Args:
+        datasource (list of tuple): data from data.image.get_data()
+        weight (np.array): weight of training set.
+        attribute_name: list of attribute in dataset
+        num_attribute: num of attribute in one episode
+        num_positive: num of positive sampler in each attribute
+        num_negative: num of negative sampler in each attribute
+        num_iterator: num of iterator in each epoch.
+        shuffle: shuffle data before sampler
+    """
+    def __init__(
+        self,
+        datasource,
+        weight,
+        attribute_name,
+        num_attribute,
+        num_sampler,
+        num_iterator,
+        shuffle=True,
+        **kwargs):
+
+        assert num_attribute <= len(attribute_name), 'num of attribute in one batch must less than num of attribute in dataset'
+        
+        self.datasource = datasource
+        self.attribute_name = list(enumerate(attribute_name))
+        self.num_attribute = num_attribute
+        self.num_iterator = num_iterator
+        self.shuffle = shuffle
+
+        weight1 = np.exp(weight)
+        weight2 = np.exp(1-weight)
+        self.num_positive = (num_sampler*weight1/(weight1+weight2)).astype(int)
+        self.num_negative = num_sampler - self.num_positive
+
+        self.pos_dict = defaultdict(list)
+        self.neg_dict = defaultdict(list)
+
+        for index, (_, label) in enumerate(self.datasource):
+            for i, attribute in enumerate(attribute_name):
+                if label[i] == True:
+                    self.pos_dict[attribute].append(index)
+                else:
+                    self.neg_dict[attribute].append(index)
+
+    def __iter__(self):
+        if self.shuffle:
+            np.random.shuffle(self.attribute_name)
+            for _, attribute in self.attribute_name:
+                np.random.shuffle(self.pos_dict[attribute])
+                np.random.shuffle(self.neg_dict[attribute])
+        for _ in range(self.num_iterator):
+            idx_selected_attribute = np.random.choice(len(self.attribute_name), size=self.num_attribute, replace=True)
+            batch = []
+            for idx in idx_selected_attribute:
+                index, attribute = self.attribute_name[idx]
+                pos_idxs = np.random.choice(self.pos_dict[attribute], size=self.num_positive[idx], replace=True)
+                neg_idxs = np.random.choice(self.neg_dict[attribute], size=self.num_negative[idx], replace=True)
+                batch.extend(list(zip(pos_idxs, repeat(index))))
+                batch.extend(list(zip(neg_idxs, repeat(index))))
+            yield batch
+
+    def __len__(self):
+        return self.num_iterator
+
 
 r""" Person re-identification sampler
 """
@@ -433,6 +500,21 @@ def build_sampler(name, config, phase, datasource, weight, attribute_name, **kwa
             phase+'_num_iterator': config[phase]['num_iterator']
         })
         return RandomBatchSamplerAttributeWeight(
+            datasource=datasource,
+            weight=weight,
+            attribute_name=attribute_name,
+            num_attribute=config[phase]['num_attribute'],
+            num_sampler=config[phase]['num_sampler'],
+            num_iterator=config[phase]['num_iterator']
+        ), dict_params
+    
+    elif name == 'RandomBatchSamplerAttributeWeight1':
+        dict_params.update({
+            phase+'_num_attribute': config[phase]['num_attribute'],
+            phase+'_num_sampler': config[phase]['num_sampler'],
+            phase+'_num_iterator': config[phase]['num_iterator']
+        })
+        return RandomBatchSamplerAttributeWeight1(
             datasource=datasource,
             weight=weight,
             attribute_name=attribute_name,
