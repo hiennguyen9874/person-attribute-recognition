@@ -1,7 +1,7 @@
 base: config/base_episode.yml
 
 model:
-  backbone: resnet50
+  backbone: efficientnet-b5
   pooling: gem_pooling
   head: BNHead
   bn_where: after

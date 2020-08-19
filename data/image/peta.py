@@ -1,10 +1,10 @@
 import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
+
 import pickle
 import scipy.io
 import numpy as np
-
 
 from collections import defaultdict
 
@@ -41,8 +41,8 @@ class Peta(BaseDataSource):
         
         if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', 'PETA.mat')):
             data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
-        elif os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(file_path[0].split('.')[:-1]), 'PETA.mat'))
-            data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(file_path[0].split('.')[:-1]))
+        elif os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(list(self.file_path.keys())[0].split('.')[:-1]), 'PETA.mat')):
+            data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(list(self.file_path.keys())[0].split('.')[:-1]))
 
         f = scipy.io.loadmat(os.path.join(data_dir, 'PETA.mat'))
         
@@ -95,14 +95,20 @@ class Peta(BaseDataSource):
     def save_attribute(self, path='attribute.pkl'):
         with open(path, 'wb') as f:
             pickle.dump(self.get_attribute(), f)
+    
+    def summary(self):
+        print('num image in training set: ', len(self.get_data('train')))
+        print('num image in valid set: ', len(self.get_data('val')))
+        print('num image in test set: ', len(self.get_data('test')))
 
 if __name__ == "__main__":
     from utils import read_config
-    config = read_config('config/base_epoch.yml')
+    config = read_config('config/base_epoch.yml', False)
     datasource = Peta(root_dir=config['data']['data_dir'], download=True, extract=True)
+    datasource.summary()
     # print(len(datasource.get_attribute()))
     # print(np.expand_dims(datasource.get_weight('test'), axis=1))
-    datasource.save_attribute('peta_attribute.pkl')
+    # datasource.save_attribute('peta_attribute.pkl')
     pass
 
 r'''
