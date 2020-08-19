@@ -5,7 +5,6 @@ import numpy as np
 
 from collections import defaultdict
 
-
 from base import BaseDataSource
 
 class PPE(BaseDataSource):

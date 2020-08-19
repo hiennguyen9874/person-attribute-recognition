@@ -8,6 +8,7 @@ model:
 
 data:
   name: wider
+  image_size: [256, 128]
   batch_size: 32
 
 optimizer:

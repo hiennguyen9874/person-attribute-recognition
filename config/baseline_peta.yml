@@ -8,6 +8,7 @@ model:
 
 data:
   name: peta
+  image_size: [256, 128]
   batch_size: 64
 
 optimizer:

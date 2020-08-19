@@ -33,16 +33,16 @@ class BaseDataManger(object):
         return self.dataloader[phase]
     
     def get_image_size(self):
-        return self.datasource.get_image_size()[0], self.datasource.get_image_size()[1]
+        return self.config['image_size'][0], self.config['image_size'][1]
 
 class DataManger_Epoch(BaseDataManger):
     def __init__(self, config, **kwargs):
         super(DataManger_Epoch, self).__init__(config)
         transform = dict()
         transform['train'] = transforms.Compose([
-            transforms.Resize(size=self.datasource.get_image_size()),
+            transforms.Resize(size=config['image_size']),
             transforms.Pad(padding=10, fill=0, padding_mode='constant'),
-            transforms.RandomCrop(size=self.datasource.get_image_size(), padding=None),
+            transforms.RandomCrop(size=config['image_size'], padding=None),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
@@ -50,13 +50,13 @@ class DataManger_Epoch(BaseDataManger):
         ])
         
         transform['val'] = transforms.Compose([
-            transforms.Resize(size=self.datasource.get_image_size()),
+            transforms.Resize(size=config['image_size']),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
 
         transform['test'] = transforms.Compose([
-            transforms.Resize(size=self.datasource.get_image_size()),
+            transforms.Resize(size=config['image_size']),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
@@ -98,9 +98,9 @@ class DataManger_Episode(BaseDataManger):
         super(DataManger_Episode, self).__init__(config)
         transform = dict()
         transform['train'] = transforms.Compose([
-            transforms.Resize(size=self.datasource.get_image_size()),
+            transforms.Resize(size=config['image_size']),
             transforms.Pad(padding=10, fill=0, padding_mode='constant'),
-            transforms.RandomCrop(size=self.datasource.get_image_size(), padding=None),
+            transforms.RandomCrop(size=config['image_size'], padding=None),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
@@ -108,13 +108,13 @@ class DataManger_Episode(BaseDataManger):
         ])
         
         transform['val'] = transforms.Compose([
-            transforms.Resize(size=self.datasource.get_image_size()),
+            transforms.Resize(size=config['image_size']),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])
 
         transform['test'] = transforms.Compose([
-            transforms.Resize(size=self.datasource.get_image_size()),
+            transforms.Resize(size=config['image_size']),
             transforms.ToTensor(),
             transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
         ])

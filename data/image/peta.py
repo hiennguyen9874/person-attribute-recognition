@@ -40,8 +40,8 @@ class Peta(BaseDataSource):
                 self._extract(file_name=key, use_tqdm=use_tqdm)
         
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
-        if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', 'PA-100K')):
-            data_dir = os.path.join(data_dir, 'PA-100K')
+        if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', 'PETA-New')):
+            data_dir = os.path.join(data_dir, 'PETA-New')
         
         f = scipy.io.loadmat(os.path.join(data_dir, 'PETA.mat'))
         

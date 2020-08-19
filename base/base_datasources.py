@@ -15,14 +15,12 @@ class BaseDataSource(object):
         self,
         root_dir,
         dataset_dir,
-        image_size=(256, 128),
         phase=['train', 'val', 'test'],
         **kwargs):
         
         self.phase = phase
         self.root_dir = root_dir
         self.dataset_dir = dataset_dir
-        self.image_size = image_size
         
     def _exists(self, extract_dir):
         raise NotImplementedError
@@ -94,11 +92,6 @@ class BaseDataSource(object):
         r""" get data, must return list of (image_path, label)
         """
         raise NotImplementedError
-
-    def get_image_size(self):
-        r""" get size of image. resize image to fixed size before feed into model
-        """
-        return self.image_size
     
     def get_phase(self):
         r""" get list of phase.

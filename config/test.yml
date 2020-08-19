@@ -8,6 +8,7 @@ model:
 
 data:
   name: peta
+  image_size: [256, 192]
   train:
     num_attribute: 8
     num_positive: 8
