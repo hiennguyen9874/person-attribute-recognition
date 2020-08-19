@@ -8,6 +8,7 @@ from models.backbone.resnet_ibn_a import *
 from models.backbone.resnet_ibn_a_nl import *
 from models.backbone.osnet import *
 from models.backbone.vgg import *
+from models.backbone.eficientnet import Efficient
 
 __backbones = {
     'osnet': (osnet, 512),
@@ -26,5 +27,10 @@ __backbones = {
 }
 
 def build_backbone(name, pretrained=True, progress=True):
-    assert name in __backbones.keys(), 'name of backbone must in %s' % str(__backbones.keys())
-    return __backbones[name][0](pretrained=pretrained, progress=progress), __backbones[name][1]
+    # assert name in __backbones.keys(), 'name of backbone must in %s' % str(__backbones.keys())
+    # return __backbones[name][0](pretrained=pretrained, progress=progress), __backbones[name][1]
+    if name in __backbones.keys():
+        return __backbones[name][0](pretrained=pretrained, progress=progress), __backbones[name][1]
+    elif name in ['efficientnet-b'+str(i) for i in range(9)]:
+        model = Efficient(name)
+        return model, model.get_outchannels()
