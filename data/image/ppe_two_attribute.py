@@ -13,13 +13,13 @@ class PPE_Two(BaseDataSource):
     attribute_name = ['hard_hat', 'safety_vest']
     
     def __init__(self, root_dir='datasets', download=True, extract=True, use_tqdm=True, validation_split=0.1):
-        dataset_dir = 'ppe'
+        super(PPE_Two, self).__init__(root_dir, dataset_dir = 'ppe', image_size = (256, 256))
+        
         file_name = 'ppe.zip'
-        super(PPE_Two, self).__init__(root_dir, dataset_dir, file_name, image_size = (256, 256))
         if download:
-            self._download(use_tqdm=use_tqdm)
+            self._download(file_name, use_tqdm=use_tqdm)
         if extract:
-            self._extract(use_tqdm=use_tqdm)
+            self._extract(file_name, use_tqdm=use_tqdm)
 
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', 'ppe')
         data = self._processes_dir(data_dir)
@@ -107,11 +107,15 @@ class PPE_Two(BaseDataSource):
     def save_attribute(self, path='attribute.pkl'):
         with open(path, 'wb') as f:
             pickle.dump(self.get_attribute(), f)
+   
+    def summary(self):
+        print('num image in training set: ', len(self.get_data('train')))
+        print('num image in valid set: ', len(self.get_data('val')))
+        print('num image in test set: ', len(self.get_data('test')))
 
 if __name__ == "__main__":
-    from utils import read_config
-    config = read_config('config/base.yml')
-    datasource = PPE_Two(root_dir=config['data']['data_dir'], download=True, extract=True)
+    datasource = PPE_Two(root_dir='/datasets', download=True, extract=True)
+    datasource.summary()
     # print('num image train:', len(datasource.get_data('train')))
     # print('num image val', len(datasource.get_data('val')))
     # print('num image test', len(datasource.get_data('test')))
