@@ -14,7 +14,7 @@ class PA_100K(BaseDataSource):
     r''' https://github.com/xh-liu/HydraPlus-Net/blob/master/README.md
     '''
     url = {
-        'PETA-New.zip': '1Jfb3I8BK4oOX3eepaiYyd4fHoMNkgTaz'
+        'PA-100K.zip': '1Jfb3I8BK4oOX3eepaiYyd4fHoMNkgTaz'
     }
     file_path = {
         'PA-100K.zip': '/content/drive/Shared drives/REID/HIEN/Datasets/PA-100K.zip',
@@ -30,7 +30,6 @@ class PA_100K(BaseDataSource):
         super(PA_100K, self).__init__(
             root_dir,
             dataset_dir = 'pa_100k',
-            file_name = 'PA-100K.zip',
             image_size=(256, 128))
         
         if download:
@@ -42,7 +41,7 @@ class PA_100K(BaseDataSource):
         if extract: 
             for key, value in self.url.items():
                 self._extract(file_name=key, use_tqdm=use_tqdm)
-            
+        
         f = scipy.io.loadmat(os.path.join(self.data_dir, 'annotation.mat'))
         image_name = dict()
         label = dict()
@@ -103,10 +102,16 @@ class PA_100K(BaseDataSource):
         with open(path, 'wb') as f:
             pickle.dump(self.get_attribute(), f)
 
+    def summary(self):
+        print('num image in training set: ', len(self.get_data('train')))
+        print('num image in valid set: ', len(self.get_data('val')))
+        print('num image in test set: ', len(self.get_data('test')))
+        
 if __name__ == "__main__":
     datasource = PA_100K(root_dir='/datasets', download=True, extract=True)
+    datasource.summary()
     # print(np.expand_dims(datasource.get_weight('train'), axis=1))
-    datasource.save_attribute('pa100k_attribute.pkl')
+    # datasource.save_attribute('pa100k_attribute.pkl')
     pass
 
 '''
