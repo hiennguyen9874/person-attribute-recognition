@@ -6,9 +6,14 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-
 from torchsummary import summary
-from efficientnet_pytorch import EfficientNet
+from utils import pip_install
+
+try:
+    from efficientnet_pytorch import EfficientNet
+except ImportError as e:
+    pip_install('efficientnet_pytorch')
+    from efficientnet_pytorch import EfficientNet
 
 class Stem(nn.Module):
     def __init__(self, in_channels):

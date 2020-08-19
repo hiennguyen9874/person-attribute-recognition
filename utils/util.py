@@ -2,8 +2,14 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
+import os
+import cv2
 import json
+import yaml
 import shutil
+import subprocess
+import collections
+import pkg_resources
 
 import numpy as np
 from utils.read_config import read_config
@@ -13,7 +19,7 @@ from PIL import Image
 from pathlib import Path
 from collections import OrderedDict
 
-__all__ = ['imread', 'read_json', 'write_json', 'rmdir', 'config_to_str', 'array_interweave', 'neq']
+__all__ = ['imread', 'read_json', 'write_json', 'rmdir', 'config_to_str', 'array_interweave', 'neq', 'pip_install']
 
 def imread(path):
     image = Image.open(path)
@@ -51,3 +57,10 @@ def array_interweave(a, b):
 def neq(x, y, z):
     return (x != y or z) or y != z
 
+def pip_install(package, version=None):
+    if version != None:
+        if pkg_resources.get_distribution(package).version ==  version:
+            return
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package+"=="+version])
+    else:
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
