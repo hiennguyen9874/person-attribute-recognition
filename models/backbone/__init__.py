@@ -32,4 +32,5 @@ def build_backbone(name, pretrained=True, progress=True):
     if name in __backbones.keys():
         return __backbones[name][0](pretrained=pretrained, progress=progress), __backbones[name][1]
     elif name in ['efficientnet-b'+str(i) for i in range(9)]:
-        return Efficient(name), 2048
+        model = Efficient(name)
+        return model, model.get_outchannels()
