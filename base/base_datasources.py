@@ -22,7 +22,6 @@ class BaseDataSource(object):
         self.phase = phase
         self.root_dir = root_dir
         self.dataset_dir = dataset_dir
-        self.data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
         self.image_size = image_size
         
     def _exists(self, extract_dir):

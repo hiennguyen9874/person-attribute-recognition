@@ -42,17 +42,21 @@ class PA_100K(BaseDataSource):
             for key, value in self.url.items():
                 self._extract(file_name=key, use_tqdm=use_tqdm)
         
-        f = scipy.io.loadmat(os.path.join(self.data_dir, 'annotation.mat'))
+        data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
+        if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', 'PA-100K')):
+            data_dir = os.path.join(data_dir, 'PA-100K')
+
+        f = scipy.io.loadmat(os.path.join(data_dir, 'annotation.mat'))
         image_name = dict()
         label = dict()
         
-        image_name['train'] = [os.path.join(self.data_dir, 'images', f['train_images_name'][i][0][0]) for i in range(80000)]
+        image_name['train'] = [os.path.join(data_dir, 'images', f['train_images_name'][i][0][0]) for i in range(80000)]
         label['train'] = f['train_label'][:, np.array(self.group_order)].astype(np.float32)
         
-        image_name['val'] = [os.path.join(self.data_dir, 'images',  f['val_images_name'][i][0][0]) for i in range(10000)]
+        image_name['val'] = [os.path.join(data_dir, 'images',  f['val_images_name'][i][0][0]) for i in range(10000)]
         label['val'] = f['val_label'][:, np.array(self.group_order)].astype(np.float32)
         
-        image_name['test'] = [os.path.join(self.data_dir, 'images', f['test_images_name'][i][0][0]) for i in range(10000)]
+        image_name['test'] = [os.path.join(data_dir, 'images', f['test_images_name'][i][0][0]) for i in range(10000)]
         label['test'] = f['test_label'][:, np.array(self.group_order)].astype(np.float32)
 
         self.attribute_name = [f['attributes'][i][0][0] for i in range(26)]

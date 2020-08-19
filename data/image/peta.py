@@ -39,11 +39,10 @@ class Peta(BaseDataSource):
             for key, value in self.url.items():
                 self._extract(file_name=key, use_tqdm=use_tqdm)
         
-        if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', 'PETA.mat')):
-            data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
-        elif os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(list(self.file_path.keys())[0].split('.')[:-1]), 'PETA.mat')):
-            data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', ''.join(list(self.file_path.keys())[0].split('.')[:-1]))
-
+        data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
+        if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', 'PA-100K')):
+            data_dir = os.path.join(data_dir, 'PA-100K')
+        
         f = scipy.io.loadmat(os.path.join(data_dir, 'PETA.mat'))
         
         raw_attr_name = [i[0][0] for i in f['peta'][0][0][1]]
