@@ -105,7 +105,7 @@ class RandomBatchSamplerAttribute(torch.utils.data.Sampler):
         self.datasource = datasource
         
         self.weight = torch.exp(1-torch.tensor(weight, dtype=torch.float))
-        self.weight /= torch.sum(self.weight)
+        # self.weight /= torch.sum(self.weight)
 
         self.attribute_name = list(enumerate(attribute_name))
         self.num_attribute = num_attribute
