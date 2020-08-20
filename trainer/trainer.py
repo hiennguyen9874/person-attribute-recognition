@@ -92,7 +92,7 @@ class Trainer(BaseTrainer):
 
         # resume model from last checkpoint
         if config['resume'] != '':
-            self._resume_checkpoint(config['resume'])
+            self._resume_checkpoint(config['resume'], config['only_model'])
     
     def train(self):
         # begin train
@@ -243,15 +243,18 @@ class Trainer(BaseTrainer):
                 self.logger.info("Saving current best {}: model_best_{}.pth ...".format(metric, metric))
                 torch.save(state, filename)
     
-    def _resume_checkpoint(self, resume_path):
+    def _resume_checkpoint(self, resume_path, only_model=False):
         r""" Load model from checkpoint
         """
         if not os.path.exists(resume_path):
             raise FileExistsError("Resume path not exist!")
         self.logger.info("Loading checkpoint: {} ...".format(resume_path))
         checkpoint = torch.load(resume_path, map_location=self.map_location)
-        self.start_epoch = checkpoint['epoch'] + 1
         self.model.load_state_dict(checkpoint['state_dict'])
+        if only_model:
+            self.logger.info("Pretrained-model loaded!")
+            return
+        self.start_epoch = checkpoint['epoch'] + 1
         self.criterion.load_state_dict(checkpoint['loss'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])
         self.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
