@@ -85,7 +85,7 @@ class DataManger_Epoch(BaseDataManger):
 
         self.dataloader['test'] = DataLoader(
             dataset['test'],
-            batch_size=128,
+            batch_size=config['batch_size'],
             shuffle=False,
             drop_last=False
         )
