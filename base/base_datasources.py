@@ -83,7 +83,9 @@ class BaseDataSource(object):
         elif url != None:
             download_with_url(url, os.path.join(self.root_dir, self.dataset_dir, 'raw'), file_name, use_tqdm)
         elif file_path != None:
+            print('Copying data...')
             copyfile(file_path, os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name))
+            print("Copied!")
         else:
             if not os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name)):
                 raise FileExistsError('please download file %s into %s' % (file_name, os.path.join(self.root_dir, self.dataset_dir, 'raw')))
