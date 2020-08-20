@@ -22,7 +22,8 @@ class PA_100K(BaseDataSource):
     group_order = [7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 9, 10, 11, 12, 1, 2, 3, 0, 4, 5, 6]
 
     def __init__(
-        self,root_dir='datasets',
+        self,
+        root_dir='datasets',
         download=True,
         extract=True,
         use_tqdm=True):
