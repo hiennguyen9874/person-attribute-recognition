@@ -11,6 +11,7 @@ cycler==0.10.0
 distlib==0.3.0
 distro==1.4.0
 easydict==1.9
+efficientnet-pytorch==0.6.3
 future==0.18.2
 gast==0.3.3
 google-auth==1.20.1
@@ -29,6 +30,7 @@ matplotlib==3.3.0
 msgpack==0.6.2
 numpy==1.18.5
 oauthlib==3.1.0
+opencv-python==4.4.0.42
 opt-einsum==3.3.0
 packaging==20.3
 pandas==1.1.0
@@ -55,6 +57,7 @@ tensorflow==2.3.0
 tensorflow-estimator==2.3.0
 termcolor==1.1.0
 torch==1.6.0+cpu
+torch-summary==1.4.1
 torchvision==0.7.0+cpu
 tqdm==4.48.2
 urllib3==1.25.8
