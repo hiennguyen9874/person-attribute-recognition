@@ -31,7 +31,7 @@ class Efficient(nn.Module):
         return EfficientNet.get_image_size(self.name)
 
 if __name__ == "__main__":
-    name = 'efficientnet-b5'
+    name = 'efficientnet-b4'
     model = EfficientNet.from_pretrained(name, advprop=True)
     print("Input image size: ", EfficientNet.get_image_size(name))
     # summary(model, input_data=(3, EfficientNet.get_image_size(name), EfficientNet.get_image_size(name)//2))
