@@ -47,10 +47,10 @@ class DataManger_Epoch(BaseDataManger):
             A.HorizontalFlip(p=0.5),
             A.Normalize(
                 mean=[0.485, 0.456, 0.406],
-                std=[0.229, 0.224, 0.225],
+                std=[0.229, 0.224, 0.225]
             ),
             ToTensorV2(),
-            A.Lambda(image=RandomErasing(probability=0.5, mean=[0.485, 0.456, 0.406]))
+            A.Lambda(image=RandomErasing(probability=0.5, mean=[0.485, 0.456, 0.406])),
         ])
 
         transform['val'] = A.Compose([
@@ -112,13 +112,12 @@ class DataManger_Episode(BaseDataManger):
             A.PadIfNeeded(min_height=config['image_size'][0]+10, min_width=config['image_size'][1]+10),
             A.RandomCrop(config['image_size'][0], config['image_size'][1]),
             A.HorizontalFlip(p=0.5),
-            A.Cutout(num_holes=8, max_h_size=100, max_w_size=100),
             A.Normalize(
                 mean=[0.485, 0.456, 0.406],
-                std=[0.229, 0.224, 0.225],
+                std=[0.229, 0.224, 0.225]
             ),
             ToTensorV2(),
-            A.Lambda(image=RandomErasing(probability=0.5, mean=[0.0, 0.0, 0.0]))
+            A.Lambda(image=RandomErasing(probability=0.5, mean=[0.485, 0.456, 0.406]))
         ])
 
         transform['val'] = A.Compose([
