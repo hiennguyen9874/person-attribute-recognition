@@ -8,18 +8,17 @@ import argparse
 
 import numpy as np
 
-from PIL import Image
-from torch import res
-from torchvision import transforms
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
 
 from models import build_model
-from utils import read_config
+from utils import read_config, imread
 
 def extractor(path_config, image, return_type=0):
     r"""
     Args:
         path_config (str): path to config image
-        image (PIL image):
+        image (numpy image):
         return_type: type of return
             0: return list of binary
             1: return dict
@@ -40,13 +39,16 @@ def extractor(path_config, image, return_type=0):
     model.eval()
     model.to(device)
 
-    tranform_extract = transforms.Compose([
-        transforms.Resize(size=(config['data']['size'][0], config['data']['size'][1])),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    tranform_extract = A.Compose([
+        A.Resize(config['data']['size'][0], config['data']['size'][1]),
+        A.Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225],
+        ),
+        ToTensorV2()
     ])
 
-    image = tranform_extract(image)
+    image = tranform_extract(image=image)
     image = torch.unsqueeze(image, 0)
 
     out = model(image)
@@ -73,10 +75,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
     parser.add_argument('--config', default='config/base_extraction.yml', type=str)
     args = parser.parse_args()
-
-    def imread(path):
-        image = Image.open(path)
-        return image
 
     path_image = "D:/datasets/peta/processed/images/00001.png"
     image = imread(path_image)
