@@ -571,6 +571,23 @@ def build_sampler(name, config, phase, datasource, weight, attribute_name, **kwa
             num_negative=config[phase]['num_negative'],
             num_iterator=config[phase]['num_iterator']
         ), dict_params
+    
+    elif name == 'RandomBatchSamplerAttribute1':
+        dict_params.update({
+            phase+'_num_attribute': config[phase]['num_attribute'],
+            phase+'_num_positive': config[phase]['num_positive'],
+            phase+'_num_negative': config[phase]['num_negative'],
+            phase+'_num_iterator': config[phase]['num_iterator']
+        })
+        return RandomBatchSamplerAttribute1(
+            datasource=datasource,
+            weight=weight,
+            attribute_name=attribute_name,
+            num_attribute=config[phase]['num_attribute'],
+            num_positive=config[phase]['num_positive'],
+            num_negative=config[phase]['num_negative'],
+            num_iterator=config[phase]['num_iterator']
+        ), dict_params
 
     elif name == 'RandomBatchSamplerAttributeWeight':
         dict_params.update({
