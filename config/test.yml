@@ -1,4 +1,4 @@
-base: config/base_epoch.yml
+base: config/base_episode.yml
 
 model:
   backbone: resnet50
@@ -9,29 +9,48 @@ model:
 data:
   name: peta
   image_size: [256, 192]
-  batch_size: 64
+  sampler: RandomBatchSamplerAttribute1
+  train:
+    num_attribute: 8
+    num_positive: 8
+    num_negative: 8
+    num_iterator: 700
+  val:
+    num_attribute: 8
+    num_positive: 8
+    num_negative: 8
+    num_iterator: 100
 
 optimizer:
-  name: adam
-  lr: 0.00035
+  name: sgd
+  lr: 0.01
+  specified_lr:
+    enable: True
+    lr: 0.1
+    layers: [head]
 
 loss:
-  name: CEL_Sigmoid
+  name: Singular_BCE
+  reduction: mean
 
 freeze:
-  enable: False
+  enable: True
   layers: [backbone]
   epochs: 10
 
 lr_scheduler:
   enable: True
-  MultiStepLR:
-  steps: [15, 20, 25]
-  gamma: 0.1
+  name: ReduceLROnPlateau
+  factor: 0.1
+  patience: 6
+  min_lr: 0
+
+clip_grad_norm_:
+  enable: True
+  max_norm: 10.0
 
 trainer:
-  epochs: 30
-  
+  epochs: 120
+    
 trainer_colab:
-  epochs: 30
-
+  epochs: 120

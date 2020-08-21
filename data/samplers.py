@@ -145,6 +145,76 @@ class RandomBatchSamplerAttribute(torch.utils.data.Sampler):
         return self.num_iterator
 
 
+class RandomBatchSamplerAttribute1(torch.utils.data.Sampler):
+    r""" Episode sampler, random attribute from multinomial distribution, 
+        each attribute, random 'k' positive sampler and 'l' negative sampler.
+    Args:
+        datasource (list of tuple): data from data.image.get_data()
+        weight (np.array): weight of training set.
+        attribute_name: list of attribute in dataset
+        num_attribute: num of attribute in one episode
+        num_positive: num of positive sampler in each attribute
+        num_negative: num of negative sampler in each attribute
+        num_iterator: num of iterator in each epoch.
+        shuffle: shuffle data before sampler
+    """
+    def __init__(
+        self,
+        datasource,
+        weight,
+        attribute_name,
+        num_attribute,
+        num_positive,
+        num_negative,
+        num_iterator,
+        shuffle=True,
+        **kwargs):
+
+        assert num_attribute <= len(attribute_name), 'num of attribute in one batch must less than num of attribute in dataset'
+        
+        self.datasource = datasource
+        
+        self.weight = torch.exp(torch.tensor(weight, dtype=torch.float))
+        self.weight /= torch.sum(self.weight)
+
+        self.attribute_name = list(enumerate(attribute_name))
+        self.num_attribute = num_attribute
+        self.num_positive = num_positive
+        self.num_negative = num_negative
+        self.num_iterator = num_iterator
+        self.shuffle = shuffle
+
+        self.pos_dict = defaultdict(list)
+        self.neg_dict = defaultdict(list)
+
+        for index, (_, label) in enumerate(self.datasource):
+            for i, attribute in enumerate(attribute_name):
+                if label[i] == True:
+                    self.pos_dict[attribute].append(index)
+                else:
+                    self.neg_dict[attribute].append(index)
+
+    def __iter__(self):
+        if self.shuffle:
+            np.random.shuffle(self.attribute_name)
+            for _, attribute in self.attribute_name:
+                np.random.shuffle(self.pos_dict[attribute])
+                np.random.shuffle(self.neg_dict[attribute])
+        for _ in range(self.num_iterator):
+            idx_selected_attribute = torch.multinomial(self.weight, self.num_attribute, replacement=True)
+            batch = []
+            for idx in idx_selected_attribute:
+                index, attribute = self.attribute_name[idx]
+                pos_idxs = np.random.choice(self.pos_dict[attribute], size=self.num_positive, replace=True)
+                neg_idxs = np.random.choice(self.neg_dict[attribute], size=self.num_negative, replace=True)
+                batch.extend(list(zip(pos_idxs, repeat(index))))
+                batch.extend(list(zip(neg_idxs, repeat(index))))
+            yield batch
+
+    def __len__(self):
+        return self.num_iterator
+
+
 class RandomBatchSamplerAttributeWeight(torch.utils.data.Sampler):
     r""" Episode sampler, random attribute based weight, 
         each attribute, random 'k' positive sampler and 'l' negative sampler.
