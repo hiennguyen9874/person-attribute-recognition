@@ -9,7 +9,7 @@ from utils import imread
 __all__ = ['ImageDataset']
 
 class ImageDataset(torch.utils.data.Dataset):
-    def __init__(self, data, transform=None):
+    def __init__(self, data, transform):
         self.data = data
         self.transform = transform
         
@@ -17,16 +17,15 @@ class ImageDataset(torch.utils.data.Dataset):
         if isinstance(index, int):
             img_path, label = self.data[index]
             img = imread(img_path)
-            if self.transform is not None:
-                img = self.transform(img)
-            return img, label
+            result = self.transform(image=img)
+            return result['image'], label
+
         elif isinstance(index, tuple):
             index, attribute_idx = index
             img_path, label = self.data[index]
             img = imread(img_path)
-            if self.transform is not None:
-                img = self.transform(img)
-            return img, label, attribute_idx
+            result = self.transform(image=img)
+            return result['image'], label, attribute_idx
 
     def __len__(self):
         return len(self.data)
