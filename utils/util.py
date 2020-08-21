@@ -14,15 +14,14 @@ import pkg_resources
 import numpy as np
 from utils.read_config import read_config
 
-from PIL import Image
-
 from pathlib import Path
 from collections import OrderedDict
 
 __all__ = ['imread', 'read_json', 'write_json', 'rmdir', 'config_to_str', 'array_interweave', 'neq', 'pip_install']
 
 def imread(path):
-    image = Image.open(path)
+    image = cv2.imread(path)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     return image
 
 def read_json(fname):

@@ -4,8 +4,6 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../')
 import torch
 import torchvision.datasets as datasets
 
-from PIL import Image
-
 from utils import imread
 
 __all__ = ['ImageDataset']
