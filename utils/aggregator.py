@@ -52,11 +52,9 @@ def extract(path_to_folder):
 
     return all_per_key
 
-
 def get_valid_filename(s):
     s = str(s).strip().replace(' ', '_')
     return re.sub(r'(?u)[^-\w.]', '', s)
-
 
 def aggregate(dpath, list_dname, output_path=None):
     assert os.path.exists(dpath), "folder %s not exists" % dpath

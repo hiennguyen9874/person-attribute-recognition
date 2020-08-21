@@ -7,6 +7,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class Singular_BCE(nn.Module):
+    r""" Binary cross entropy only on idx_attribute
+    """
     def __init__(self, num_attribute, reduction='sum'):
         super(Singular_BCE, self).__init__()
         assert reduction in ['sum', 'mean', 'attribute']
