@@ -11,11 +11,11 @@ from collections import defaultdict
 from base import BaseDataSource
 
 class Peta(BaseDataSource):
-    r''' Peta Dataset
+    r""" Peta Dataset
         http://mmlab.ie.cuhk.edu.hk/projects/PETA.html
         https://github.com/dangweili/pedestrian-attribute-recognition-pytorch
         https://github.com/valencebond/Strong_Baseline_of_Pedestrian_Attribute_Recognition/blob/master/dataset/preprocess/format_peta.py
-    '''
+    """
     url = {
         'PETA-New.zip': '1Z2o5RyyCXBBGdEUey-Wi1ImFDFUTIVEo'
     }

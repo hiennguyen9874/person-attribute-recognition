@@ -19,8 +19,10 @@ from evaluators import recognition_metrics
 __all__ = ['recognition_metrics', 'compute_accuracy_cuda', 'log_test']
 
 def recognition_metrics(labels, preds, threshold=0.5, eps = 1e-20):
-    r""" https://en.wikipedia.org/wiki/Confusion_matrix
+    r""" 
     https://arxiv.org/pdf/1603.07054.pdf
+    https://en.wikipedia.org/wiki/Confusion_matrix
+    https://github.com/valencebond/Strong_Baseline_of_Pedestrian_Attribute_Recognition/blob/97e33338432d277596dcb1958292b070facfd6ff/tools/function.py#L81
     Args:
         labels (num_sampler, num_attribute): 2d numpy array binary
         preds (num_sampler, num_attribute): 2d numpy array float

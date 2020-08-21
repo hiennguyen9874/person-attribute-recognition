@@ -64,6 +64,5 @@ def build_lr_scheduler(config, optimizer):
             warmup_method=cfg_lr_scheduler['warmup_method']
         ), dict_paramsters
     
-    
     else:
         raise KeyError('config[lr_scheduler][name] error')

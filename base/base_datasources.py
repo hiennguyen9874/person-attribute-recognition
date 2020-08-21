@@ -10,7 +10,7 @@ from shutil import copy2
 
 from utils import download_file_from_google_drive, download_with_url
 
-class BaseDataSource(object):    
+class BaseDataSource(object):
     def __init__(
         self,
         root_dir,
