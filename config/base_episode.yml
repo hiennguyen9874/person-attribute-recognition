@@ -27,7 +27,7 @@ model:
 data:
   # folder will save data
   data_dir: /datasets
-  # name of dataset: [peta, pa100k, ppe, ppe_two]
+  # name of dataset: [peta, pa100k, ppe, ppe_two, wider]
   name: peta
   image_size: [256, 192]
   # automatic download and extract model from my drive
