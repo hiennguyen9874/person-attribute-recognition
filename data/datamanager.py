@@ -2,6 +2,9 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
+from utils import pip_install
+pip_install('albumentations', '0.4.6')
+
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 from torch.utils.data.dataloader import DataLoader
