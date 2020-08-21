@@ -2,13 +2,14 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
-from torchvision import transforms
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
 from torch.utils.data.dataloader import DataLoader
 
 from data.image import build_datasource
 from data.datasets import ImageDataset
-from data.transforms import RandomErasing
 from data.samplers import build_sampler
+from data.transforms import RandomErasing
 
 __all__ = ['DataManger_Epoch', 'DataManger_Episode']
 
@@ -39,26 +40,35 @@ class DataManger_Epoch(BaseDataManger):
     def __init__(self, config, **kwargs):
         super(DataManger_Epoch, self).__init__(config)
         transform = dict()
-        transform['train'] = transforms.Compose([
-            transforms.Resize(size=config['image_size']),
-            transforms.Pad(padding=10, fill=0, padding_mode='constant'),
-            transforms.RandomCrop(size=config['image_size'], padding=None),
-            transforms.RandomHorizontalFlip(p=0.5),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            RandomErasing(probability=0.5, mean=[0.485, 0.456, 0.406])
-        ])
-        
-        transform['val'] = transforms.Compose([
-            transforms.Resize(size=config['image_size']),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        transform['train'] = A.Compose([
+            A.Resize(config['image_size'][0], config['image_size'][1]),
+            A.PadIfNeeded(min_height=config['image_size'][0]+10, min_width=config['image_size'][1]+10),
+            A.RandomCrop(config['image_size'][0], config['image_size'][1]),
+            A.HorizontalFlip(p=0.5),
+            A.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+            ),
+            ToTensorV2(),
+            A.Lambda(image=RandomErasing(probability=0.5, mean=[0.485, 0.456, 0.406]))
         ])
 
-        transform['test'] = transforms.Compose([
-            transforms.Resize(size=config['image_size']),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        transform['val'] = A.Compose([
+            A.Resize(config['image_size'][0], config['image_size'][1]),
+            A.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+            ),
+            ToTensorV2()
+        ])
+
+        transform['test'] = A.Compose([
+            A.Resize(config['image_size'][0], config['image_size'][1]),
+            A.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+            ),
+            ToTensorV2()
         ])
 
         dataset = dict()
@@ -97,26 +107,36 @@ class DataManger_Episode(BaseDataManger):
     def __init__(self, config, **kwargs):
         super(DataManger_Episode, self).__init__(config)
         transform = dict()
-        transform['train'] = transforms.Compose([
-            transforms.Resize(size=config['image_size']),
-            transforms.Pad(padding=10, fill=0, padding_mode='constant'),
-            transforms.RandomCrop(size=config['image_size'], padding=None),
-            transforms.RandomHorizontalFlip(p=0.5),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
-            RandomErasing(probability=0.5, mean=[0.485, 0.456, 0.406])
-        ])
-        
-        transform['val'] = transforms.Compose([
-            transforms.Resize(size=config['image_size']),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        transform['train'] = A.Compose([
+            A.Resize(config['image_size'][0], config['image_size'][1]),
+            A.PadIfNeeded(min_height=config['image_size'][0]+10, min_width=config['image_size'][1]+10),
+            A.RandomCrop(config['image_size'][0], config['image_size'][1]),
+            A.HorizontalFlip(p=0.5),
+            A.Cutout(num_holes=8, max_h_size=100, max_w_size=100),
+            A.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+            ),
+            ToTensorV2(),
+            A.Lambda(image=RandomErasing(probability=0.5, mean=[0.0, 0.0, 0.0]))
         ])
 
-        transform['test'] = transforms.Compose([
-            transforms.Resize(size=config['image_size']),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+        transform['val'] = A.Compose([
+            A.Resize(config['image_size'][0], config['image_size'][1]),
+            A.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+            ),
+            ToTensorV2()
+        ])
+
+        transform['test'] = A.Compose([
+            A.Resize(config['image_size'][0], config['image_size'][1]),
+            A.Normalize(
+                mean=[0.485, 0.456, 0.406],
+                std=[0.229, 0.224, 0.225],
+            ),
+            ToTensorV2()
         ])
 
         dataset = dict()
