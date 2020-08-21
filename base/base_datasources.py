@@ -6,7 +6,7 @@ import zipfile
 import tarfile
 
 from tqdm import tqdm
-from shutil import copyfile
+from shutil import copy2
 
 from utils import download_file_from_google_drive, download_with_url
 
@@ -84,7 +84,7 @@ class BaseDataSource(object):
             download_with_url(url, os.path.join(self.root_dir, self.dataset_dir, 'raw'), file_name, use_tqdm)
         elif file_path != None:
             print('Copying data...')
-            copyfile(file_path, os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name))
+            copy2(file_path, os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name))
             print("Copied!")
         else:
             if not os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'raw', file_name)):

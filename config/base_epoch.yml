@@ -69,7 +69,7 @@ freeze:
 
 # learning rate scheduler. if you not config manual parameters, it will get from default, corresponding name
 lr_scheduler:
-  enable: True
+  enable: False
   name: MultiStepLR
   default:
     WarmupMultiStepLR:
@@ -113,7 +113,7 @@ trainer:
   use_tqdm: True
 
 # train on colab
-# log folder will copy to log_dir_saved at end of epoch
+# log_dir folder will copied to log_dir_saved at end of epoch
 # use_tqdm: use tqdm process bar when training.
 trainer_colab:
   n_gpu: 1
