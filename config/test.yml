@@ -1,22 +1,37 @@
-base: config/base_epoch.yml
+base: config/base_episode.yml
 
 model:
-  backbone: efficientnet-b5
+  backbone: resnet50
   pooling: gem_pooling
   head: BNHead
   bn_where: after
 
 data:
   name: peta
-  image_size: [456, 228]
-  batch_size: 16
+  image_size: [256, 192]
+  sampler: RandomBatchSamplerAttribute1
+  train:
+    num_attribute: 8
+    num_positive: 8
+    num_negative: 8
+    num_iterator: 700
+  val:
+    num_attribute: 8
+    num_positive: 8
+    num_negative: 8
+    num_iterator: 100
 
 optimizer:
-  name: adam
-  lr: 0.00035
+  name: sgd
+  lr: 0.01
+  specified_lr:
+    enable: True
+    lr: 0.1
+    layers: [head]
 
 loss:
-  name: CEL_Sigmoid
+  name: Singular_BCE
+  reduction: mean
 
 freeze:
   enable: True
@@ -25,16 +40,17 @@ freeze:
 
 lr_scheduler:
   enable: True
-  name: WarmupMultiStepLR
-  steps: [30, 60, 90]
-  gamma: 0.1
-  warmup_factor: 0.01
-  warmup_iters: 10
+  name: ReduceLROnPlateau
+  factor: 0.1
+  patience: 6
+  min_lr: 0
+
+clip_grad_norm_:
+  enable: True
+  max_norm: 10.0
 
 trainer:
   epochs: 120
-  
+    
 trainer_colab:
   epochs: 120
-
-
