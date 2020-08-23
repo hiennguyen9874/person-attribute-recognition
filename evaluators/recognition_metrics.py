@@ -13,7 +13,7 @@ from easydict import EasyDict
 from models import build_model
 from data import build_datamanager
 from logger import setup_logging
-from utils import read_config, rmdir, summary, array_interweave, COLOR
+from utils import read_config, rmdir, summary, array_interweave, array_interweave3, COLOR
 from evaluators import recognition_metrics
 
 __all__ = ['recognition_metrics', 'compute_accuracy_cuda', 'log_test']
@@ -212,6 +212,80 @@ def compare_class_based(logger_func, attribute_name, weight, result_label1, resu
         round(np.mean(result_label2.recall)*100, 2),
         round(np.mean(result_label1.f1_score)*100, 2),
         round(np.mean(result_label2.f1_score)*100, 2)))
+def compare_class_based3(logger_func, attribute_name, weight, result_label1, result_label2, result_label3, color=COLOR.BOLD):
+    r""" log result and the difference between result_label1, result_label2 and result_label3
+    Args:
+        logger_func: logger.info or print
+        attribute_name: list of attribute
+        weight: weight of each attribute in testset
+        result_label1, result_label2
+        color: result higher will colored
+    """
+    # logger_func('class-based metrics:')
+    result1 = np.stack([result_label1.accuracy, result_label1.mean_accuracy, result_label1.precision, result_label1.recall, result_label1.f1_score], axis=0)
+    result1 = np.around(result1*100, 2)
+    result1 = result1.transpose()
+
+    result2 = np.stack([result_label2.accuracy, result_label2.mean_accuracy, result_label2.precision, result_label2.recall, result_label2.f1_score], axis=0)
+    result2 = np.around(result2*100, 2)
+    result2 = result2.transpose()
+
+    result3 = np.stack([result_label3.accuracy, result_label3.mean_accuracy, result_label3.precision, result_label3.recall, result_label3.f1_score], axis=0)
+    result3 = np.around(result3*100, 2)
+    result3 = result3.transpose()
+
+    row_format = "{:>20}{:>12}{:>17}{:>20}{:>25}{:>20}{:>24}"
+    logger_func(row_format.format('attribute', 'weight', 'accuracy', 'mA', 'precision', 'recall', 'f1_score'))
+    
+    logger_func(row_format.format(*['-']*7))
+
+    for i in range(len(attribute_name)):
+        row_format = "{:>20}" + "{:>12}"
+        for j in range(5):
+            if np.argmax([result1[i][j], result2[i][j], result3[i][j]]) == 0:
+                row_format += color + "{:>10}" + COLOR.END + "|{:>5}" + "|{:>5}"
+            elif np.argmax([result1[i][j], result2[i][j], result3[i][j]]) == 1:
+                row_format += "{:>10}|" + color + "{:>5}" + COLOR.END + "|{:>5}"
+            elif np.argmax([result1[i][j], result2[i][j], result3[i][j]]) == 2:
+                row_format += "{:>10}|" + "{:>5}|" + color + "{:>5}" + COLOR.END
+        logger_func(row_format.format(attribute_name[i], np.around(weight[i]*100, 2), *array_interweave3(result1[i], result2[i], result3[i]).tolist()))
+
+    row_format = "{:>20}{:>12}{:>17}{:>20}{:>25}{:>20}{:>24}"
+    logger_func(row_format.format(*['-']*7))
+    
+    mean_result1 = np.around(np.mean(np.array([result_label1.accuracy, result_label1.mean_accuracy, result_label1.precision, result_label1.recall, result_label1.f1_score]), axis=1)*100, 2)
+    
+    mean_result2 = np.around(np.mean(np.array([result_label2.accuracy, result_label2.mean_accuracy, result_label2.precision, result_label2.recall, result_label2.f1_score]), axis=1)*100, 2)
+    
+    mean_result3 = np.around(np.mean(np.array([result_label3.accuracy, result_label3.mean_accuracy, result_label3.precision, result_label3.recall, result_label3.f1_score]), axis=1)*100, 2)
+
+    row_format = "{:>20}" + "{:>12}"
+    for i in range(5):
+        if np.argmax([mean_result1[i], mean_result2[i], mean_result3[i]]) == 0:
+            row_format += color + "{:>10}" + COLOR.END + "|{:>5}" + "|{:>5}"
+        elif np.argmax([mean_result1[i], mean_result2[i], mean_result3[i]]) == 1:
+            row_format += "{:>10}|" + color + "{:>5}" + COLOR.END + "|{:>5}"
+        elif np.argmax([mean_result1[i], mean_result2[i], mean_result3[i]]) == 2:
+            row_format += "{:>10}|" + "{:>5}|" + color + "{:>5}" + COLOR.END
+
+    logger_func(row_format.format(
+        'mean',
+        '-',
+        round(np.mean(result_label1.accuracy)*100, 2),
+        round(np.mean(result_label2.accuracy)*100, 2),
+        round(np.mean(result_label3.accuracy)*100, 2),
+        round(np.mean(result_label1.mean_accuracy)*100, 2),
+        round(np.mean(result_label2.mean_accuracy)*100, 2),
+        round(np.mean(result_label3.mean_accuracy)*100, 2),
+        round(np.mean(result_label1.precision)*100, 2),
+        round(np.mean(result_label2.precision)*100, 2),
+        round(np.mean(result_label3.precision)*100, 2),
+        round(np.mean(result_label1.recall)*100, 2),
+        round(np.mean(result_label2.recall)*100, 2),
+        round(np.mean(result_label3.recall)*100, 2),
+        round(np.mean(result_label1.f1_score)*100, 2),
+        round(np.mean(result_label2.f1_score)*100, 2),
+        round(np.mean(result_label3.f1_score)*100, 2)))
 
 def test(config, datamanager, logger_func):
     cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
