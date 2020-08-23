@@ -249,7 +249,7 @@ class RandomBatchSamplerAttributeWeight(torch.utils.data.Sampler):
 
         weight1 = np.exp(1-weight)
         weight2 = np.exp(weight)
-        self.num_positive = np.rint(num_sampler*weight1/(weight1+weight2))
+        self.num_positive = np.rint(num_sampler*weight1/(weight1+weight2)).astype(int)
         self.num_negative = num_sampler - self.num_positive
 
         self.pos_dict = defaultdict(list)
@@ -325,7 +325,7 @@ class RandomBatchSamplerAttributeWeight1(torch.utils.data.Sampler):
 
         weight1 = np.exp(weight)
         weight2 = np.exp(1-weight)
-        self.num_positive = np.rint(num_sampler*weight1/(weight1+weight2))
+        self.num_positive = np.rint(num_sampler*weight1/(weight1+weight2)).astype(int)
         self.num_negative = num_sampler - self.num_positive
 
         self.pos_dict = defaultdict(list)
