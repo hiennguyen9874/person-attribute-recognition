@@ -6,14 +6,13 @@ import random
 import math
 import numpy as np
 
-from PIL import Image
 from collections import deque
 import torchvision.transforms.functional as F
 
 from data.image.ppe import PPE
 from data.image.pa_100k import PA_100K
 
-__all__ = ['RandomErasing', 'RandomPatch']
+__all__ = ['RandomErasing']
 
 class RandomErasing(object):
     """ Randomly selects a rectangle region in an image and erases its pixels.
@@ -34,7 +33,7 @@ class RandomErasing(object):
         self.sh = sh
         self.r1 = r1
        
-    def __call__(self, img):
+    def __call__(self, img, **kwargs):
 
         if random.uniform(0, 1) > self.probability:
             return img
@@ -61,80 +60,4 @@ class RandomErasing(object):
 
         return img
 
-class RandomPatch(object):
-    """Random patch data augmentation.
-    There is a patch pool that stores randomly extracted pathces from person images.
-    For each input image, RandomPatch
-        1) extracts a random patch and stores the patch in the patch pool;
-        2) randomly selects a patch from the patch pool and pastes it on the
-           input (at random position) to simulate occlusion.
-    Reference:
-        - Zhou et al. Omni-Scale Feature Learning for Person Re-Identification. ICCV, 2019.
-        - Zhou et al. Learning Generalisable Omni-Scale Representations
-          for Person Re-Identification. arXiv preprint, 2019.
-    """
-
-    def __init__(self, prob_happen=0.5, pool_capacity=50000, min_sample_size=100,
-                 patch_min_area=0.01, patch_max_area=0.5, patch_min_ratio=0.1,
-                 prob_rotate=0.5, prob_flip_leftright=0.5,
-                 ):
-        self.prob_happen = prob_happen
-
-        self.patch_min_area = patch_min_area
-        self.patch_max_area = patch_max_area
-        self.patch_min_ratio = patch_min_ratio
-
-        self.prob_rotate = prob_rotate
-        self.prob_flip_leftright = prob_flip_leftright
-
-        self.patchpool = deque(maxlen=pool_capacity)
-        self.min_sample_size = min_sample_size
-
-    def generate_wh(self, W, H):
-        area = W * H
-        for attempt in range(100):
-            target_area = random.uniform(self.patch_min_area, self.patch_max_area) * area
-            aspect_ratio = random.uniform(self.patch_min_ratio, 1. / self.patch_min_ratio)
-            h = int(round(math.sqrt(target_area * aspect_ratio)))
-            w = int(round(math.sqrt(target_area / aspect_ratio)))
-            if w < W and h < H:
-                return w, h
-        return None, None
-
-    def transform_patch(self, patch):
-        if random.uniform(0, 1) > self.prob_flip_leftright:
-            patch = patch.transpose(Image.FLIP_LEFT_RIGHT)
-        if random.uniform(0, 1) > self.prob_rotate:
-            patch = patch.rotate(random.randint(-10, 10))
-        return patch
-
-    def __call__(self, img):
-        if isinstance(img, np.ndarray):
-            img = Image.fromarray(img.astype(np.uint8))
-
-        W, H = img.size  # original image size
-
-        # collect new patch
-        w, h = self.generate_wh(W, H)
-        if w is not None and h is not None:
-            x1 = random.randint(0, W - w)
-            y1 = random.randint(0, H - h)
-            new_patch = img.crop((x1, y1, x1 + w, y1 + h))
-            self.patchpool.append(new_patch)
-
-        if len(self.patchpool) < self.min_sample_size:
-            return img
-
-        if random.uniform(0, 1) > self.prob_happen:
-            return img
-
-        # paste a randomly selected patch on a random position
-        patch = random.sample(self.patchpool, 1)[0]
-        patchW, patchH = patch.size
-        x1 = random.randint(0, W - patchW)
-        y1 = random.randint(0, H - patchH)
-        patch = self.transform_patch(patch)
-        img.paste(patch, (x1, y1))
-
-        return img
 
