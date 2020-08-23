@@ -17,7 +17,7 @@ from utils.read_config import read_config
 from pathlib import Path
 from collections import OrderedDict
 
-__all__ = ['imread', 'read_json', 'write_json', 'rmdir', 'config_to_str', 'array_interweave', 'neq', 'pip_install']
+__all__ = ['imread', 'read_json', 'write_json', 'rmdir', 'config_to_str', 'array_interweave', 'array_interweave3', 'neq', 'pip_install']
 
 def imread(path):
     image = cv2.imread(path)
@@ -52,6 +52,13 @@ def array_interweave(a, b):
     c[0::2] = a
     c[1::2] = b
     return c
+
+def array_interweave3(a, b, c):
+    d = np.empty((a.size + b.size + c.size,), dtype=a.dtype)
+    d[0::3] = a
+    d[1::3] = b
+    d[2::3] = c
+    return d
 
 def neq(x, y, z):
     return (x != y or z) or y != z
