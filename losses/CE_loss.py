@@ -9,16 +9,15 @@ import torch.nn.functional as F
 class CEL_Sigmoid(nn.Module):
     r""" https://arxiv.org/pdf/2005.11909.pdf
     """
-    def __init__(self, pos_ratio=None, reduction='mean', use_gpu=True):
+    def __init__(self, pos_ratio=None, reduction='mean', **kwargs):
         super(CEL_Sigmoid, self).__init__()
         assert reduction in ['sum', 'mean'], 'reduction must be mean or sum'
         self.pos_ratio = pos_ratio
         self.reduction = reduction
-        self.use_gpu = use_gpu
 
-    def forward(self, logits, targets):
-        batch_size = logits.shape[0]
-        loss = F.binary_cross_entropy_with_logits(logits, targets, reduction='none')
+    def forward(self, inputs, targets):
+        batch_size = inputs.shape[0]
+        loss = F.binary_cross_entropy_with_logits(inputs, targets, reduction='none')
         if self.pos_ratio is not None:
             weight = self.__ratio2weight(targets, self.pos_ratio)
             loss = (loss * weight)
