@@ -22,6 +22,8 @@ class PPE_Two(BaseDataSource):
             self._extract(file_name, use_tqdm=use_tqdm)
 
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', 'ppe')
+        if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', 'ppe')):
+            data_dir = os.path.join(data_dir, 'ppe')
         data = self._processes_dir(data_dir)
         
         # split data

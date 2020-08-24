@@ -5,7 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../')
 import zipfile
 import tarfile
 
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from shutil import copy2
 
 from utils import download_file_from_google_drive, download_with_url

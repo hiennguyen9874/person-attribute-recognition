@@ -3,23 +3,22 @@ import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
 
+import cv2
 import torch
 import argparse
 
-import cv2
-
 import numpy as np
 import matplotlib.pyplot as plt
-from PIL import Image
-from torchvision import transforms
-from utils import read_config
+
+from utils import pip_install
+pip_install('albumentations', '0.4.6')
+
+import albumentations as A
+from albumentations.pytorch import ToTensorV2
 
 from data.image import build_datasource
 from models import build_model
-
-def imread(path):
-    image = Image.open(path)
-    return image
+from utils import read_config, imread
 
 def main(config):
     datasource = build_datasource(
@@ -29,15 +28,20 @@ def main(config):
         extract=config['data']['extract'],
         use_tqdm=config['data']['use_tqdm'])
     
-    transform = transforms.Compose([
-        transforms.Resize(size=datasource.get_image_size()),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+    height, width = config['data']['image_size'][0], config['data']['image_size'][1]
+    
+    transform = A.Compose([
+        A.Resize(height, width),
+        A.Normalize(
+            mean=[0.485, 0.456, 0.406],
+            std=[0.229, 0.224, 0.225],
+        ),
+        ToTensorV2()
     ])
 
-    model, _ = build_model(config['model'], num_classes=len(datasource.get_attribute()))
+    model, _ = build_model(config, num_classes=len(datasource.get_attribute()))
     
-    cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
+    cfg_trainer = config['trainer']
     
     use_gpu = cfg_trainer['n_gpu'] > 0 and torch.cuda.is_available()
     device = torch.device('cuda:0' if use_gpu else 'cpu')
@@ -50,13 +54,12 @@ def main(config):
     model.eval()
     model.to(device)
 
-    width, height = datasource.get_image_size()
     attribute_name = datasource.get_attribute()
 
     for img_path, label in datasource.get_data('train'):
         label = label.astype(bool)
         img_orig = imread(img_path)
-        img = transform(img_orig)
+        img = transform(image=img_orig)['image']
         img = torch.unsqueeze(img, dim=0)
         img = img.to(device)
 

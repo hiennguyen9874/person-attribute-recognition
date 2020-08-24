@@ -6,8 +6,6 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
-
-
 __all__ = ['plot_loss_accuracy']
 
 from utils.aggregator import aggregate, aggregate1

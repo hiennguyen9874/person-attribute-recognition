@@ -7,7 +7,7 @@ import logging
 import argparse
 import numpy as np
 
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from easydict import EasyDict
 
 from models import build_model
@@ -212,6 +212,7 @@ def compare_class_based(logger_func, attribute_name, weight, result_label1, resu
         round(np.mean(result_label2.recall)*100, 2),
         round(np.mean(result_label1.f1_score)*100, 2),
         round(np.mean(result_label2.f1_score)*100, 2)))
+        
 def compare_class_based3(logger_func, attribute_name, weight, result_label1, result_label2, result_label3, color=COLOR.BOLD):
     r""" log result and the difference between result_label1, result_label2 and result_label3
     Args:

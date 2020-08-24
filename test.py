@@ -7,7 +7,7 @@ import logging
 import torch
 import numpy as np
 
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 from models import build_model
 from data import build_datamanager

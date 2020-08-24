@@ -5,7 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__))))
 import shutil
 import argparse
 
-from tqdm  import tqdm
+from tqdm.auto import tqdm
 
 from utils import rmdir
 
