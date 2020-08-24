@@ -10,7 +10,7 @@ import glob
 import gdown
 import scipy.io
 import numpy as np
-from tqdm import tqdm
+from tqdm.auto import tqdm
 from collections import defaultdict
 
 from utils import download_file_from_google_drive, download_with_url

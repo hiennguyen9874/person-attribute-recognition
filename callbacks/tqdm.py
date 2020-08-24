@@ -1,4 +1,4 @@
-from tqdm import tqdm
+from tqdm.auto import tqdm
 
 class Tqdm(object):
     r""" Tqdm Progress Bar callback \
@@ -23,4 +23,3 @@ class Tqdm(object):
 
     def on_epoch_end(self):
         self.progbar.close()
-

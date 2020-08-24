@@ -48,7 +48,7 @@ def extractor(path_config, image, return_type=0):
         ToTensorV2()
     ])
 
-    image = tranform_extract(image=image)
+    image = tranform_extract(image=image)['image']
     image = torch.unsqueeze(image, 0)
 
     out = model(image)
@@ -76,8 +76,9 @@ if __name__ == "__main__":
     parser.add_argument('--config', default='config/base_extraction.yml', type=str)
     args = parser.parse_args()
 
-    path_image = "D:/datasets/peta/processed/images/00001.png"
+    path_image = "D:/datasets/peta/processed/images/00009.png"
     image = imread(path_image)
     
     result = extractor(args.config, image, 2)
     print(result)
+
