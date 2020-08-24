@@ -46,3 +46,5 @@
 - https://github.com/kakaobrain/fast-autoaugment, https://arxiv.org/pdf/1905.00397.pdf
 
 - https://github.com/ildoonet/pytorch-randaugment
+
+- https://www.dlology.com/blog/multi-class-classification-with-focal-loss-for-imbalanced-datasets/

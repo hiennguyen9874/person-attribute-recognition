@@ -7,6 +7,7 @@ import torch.nn as nn
 
 from losses.CE_loss import CEL_Sigmoid
 from losses.Singular_BCE import Singular_BCE
+from losses.Focal_loss import FocalLoss
 
 def build_losses(config, pos_ratio, num_attribute, use_gpu=True, **kwargs):
     cfg_loss = config['loss']
@@ -19,6 +20,8 @@ def build_losses(config, pos_ratio, num_attribute, use_gpu=True, **kwargs):
         return CEL_Sigmoid(pos_ratio, use_gpu=use_gpu, reduction=cfg_loss['reduction']), {'reduction': cfg_loss['reduction']}
     elif cfg_loss['name'] == 'Singular_BCE':
         return Singular_BCE(num_attribute, reduction=cfg_loss['reduction']), {'reduction': cfg_loss['reduction']}
+    elif cfg_loss['name'] == 'FocalLoss':
+        return FocalLoss(pos_ratio), {}
     else:
         raise KeyError('config[loss][name] error')
 

@@ -39,20 +39,25 @@ if __name__ == "__main__":
         saved = False
         for i, line in enumerate(info_log):
             head = line[41:].split(':')
-            if head[0] not in ['Run id', 'Dataset', 'Model', 'Freeze layer', 'Loss', 'Optimizer', 'Lr scheduler']:
+            if head[0] not in ['Run id', 'Dataset', 'Data', 'Model', 'Freeze layer', 'Loss', 'Optimizer', 'Lr scheduler']:
                 break
             if head[0] == 'Dataset':
                 saved_info['info']['Dataset'] = head[1].split(',')[0].replace(' ', '')
+            if head[0] == 'Data':
+                saved_info['info']['Dataset'] = head[2].split(',')[0].replace(' ', '')
             if head[0] == 'Model':
-                saved_info['info']['Model'] = head[2].split(' ')[1].replace(' ', '')
+                try:
+                    saved_info['info']['Model'] = head[2].split(' ')[1].split(',')[0].replace(' ', '')
+                except:
+                    saved_info['info']['Model'] = head[1].split(' ')[1].split(',')[0].replace(' ', '')
             if head[0] == 'Freeze layer':
                 saved_info['info']['Freeze layer'] = 1
             if head[0] == 'Loss':
-                saved_info['info']['Loss'] = head[1].split(' ')[1].replace(' ', '')
+                saved_info['info']['Loss'] = head[1].split(' ')[1].split(',')[0].replace(' ', '')
             if head[0] == 'Optimizer':
-                saved_info['info']['Optimizer'] = head[1].split(' ')[1].replace(' ', '')
+                saved_info['info']['Optimizer'] = head[1].split(' ')[1].split(',')[0].replace(' ', '')
             if head[0] == 'Lr scheduler':
-                saved_info['info']['Lr scheduler'] = head[1].split(' ')[1].replace(' ', '')
+                saved_info['info']['Lr scheduler'] = head[1].split(' ')[1].split(',')[0].replace(' ', '')
             saved = True
         info_log.close()
         if saved == True:
@@ -60,10 +65,10 @@ if __name__ == "__main__":
                 saved_info['info']['Freeze layer'] = 0
             all_saved_info.append(saved_info)
     
-    # rmdir(saved_folder)
+    rmdir(saved_folder)
     for x in tqdm(all_saved_info):
         source = x['path']
-        des = os.path.join(saved_folder, x['info']['Dataset'], x['info']['Model'],  x['info']['Loss'], 'Freeze layer'.replace(' ', '') + '-' + str(x['info']['Freeze layer']), x['info']['Optimizer'], x['info']['Lr scheduler'], x['id'])
+        des = os.path.join(saved_folder, x['info']['Model'],  x['info']['Loss'], 'Freeze layer'.replace(' ', '') + '-' + str(x['info']['Freeze layer']), x['info']['Optimizer'], x['info']['Lr scheduler'], x['id'])
         if not os.path.exists(des):
             os.makedirs(des, exist_ok=True)
             copytree(source, des)
