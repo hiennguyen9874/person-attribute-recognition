@@ -11,7 +11,7 @@ import numpy as np
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
-from models import build_model
+from model import build_model
 from utils import read_config, imread
 
 def extractor(path_config, image, return_type=0):
@@ -81,4 +81,3 @@ if __name__ == "__main__":
     
     result = extractor(args.config, image, 2)
     print(result)
-

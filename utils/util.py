@@ -10,14 +10,38 @@ import shutil
 import subprocess
 import collections
 import pkg_resources
+import collections.abc
 
 import numpy as np
-from utils.read_config import read_config
 
 from pathlib import Path
 from collections import OrderedDict
 
-__all__ = ['imread', 'read_json', 'write_json', 'rmdir', 'config_to_str', 'array_interweave', 'array_interweave3', 'neq', 'pip_install']
+__all__ = ['read_config', 'imread', 'read_json', 'write_json', 'rmdir', 'config_to_str', 'array_interweave', 'array_interweave3', 'neq', 'pip_install']
+
+def update(d, u):
+    r""" deep update dict. copied from here: https://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth
+    """
+    for k, v in u.items():
+        if isinstance(v, collections.abc.Mapping):
+            d[k] = update(d.get(k, {}), v)
+        else:
+            d[k] = v
+    return d
+
+def read_config(path_config: str, base=True):
+    r""" read config yml file, return dict
+    """
+    new_config = yaml.safe_load(open(path_config))
+    if not base:
+        return new_config
+    base_config = yaml.safe_load(open(new_config['base']))
+    all_config = update(base_config, new_config)
+    if all_config['lr_scheduler']['enable']:
+        for key, value in all_config['lr_scheduler']['default'][all_config['lr_scheduler']['name']].items():
+            if key not in all_config['lr_scheduler']:
+                all_config['lr_scheduler'][key] = value
+    return all_config
 
 def imread(path):
     image = cv2.imread(path)
