@@ -9,18 +9,14 @@ model:
 data:
   name: peta
   image_size: [256, 192]
-  batch_size: 32
+  batch_size: 64
 
 optimizer:
-  name: sgd
-  lr: 0.01
-  specified_lr:
-    enable: True
-    lr: 0.1
-    layers: [head]
+  name: adam
+  lr: 0.00035
 
 loss:
-  name: CEL_Sigmoid
+  name: FocalLoss
 
 freeze:
   enable: True
@@ -30,18 +26,13 @@ freeze:
 lr_scheduler:
   enable: True
   name: WarmupMultiStepLR
-  steps: [20, 40, 60, 80, 100]
+  steps: [30, 60, 90]
   gamma: 0.1
   warmup_factor: 0.01
   warmup_iters: 10
-
-clip_grad_norm_:
-  enable: True
-  max_norm: 10.0
 
 trainer:
   epochs: 120
   
 trainer_colab:
   epochs: 120
-
