@@ -9,7 +9,7 @@ import torch.nn.functional as F
 class FocalLoss(nn.Module):
     def __init__(self, pos_ratio=None, alpha=1, gamma=2, **kwargs):
         super(FocalLoss, self).__init__()
-        self.pos_ratio
+        self.pos_ratio = pos_ratio
         self.alpha = alpha
         self.gamma = gamma
 
@@ -19,10 +19,8 @@ class FocalLoss(nn.Module):
         pt = torch.exp(-loss)
         loss = self.alpha * (1-pt)**self.gamma * loss
         
-        return torch.mean(loss)
-        
-        # if self.pos_ratio is not None:
-        #     weight = self.__ratio2weight(targets, self.pos_ratio)
-        #     loss = (loss * weight)
-        # loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
-        # return loss
+        if self.pos_ratio is not None:
+            weight = self.__ratio2weight(targets, self.pos_ratio)
+            loss = (loss * weight)
+        loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
+        return loss
