@@ -7,11 +7,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class FocalLoss(nn.Module):
-    def __init__(self, pos_ratio=None, alpha=1, gamma=2, **kwargs):
+    def __init__(self, pos_ratio=None, alpha=1, gamma=2, reduction='mean', **kwargs):
         super(FocalLoss, self).__init__()
+        assert reduction in ['sum', 'mean'], 'reduction must be mean or sum'
         self.pos_ratio = pos_ratio
         self.alpha = alpha
         self.gamma = gamma
+        self.reduction = reduction
 
     def forward(self, inputs, targets):
         batch_size = inputs.shape[0]
@@ -24,3 +26,8 @@ class FocalLoss(nn.Module):
             loss = (loss * weight)
         loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
         return loss
+    
+    def __ratio2weight(self, targets, ratio):
+        ratio = ratio.type_as(targets)
+        weights = torch.exp(targets * (1 - ratio) + (1 - targets) * ratio)
+        return weights
