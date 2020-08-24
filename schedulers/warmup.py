@@ -125,9 +125,9 @@ if __name__ == "__main__":
     x = []
     y = []
     net = nn.Linear(10, 10)
-    optimizer = torch.optim.SGD(net.parameters(), lr=0.00035)
-    # lr_scheduler = WarmupCosineAnnealingLR(optimizer, max_iters=80, delay_iters=30, eta_min_lr=0.00000077, warmup_factor=0.01, warmup_iters=10, warmup_method="linear")
-    lr_scheduler = WarmupMultiStepLR(optimizer, milestones=[30, 60, 90], gamma=0.1, warmup_factor=0.1, warmup_iters=10, warmup_method="linear")
+    optimizer = torch.optim.SGD(net.parameters(), lr=0.01)
+    lr_scheduler = WarmupCosineAnnealingLR(optimizer, max_iters=120, delay_iters=30, eta_min_lr=0.00001, warmup_factor=0.01, warmup_iters=10, warmup_method="linear")
+    # lr_scheduler = WarmupMultiStepLR(optimizer, milestones=[30, 60, 90], gamma=0.1, warmup_factor=0.1, warmup_iters=10, warmup_method="linear")
     for i in range(120):
         lr_scheduler.step()
         for j in range(3):
