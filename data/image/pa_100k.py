@@ -11,7 +11,7 @@ import scipy.io
 from base import BaseDataSource
 
 class PA_100K(BaseDataSource):
-    r''' https://github.com/xh-liu/HydraPlus-Net/blob/master/README.md
+    r''' https://github.com/xh-liu/HydraPlus-Net/blob/master/README.md,
     '''
     url = {
         'PA-100K.zip': '1Jfb3I8BK4oOX3eepaiYyd4fHoMNkgTaz'
@@ -115,7 +115,7 @@ class PA_100K(BaseDataSource):
 if __name__ == "__main__":
     datasource = PA_100K(root_dir='/datasets', download=True, extract=True)
     datasource.summary()
-    # print(np.expand_dims(datasource.get_weight('train'), axis=1))
+    print(np.expand_dims(datasource.get_weight('train'), axis=1))
     # datasource.save_attribute('pa100k_attribute.pkl')
     pass
 

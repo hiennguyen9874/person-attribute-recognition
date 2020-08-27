@@ -228,3 +228,4 @@ def build_datamanager(train_type, config, **kwargs):
         return datamanager, dict_paramsters
     else:
         raise KeyError('type error')
+
