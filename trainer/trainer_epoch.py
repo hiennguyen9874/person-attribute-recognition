@@ -42,6 +42,11 @@ class Trainer_Epoch(Trainer):
 
                 # calculate loss and accuracy
                 loss = self.criterion(out, labels)
+
+                # calculate instance-based accuracy
+                preds = torch.sigmoid(out)
+                
+                mean_accuracy, accuracy, f1_score = compute_accuracy_cuda(labels, preds)
             
             # backward parameters
             # loss.backward()
@@ -61,11 +66,6 @@ class Trainer_Epoch(Trainer):
             # Updates the scale for next iteration.
             self.scaler.update()
             
-            # calculate instance-based accuracy
-            preds = torch.sigmoid(out)
-            
-            mean_accuracy, accuracy, f1_score = compute_accuracy_cuda(labels, preds)
-
             # update loss and accuracy in MetricTracker
             self.train_metrics.update('loss', loss.item())
             self.train_metrics.update('mA', mean_accuracy)
@@ -116,10 +116,10 @@ class Trainer_Epoch(Trainer):
                     # calculate loss and accuracy
                     loss = self.criterion(out, labels)
 
-                # calculate instance-based accuracy
-                preds = torch.sigmoid(out)
-                
-                mean_accuracy, accuracy, f1_score = compute_accuracy_cuda(labels, preds)
+                    # calculate instance-based accuracy
+                    preds = torch.sigmoid(out)
+                    
+                    mean_accuracy, accuracy, f1_score = compute_accuracy_cuda(labels, preds)
 
                 # update loss and accuracy in MetricTracker
                 self.valid_metrics.update('loss', loss.item())
