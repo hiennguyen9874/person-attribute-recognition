@@ -63,6 +63,16 @@ def build_lr_scheduler(config, optimizer):
             warmup_iters=cfg_lr_scheduler['warmup_iters'],
             warmup_method=cfg_lr_scheduler['warmup_method']
         ), dict_paramsters
-    
+    elif cfg_lr_scheduler['name'] == 'CosineAnnealingLR':
+        dict_paramsters = {
+            'max_iters': cfg_lr_scheduler['max_iters'],
+            'eta_min_lr': cfg_lr_scheduler['eta_min_lr']
+        }
+
+        return lr_scheduler.CosineAnnealingLR(
+            optimizer,
+            T_max=cfg_lr_scheduler['max_iters'],
+            eta_min=cfg_lr_scheduler['eta_min_lr'],
+        ), dict_paramsters
     else:
         raise KeyError('config[lr_scheduler][name] error')

@@ -103,6 +103,9 @@ lr_scheduler:
       warmup_factor: 0.01
       warmup_iters: 10
       warmup_method: linear
+    CosineAnnealingLR:
+      max_iters: 120
+      eta_min_lr: 0.00000077
 
 # clipping gradient
 clip_grad_norm_:

@@ -7,6 +7,7 @@ import time
 import torch
 
 from torch.nn.utils import clip_grad_norm_
+from torch.cuda.amp import autocast, GradScaler
 
 from callbacks import Tqdm
 from evaluators import compute_accuracy_cuda
@@ -15,6 +16,9 @@ from trainer import Trainer
 class Trainer_Episode(Trainer):
     def __init__(self, config):
         super(Trainer_Episode, self).__init__(config)
+
+        # Creates a GradScaler once at the beginning of training.
+        self.scaler = GradScaler()
         
     def _train_epoch(self, epoch):
         r""" Training step
@@ -33,29 +37,36 @@ class Trainer_Episode(Trainer):
             # zero gradient
             self.optimizer.zero_grad()
 
-            # forward batch
-            out = self.model(data)
+            with autocast():
+                # forward batch
+                out = self.model(data)
 
-            # calculate loss and accuracy
-            loss = self.criterion(out, labels, attribute_idx)
+                # calculate loss and accuracy
+                loss = self.criterion(out, labels, attribute_idx)
+
+                # calculate instance-based accuracy
+                preds = torch.sigmoid(out)
+                
+                mean_accuracy, accuracy, f1_score = compute_accuracy_cuda(labels, preds)
             
             # backward parameters
-            loss.backward()
+            # loss.backward()
+            self.scaler.scale(loss).backward()
 
             # Clips gradient norm of an iterable of parameters.
             if self.config['clip_grad_norm_']['enable']:
+                self.scaler.unscale_(self.optimizer)
                 clip_grad_norm_(
                     parameters=self.model.parameters(),
                     max_norm=self.config['clip_grad_norm_']['max_norm'])
 
             # optimize
-            self.optimizer.step()
-            
-            # calculate instance-based accuracy
-            preds = torch.sigmoid(out)
-            
-            mean_accuracy, accuracy, f1_score = compute_accuracy_cuda(labels, preds)
+            # self.optimizer.step()
+            self.scaler.step(self.optimizer)
 
+            # Updates the scale for next iteration.
+            self.scaler.update()
+            
             # update loss and accuracy in MetricTracker
             self.train_metrics.update('loss', loss.item())
             self.train_metrics.update('mA', mean_accuracy)
@@ -99,16 +110,17 @@ class Trainer_Episode(Trainer):
                 # push data to device
                 data, labels, attribute_idx = data.to(self.device), labels.to(self.device), attribute_idx.to(self.device)
                 
-                # forward batch
-                out = self.model(data)
+                with autocast():
+                    # forward batch
+                    out = self.model(data)
 
-                # calculate loss and accuracy
-                loss = self.criterion(out, labels, attribute_idx)
+                    # calculate loss and accuracy
+                    loss = self.criterion(out, labels, attribute_idx)
 
-                # calculate instance-based accuracy
-                preds = torch.sigmoid(out)
-                
-                mean_accuracy, accuracy, f1_score = compute_accuracy_cuda(labels, preds)
+                    # calculate instance-based accuracy
+                    preds = torch.sigmoid(out)
+                    
+                    mean_accuracy, accuracy, f1_score = compute_accuracy_cuda(labels, preds)
 
                 # update loss and accuracy in MetricTracker
                 self.valid_metrics.update('loss', loss.item())
