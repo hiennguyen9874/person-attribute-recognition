@@ -60,6 +60,7 @@ optimizer:
 loss:
   name: CEL_Sigmoid
   reduction: mean
+  
 
 # freeze <layers> at first <epochs>.
 freeze:
@@ -71,6 +72,7 @@ freeze:
 lr_scheduler:
   enable: False
   name: MultiStepLR
+  start: 1
   default:
     WarmupMultiStepLR:
       steps: [40, 90]

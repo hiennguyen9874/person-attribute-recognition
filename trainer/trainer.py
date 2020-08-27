@@ -109,10 +109,11 @@ class Trainer(BaseTrainer):
 
             # learning rate
             if self.lr_scheduler is not None:
-                if isinstance(self.lr_scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
-                    self.lr_scheduler.step(self.valid_metrics.avg('loss'))
-                else:
-                    self.lr_scheduler.step()
+                if self.config['lr_scheduler']['start'] <= epoch:
+                    if isinstance(self.lr_scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                        self.lr_scheduler.step(self.valid_metrics.avg('loss'))
+                    else:
+                        self.lr_scheduler.step()
             
             # add scalars to tensorboard
             self.writer.add_scalars('Loss',

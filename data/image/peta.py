@@ -5,6 +5,7 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..
 import pickle
 import scipy.io
 import numpy as np
+from shutil import copy2
 
 from collections import defaultdict
 
@@ -39,11 +40,11 @@ class Peta(BaseDataSource):
             for key, value in self.url.items():
                 self._extract(file_name=key, use_tqdm=use_tqdm)
         
-        data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
+        self.data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
         if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, 'processed', 'PETA-New')):
-            data_dir = os.path.join(data_dir, 'PETA-New')
+            self.data_dir = os.path.join(self.data_dir, 'PETA-New')
         
-        f = scipy.io.loadmat(os.path.join(data_dir, 'PETA.mat'))
+        f = scipy.io.loadmat(os.path.join(self.data_dir, 'PETA.mat'))
         
         raw_attr_name = [i[0][0] for i in f['peta'][0][0][1]]
         raw_label = f['peta'][0][0][0][:, 4:]
@@ -60,10 +61,10 @@ class Peta(BaseDataSource):
             _test = f['peta'][0][0][3][idx][0][0][0][2][:, 0] - 1
             # _trainval = np.concatenate((_train, _val), axis=0)
 
-            self.data['train'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _train])
-            self.data['val'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _val])
-            # self.data['trainval'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _trainval])
-            self.data['test'].append([(os.path.join(data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _test])
+            self.data['train'].append([(os.path.join(self.data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _train])
+            self.data['val'].append([(os.path.join(self.data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _val])
+            # self.data['trainval'].append([(os.path.join(self.data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _trainval])
+            self.data['test'].append([(os.path.join(self.data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _test])
 
             self.weight['train'].append(np.mean(label[_train], axis=0))
             self.weight['val'].append(np.mean(label[_val], axis=0))
@@ -100,18 +101,64 @@ class Peta(BaseDataSource):
         print('num image in valid set: ', len(self.get_data('val')))
         print('num image in test set: ', len(self.get_data('test')))
 
+    def parser_folder(self, phase='train'):
+        from tqdm.auto import tqdm
+        des_dir = os.path.join(self.data_dir, phase)
+        os.makedirs(des_dir, exist_ok=True)
+        os.makedirs(os.path.join(des_dir, 'images'), exist_ok=True)
+        copy2(os.path.join(self.data_dir, 'PETA.mat'), des_dir)
+        for file_path, labels in tqdm(self.get_data(phase)):
+            copy2(file_path, os.path.join(des_dir, 'images'))
+    
+    def pase_data(self, phase):
+        pos_dict = defaultdict(list)
+        neg_dict = defaultdict(list)
+
+        for idx, (_, label) in enumerate(self.get_data(phase)):
+            for i, attribute in enumerate(self.get_attribute()):
+                if label[i] == 1.0:
+                    pos_dict[attribute].append(idx)
+                else:
+                    neg_dict[attribute].append(idx)
+        return pos_dict, neg_dict
+
 if __name__ == "__main__":
     from utils import read_config
     config = read_config('config/base_epoch.yml', False)
-    datasource = Peta(root_dir=config['data']['data_dir'], download=True, extract=True)
-    datasource.summary()
+    datasource = Peta(root_dir=config['data']['data_dir'], download=False, extract=True)
+    
+    # show some image by attribute
+    import cv2
+    import matplotlib.pyplot as plt
+    
+    from shutil import copy2
+    from utils import imread
+    from tqdm.auto import tqdm
+
+    for attribute in tqdm(datasource.get_attribute()):
+        pos_dict, neg_dict = datasource.pase_data(phase='train')
+        
+        list_idx_by_attribute = pos_dict[attribute]
+        for idx in list_idx_by_attribute:
+            path, _ = datasource.get_data('train')[idx]
+            os.makedirs(os.path.join(datasource.data_dir, 'positive', attribute), exist_ok=True)
+            copy2(path, os.path.join(datasource.data_dir, 'positive', attribute))
+        
+        list_idx_by_attribute = neg_dict[attribute]
+        for idx in list_idx_by_attribute:
+            path, _ = datasource.get_data('train')[idx]
+            os.makedirs(os.path.join(datasource.data_dir, 'neg', attribute), exist_ok=True)
+            copy2(path, os.path.join(datasource.data_dir, 'neg', attribute))
+
+    # datasource.summary()
+    # datasource.parser_folder('train')
     # print(len(datasource.get_attribute()))
-    # print(np.expand_dims(datasource.get_weight('test'), axis=1))
+    # print(np.around(np.stack((datasource.get_weight('train'), datasource.get_weight('test')), axis=1)*100, 2))
     # datasource.save_attribute('peta_attribute.pkl')
     pass
 
 r'''
-['accessoryHat',
+'accessoryHat',
 'accessoryMuffler',
 'accessoryNothing',
 'accessorySunglasses',
@@ -147,3 +194,4 @@ r'''
 'personalLarger60',
 'personalMale']
 '''
+

@@ -81,6 +81,7 @@ freeze:
 lr_scheduler:
   enable: True
   name: WarmupMultiStepLR
+  start: 1
   default:
     WarmupMultiStepLR:
       steps: [40, 60, 90]

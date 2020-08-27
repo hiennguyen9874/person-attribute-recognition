@@ -14,15 +14,18 @@ from albumentations.pytorch import ToTensorV2
 from models import build_model
 from utils import read_config, imread
 
-def extractor(path_config, image, return_type=0):
-    r"""
+def extractor(path_config, path_attribute, path_model, image, return_type=0):
+    r""" 
+
     Args:
-        path_config (str): path to config image
-        image (numpy image):
-        return_type: type of return
-            0: return list of binary
-            1: return dict
-            2: return list of attribute
+        path_config ([type]): [description]
+        path_attribute ([type]): [description]
+        path_model ([type]): [description]
+        image ([type]): [description]
+        return_type (int, optional): [description]. Defaults to 0.
+
+    Returns:
+        [type]: [description]
     """
     config = read_config(path_config, False)
 
@@ -30,10 +33,10 @@ def extractor(path_config, image, return_type=0):
     device = torch.device('cuda:0' if use_gpu else 'cpu')
     map_location = "cuda:0" if use_gpu else torch.device('cpu')
 
-    attribute_name = pickle.load(open(config['data']['path_attribute'], 'rb'))
+    attribute_name = pickle.load(open(path_attribute, 'rb'))
     
     model, _ = build_model(config, num_classes=len(attribute_name))
-    checkpoint = torch.load(config['resume'], map_location=map_location)
+    checkpoint = torch.load(path_model, map_location=map_location)
 
     model.load_state_dict(checkpoint['state_dict'])
     model.eval()
