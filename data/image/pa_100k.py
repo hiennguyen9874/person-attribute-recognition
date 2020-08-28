@@ -107,15 +107,29 @@ class PA_100K(BaseDataSource):
         with open(path, 'wb') as f:
             pickle.dump(self.get_attribute(), f)
 
-    def summary(self):
+    def summary_count(self):
         print('num image in training set: ', len(self.get_data('train')))
         print('num image in valid set: ', len(self.get_data('val')))
         print('num image in test set: ', len(self.get_data('test')))
+    
+    def summary_weight(self):
+        row_format = "{:>5}" + "{:>20}" + "{:>10}"*3
+        print(row_format.format('-', 'attribute', 'train', 'val', 'test'))
+        print(row_format.format('-', '-', '-', '-', '-'))
+        for idx in range(len(self.get_attribute())):
+            print(row_format.format(
+                idx+1,
+                self.get_attribute()[idx], 
+                round(self.get_weight('train')[idx]*100, 2),
+                round(self.get_weight('val')[idx]*100, 2),
+                round(self.get_weight('test')[idx]*100,2)))
         
 if __name__ == "__main__":
     datasource = PA_100K(root_dir='/datasets', download=True, extract=True)
-    datasource.summary()
-    print(np.expand_dims(datasource.get_weight('train'), axis=1))
+    datasource.summary_weight()
+    # print(np.expand_dims(datasource.get_weight('train'), axis=1))
+    # print(np.around(np.stack((datasource.get_weight('train'), datasource.get_weight('test')), axis=1)*100, 2))
+
     # datasource.save_attribute('pa100k_attribute.pkl')
     pass
 
