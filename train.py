@@ -33,3 +33,4 @@ if __name__ == "__main__":
     config.update({'colab': args.colab})
     config.update({'only_model': args.only_model})
     main(config)
+
