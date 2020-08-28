@@ -9,14 +9,18 @@ model:
 data:
   name: peta
   image_size: [256, 192]
-  batch_size: 32
+  batch_size: 64
 
 optimizer:
-  name: adam
-  lr: 0.00035
+  name: sgd
+  lr: 0.01
+  specified_lr:
+    enable: True
+    lr: 0.1
+    layers: [head]
 
 loss:
-  name: FocalLoss
+  name: CEL_Sigmoid
 
 freeze:
   enable: True
@@ -28,6 +32,10 @@ lr_scheduler:
   name: CosineAnnealingLR
   max_iters: 120
   eta_min_lr: 0
+
+clip_grad_norm_:
+  enable: True
+  max_norm: 10.0
 
 trainer:
   epochs: 120
