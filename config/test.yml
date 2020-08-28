@@ -16,7 +16,7 @@ optimizer:
   lr: 0.00035
 
 loss:
-  name: FocalLoss
+  name: CEL_Sigmoid
 
 freeze:
   enable: True
@@ -33,11 +33,11 @@ lr_scheduler:
 
 swa:
   enable: True
-  start: 30
-  lr: 0.000175
+  start: 55
+  lr: 0.00002
 
 trainer:
-  epochs: 120
+  epochs: 150
   
 trainer_colab:
-  epochs: 120
+  epochs: 150
