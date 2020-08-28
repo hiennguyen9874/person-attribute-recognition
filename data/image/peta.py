@@ -96,11 +96,6 @@ class Peta(BaseDataSource):
         with open(path, 'wb') as f:
             pickle.dump(self.get_attribute(), f)
     
-    def summary(self):
-        print('num image in training set: ', len(self.get_data('train')))
-        print('num image in valid set: ', len(self.get_data('val')))
-        print('num image in test set: ', len(self.get_data('test')))
-
     def parser_folder(self, phase='train'):
         from tqdm.auto import tqdm
         des_dir = os.path.join(self.data_dir, phase)
@@ -122,33 +117,53 @@ class Peta(BaseDataSource):
                     neg_dict[attribute].append(idx)
         return pos_dict, neg_dict
 
+    
+    def summary_count(self):
+        print('num image in training set: ', len(self.get_data('train')))
+        print('num image in valid set: ', len(self.get_data('val')))
+        print('num image in test set: ', len(self.get_data('test')))
+    
+    def summary_weight(self):
+        row_format = "{:>5}" + "{:>25}" + "{:>10}"*3
+        print(row_format.format('-', 'attribute', 'train', 'val', 'test'))
+        print(row_format.format('-', '-', '-', '-', '-'))
+        for idx in range(len(self.get_attribute())):
+            print(row_format.format(
+                idx+1,
+                self.get_attribute()[idx], 
+                round(self.get_weight('train')[idx]*100, 2),
+                round(self.get_weight('val')[idx]*100, 2),
+                round(self.get_weight('test')[idx]*100,2)))
+
 if __name__ == "__main__":
     from utils import read_config
     config = read_config('config/base_epoch.yml', False)
     datasource = Peta(root_dir=config['data']['data_dir'], download=False, extract=True)
+
+    datasource.summary_weight()
     
     # show some image by attribute
-    import cv2
-    import matplotlib.pyplot as plt
+    # import cv2
+    # import matplotlib.pyplot as plt
     
-    from shutil import copy2
-    from utils import imread
-    from tqdm.auto import tqdm
+    # from shutil import copy2
+    # from utils import imread
+    # from tqdm.auto import tqdm
 
-    for attribute in tqdm(datasource.get_attribute()):
-        pos_dict, neg_dict = datasource.pase_data(phase='train')
+    # for attribute in tqdm(datasource.get_attribute()):
+    #     pos_dict, neg_dict = datasource.pase_data(phase='train')
         
-        list_idx_by_attribute = pos_dict[attribute]
-        for idx in list_idx_by_attribute:
-            path, _ = datasource.get_data('train')[idx]
-            os.makedirs(os.path.join(datasource.data_dir, 'positive', attribute), exist_ok=True)
-            copy2(path, os.path.join(datasource.data_dir, 'positive', attribute))
+    #     list_idx_by_attribute = pos_dict[attribute]
+    #     for idx in list_idx_by_attribute:
+    #         path, _ = datasource.get_data('train')[idx]
+    #         os.makedirs(os.path.join(datasource.data_dir, 'positive', attribute), exist_ok=True)
+    #         copy2(path, os.path.join(datasource.data_dir, 'positive', attribute))
         
-        list_idx_by_attribute = neg_dict[attribute]
-        for idx in list_idx_by_attribute:
-            path, _ = datasource.get_data('train')[idx]
-            os.makedirs(os.path.join(datasource.data_dir, 'neg', attribute), exist_ok=True)
-            copy2(path, os.path.join(datasource.data_dir, 'neg', attribute))
+    #     list_idx_by_attribute = neg_dict[attribute]
+    #     for idx in list_idx_by_attribute:
+    #         path, _ = datasource.get_data('train')[idx]
+    #         os.makedirs(os.path.join(datasource.data_dir, 'neg', attribute), exist_ok=True)
+    #         copy2(path, os.path.join(datasource.data_dir, 'neg', attribute))
 
     # datasource.summary()
     # datasource.parser_folder('train')
