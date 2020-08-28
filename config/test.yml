@@ -29,9 +29,12 @@ freeze:
 
 lr_scheduler:
   enable: True
-  name: CosineAnnealingLR
+  name: WarmupCosineAnnealingLR
   max_iters: 120
-  eta_min_lr: 0.00000077
+  delay_iters: 25
+  eta_min_lr: 0
+  warmup_factor: 0.01
+  warmup_iters: 10
 
 clip_grad_norm_:
   enable: True
