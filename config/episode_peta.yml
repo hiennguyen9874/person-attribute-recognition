@@ -39,10 +39,9 @@ freeze:
 
 lr_scheduler:
   enable: True
-  name: ReduceLROnPlateau
-  factor: 0.1
-  patience: 6
-  min_lr: 0
+  name: CosineAnnealingLR
+  max_iters: 120
+  eta_min_lr: 0
 
 clip_grad_norm_:
   enable: True
