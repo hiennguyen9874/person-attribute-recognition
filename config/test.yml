@@ -25,11 +25,9 @@ freeze:
 
 lr_scheduler:
   enable: True
-  name: WarmupMultiStepLR
-  steps: [30, 60, 90]
-  gamma: 0.1
-  warmup_factor: 0.01
-  warmup_iters: 10
+  name: CosineAnnealingLR
+  max_iters: 120
+  eta_min_lr: 0.00000077
 
 trainer:
   epochs: 120

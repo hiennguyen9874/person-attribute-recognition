@@ -103,6 +103,12 @@ clip_grad_norm_:
   enable: False
   max_norm: 10.0
 
+# swa
+swa:
+  enable: True
+  start: 10
+  lr: 0.05
+
 # if colab argument is true -> trainer_colab else -> trainer
 # train on local
 # use_tqdm: use tqdm process bar when training.

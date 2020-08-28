@@ -6,6 +6,8 @@ import time
 import torch
 import logging
 
+from torch.optim.swa_utils import AveragedModel, SWALR
+
 from base import BaseTrainer
 from callbacks import Tqdm, FreezeLayers
 from data import build_datamanager
@@ -15,8 +17,6 @@ from models import build_model
 from optimizers import build_optimizers
 from schedulers import build_lr_scheduler
 from utils import MetricTracker, summary
-
-from base import BaseTrainer
 
 class Trainer(BaseTrainer):
     r""" Trainer for person attribute recognition
@@ -31,6 +31,9 @@ class Trainer(BaseTrainer):
             config,
             num_classes=len(self.datamanager.datasource.get_attribute()),
             device=self.device)
+
+        # swa_model
+        self.swa_model = AveragedModel(self.model)
         
         # losses
         pos_ratio = torch.tensor(self.datamanager.datasource.get_weight('train'))
@@ -41,6 +44,10 @@ class Trainer(BaseTrainer):
 
         # learing rate scheduler
         self.lr_scheduler, params_lr_scheduler = build_lr_scheduler(config, self.optimizer)
+
+        # swa_scheduler
+        self.swa_start = config['swa']['start']
+        self.swa_scheduler = SWALR(self.optimizer, swa_lr=config['swa']['lr'])
 
         # callbacks for freeze backbone
         if config['freeze']['enable']:
@@ -107,13 +114,17 @@ class Trainer(BaseTrainer):
             # valid
             result = self._valid_epoch(epoch)
 
-            # learning rate
-            if self.lr_scheduler is not None:
-                if self.config['lr_scheduler']['start'] <= epoch:
-                    if isinstance(self.lr_scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
-                        self.lr_scheduler.step(self.valid_metrics.avg('loss'))
-                    else:
-                        self.lr_scheduler.step()
+            if epoch > self.swa_start:
+                self.swa_model.update_parameters(self.model)
+                self.swa_scheduler.step()
+            else:
+                # learning rate
+                if self.lr_scheduler is not None:
+                    if self.config['lr_scheduler']['start'] <= epoch:
+                        if isinstance(self.lr_scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+                            self.lr_scheduler.step(self.valid_metrics.avg('loss'))
+                        else:
+                            self.lr_scheduler.step()
             
             # add scalars to tensorboard
             self.writer.add_scalars('Loss',
@@ -155,7 +166,10 @@ class Trainer(BaseTrainer):
             # save logs to drive if using colab
             if self.config['colab']:
                 self._save_logs(epoch)
-
+        
+        # Update bn statistics for the swa_model at the end
+        torch.optim.swa_utils.update_bn(self.datamanager.get_dataloader('train'), self.swa_model)
+        
         # wait for tensorboard flush all metrics to file
         self.writer.flush()
         time.sleep(1*60)
@@ -221,9 +235,11 @@ class Trainer(BaseTrainer):
         state = {
             'epoch': epoch,
             'state_dict': self.model.state_dict(),
+            'swa_model': self.swa_model.state_dict(),
             'loss': self.criterion.state_dict(),
             'optimizer': self.optimizer.state_dict(),
             'lr_scheduler': self.lr_scheduler.state_dict(),
+            'swa_scheduler': self.lr_scheduler.state_dict(),
             'best_loss': self.best_loss
         }
         for metric in self.lst_metrics:
@@ -252,6 +268,7 @@ class Trainer(BaseTrainer):
         self.logger.info("Loading checkpoint: {} ...".format(resume_path))
         checkpoint = torch.load(resume_path, map_location=self.map_location)
         self.model.load_state_dict(checkpoint['state_dict'])
+        self.swa_model.load_state_dict(checkpoint['swa_model'])
         if only_model:
             self.logger.info("Pretrained-model loaded!")
             return
@@ -259,6 +276,7 @@ class Trainer(BaseTrainer):
         self.criterion.load_state_dict(checkpoint['loss'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])
         self.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
+        self.swa_scheduler.load_state_dict(checkpoint['swa_scheduler'])
         self.best_loss = checkpoint['best_loss']
         for metric in self.lst_metrics:
             self.best_metrics[metric] = checkpoint['best_{}'.format(metric)]
