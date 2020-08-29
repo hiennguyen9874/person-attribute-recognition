@@ -169,7 +169,24 @@ class Trainer(BaseTrainer):
         
         # Update bn statistics for the swa_model at the end
         torch.optim.swa_utils.update_bn(self.datamanager.get_dataloader('train'), self.swa_model)
-        
+
+        state = {
+            'epoch': None,
+            'state_dict': self.model.state_dict(),
+            'swa_model': self.swa_model.state_dict(),
+            'loss': self.criterion.state_dict(),
+            'optimizer': self.optimizer.state_dict(),
+            'lr_scheduler': self.lr_scheduler.state_dict(),
+            'swa_scheduler': self.lr_scheduler.state_dict(),
+            'best_loss': self.best_loss
+        }
+        for metric in self.lst_metrics:
+            state.update({'best_{}'.format(metric): self.best_metrics[metric]})
+
+        filename = os.path.join(self.checkpoint_dir, 'model_last.pth')
+        self.logger.info("Saving last model: model_last.pth ...")
+        torch.save(state, filename)
+
         # wait for tensorboard flush all metrics to file
         self.writer.flush()
         time.sleep(1*60)

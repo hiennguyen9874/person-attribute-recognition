@@ -8,6 +8,7 @@ import torch
 import numpy as np
 
 from tqdm.auto import tqdm
+from torch.optim.swa_utils import AveragedModel, SWALR
 
 from models import build_model
 from data import build_datamanager
@@ -36,8 +37,15 @@ def main(config):
     checkpoint = torch.load(config['resume'], map_location=map_location)
 
     model.load_state_dict(checkpoint['state_dict'])
+
+    swa_model = AveragedModel(model)
+    swa_model.load_state_dict(checkpoint['swa_model'])
+
     model.eval()
     model.to(device)
+
+    swa_model.eval()
+    swa_model.to(device)
     
     preds = []
     labels = []
@@ -47,7 +55,7 @@ def main(config):
             for batch_idx, (data, _labels) in enumerate(datamanager.get_dataloader('test')):
                 data, _labels = data.to(device), _labels.to(device)
 
-                out = model(data)
+                out = swa_model(data)
 
                 _preds = torch.sigmoid(out)
                 preds.append(_preds)
