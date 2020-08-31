@@ -5,14 +5,7 @@ from torchvision import transforms
 
 from ts.torch_handler.image_classifier import ImageClassifier
 
-class MNISTDigitClassifier(ImageClassifier):
-    """
-    MNISTDigitClassifier handler class. This handler extends class ImageClassifier from image_classifier.py, a
-    default handler. This handler takes an image and returns the number in that image.
-
-    Here method postprocess() has been overridden while others are reused from parent class.
-    """
-
+class Multi_LabelClassifier(ImageClassifier):
     image_processing = transforms.Compose([
         transforms.Resize(size=(256, 192)),
         transforms.ToTensor(),
@@ -20,5 +13,8 @@ class MNISTDigitClassifier(ImageClassifier):
     ])
 
     def postprocess(self, data):
+        data = data
+        data[data>0.5] = 1
+        data[data<0.5] = 0
         return data.tolist()
 
