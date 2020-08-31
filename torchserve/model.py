@@ -7,12 +7,13 @@ import torch
 import pickle
 
 from models import build_model
-from utils import read_config, imread
+from utils import read_config
 
 if __name__ == "__main__":
     FILE_PATH = os.path.dirname(os.path.realpath(__file__))
     path_config = os.path.join(FILE_PATH, 'base_extraction.yml')
-    path_model = "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth"
+    # path_model = "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth"
+    path_model = os.path.join(FILE_PATH, 'model_best_accuracy.pth')
     path_attribute = os.path.join(FILE_PATH, '..', 'peta_attribute.pkl')
 
     config = read_config(path_config, False)
@@ -54,3 +55,4 @@ if __name__ == "__main__":
     torchserve --start --ncs --model-store model_store --ts-config config.properties
 
 """
+
