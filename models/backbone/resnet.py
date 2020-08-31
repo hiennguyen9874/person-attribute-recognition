@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 from torch.hub import load_state_dict_from_url
 
-from utils import summary
+# from utils import summary
 
 __all__ = ['resnet50', 'resnet101']
 
