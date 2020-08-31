@@ -1,0 +1,118 @@
+{
+	"info": {
+		"_postman_id": "4081c5ce-6da4-465b-9867-f47aeb50d755",
+		"name": "Test TorchServe",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create model",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"model_name\": \"eager_model\",\r\n    \"url\": \"eager_model.mar\",\r\n    \"batch_size\": 128,\r\n    \"max_batch_delay\": 5000,\r\n    \"initial_workers\": 4,\r\n    \"synchronous\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://52.230.2.212:10041/models/",
+					"protocol": "http",
+					"host": [
+						"52",
+						"230",
+						"2",
+						"212"
+					],
+					"port": "10041",
+					"path": [
+						"models",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get list models",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get model by name",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Set min worker",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"min_worker\": 4,\r\n    \"synchronous\": true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://52.230.2.212:10041/models/eager_model",
+					"protocol": "http",
+					"host": [
+						"52",
+						"230",
+						"2",
+						"212"
+					],
+					"port": "10041",
+					"path": [
+						"models",
+						"eager_model"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Prediction",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": ""
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}
