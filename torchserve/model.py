@@ -396,5 +396,7 @@ if __name__ == "__main__":
     torch-model-archiver --model-name eager_model --version 1.0 --serialized-file eager_model.pt --handler handler.py --export-path model_store -f
 
     torchserve --start --ncs --model-store model_store --models eager_model=eager_model.mar --ts-config config.properties
+    torchserve --start --ncs --model-store model_store --ts-config config.properties
+
 """
 
