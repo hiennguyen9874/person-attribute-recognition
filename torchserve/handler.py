@@ -14,9 +14,11 @@ class MNISTDigitClassifier(ImageClassifier):
     """
 
     image_processing = transforms.Compose([
+        transforms.Resize(size=(256, 192)),
         transforms.ToTensor(),
-        transforms.Normalize((0.1307,), (0.3081,))
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
     def postprocess(self, data):
         return data.tolist()
+
