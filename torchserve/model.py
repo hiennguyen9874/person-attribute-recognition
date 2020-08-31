@@ -1,8 +1,3 @@
-import os
-import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__))))
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
-
 import torch
 import torch.nn as nn
 
@@ -37,12 +32,6 @@ def weights_init_classifier(m):
         if m.bias is not None:
             nn.init.constant_(m.bias, 0.0)
 
-__all__ = ['resnet50', 'resnet101']
-
-model_urls = {
-    'resnet50': 'https://download.pytorch.org/models/resnet50-19c8e357.pth',
-    'resnet101': 'https://download.pytorch.org/models/resnet101-5d3b4d8f.pth',
-}
 
 def conv3x3(in_planes, out_planes, stride=1, groups=1, dilation=1):
     """3x3 convolution with padding"""
@@ -238,6 +227,10 @@ class ResNet(nn.Module):
 
 
 def _resnet(arch, block, layers, pretrained, progress, **kwargs):
+    model_urls = {
+        'resnet50': 'https://download.pytorch.org/models/resnet50-19c8e357.pth',
+        'resnet101': 'https://download.pytorch.org/models/resnet101-5d3b4d8f.pth',
+    }
     model = ResNet(block, layers, **kwargs)
     if pretrained:
         state_dict = load_state_dict_from_url(model_urls[arch],
@@ -267,12 +260,6 @@ def resnet101(pretrained=False, progress=True, **kwargs):
     """
     return _resnet('resnet101', Bottleneck, [3, 4, 23, 3], pretrained, progress,
                    **kwargs)
-
-
-
-import torch
-import torch.nn.functional as F
-from torch import nn
 
 class GeneralizedMeanPooling(nn.Module):
     r"""Copy from here: https://github.com/JDAI-CV/fast-reid/blob/e269caf8ab/fastreid/layers/pooling.py
@@ -350,7 +337,6 @@ class BNHead(nn.Module):
         return x
 
 
-
 class EagerModel(nn.Module):
     def __init__(self):
         super(EagerModel, self).__init__()
@@ -394,15 +380,21 @@ if __name__ == "__main__":
             map_location=torch.device('cpu')
         )['state_dict'], os.path.join(os.path.dirname(os.path.realpath(__file__)), 'eager_model.pth'))
     
-    
     checkpoint = torch.load(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'eager_model.pth'), map_location=torch.device('cpu'))
     
     model = EagerModel()
     model.load_state_dict(checkpoint)
     torch.save(model.state_dict(), os.path.join(os.path.dirname(os.path.realpath(__file__)), 'eager_model.pth'))
+    
+    batch = torch.rand(64, 3, 256, 128)
+    traced_script_module = torch.jit.trace(model, batch)
+    traced_script_module.save('eager_model.pt')
 
     """
     \cp "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth" /content/person_attribute_recognition/torchserve/
     
-    torch-model-archiver --model-name eager_model --version 1.0 --model-file model.py --serialized-file eager_model.pth --export-path model_store --handler image_classifier
-    """
+    torch-model-archiver --model-name eager_model --version 1.0 --serialized-file eager_model.pt --handler handler.py --export-path model_store -f
+
+    torchserve --start --ncs --model-store model_store --models eager_model=eager_model.mar --ts-config config.properties
+"""
+

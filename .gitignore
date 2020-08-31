@@ -174,3 +174,4 @@ outputs/
 draft.*
 *.pth
 *.mar
+*.pt
