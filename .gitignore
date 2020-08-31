@@ -172,4 +172,5 @@ outputs/
 *,out
 
 draft.*
-*.pkl
+*.pth
+*.mar
