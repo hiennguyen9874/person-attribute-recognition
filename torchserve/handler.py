@@ -1,4 +1,5 @@
 import io
+import torch
 
 from PIL import Image
 from torchvision import transforms
@@ -13,8 +14,9 @@ class Multi_LabelClassifier(ImageClassifier):
     ])
 
     def postprocess(self, data):
+        # data = torch.sigmoid(data)
         data = data
         data[data>0.5] = 1
-        data[data<0.5] = 0
+        data[data<=0.5] = 0
         return data.tolist()
 
