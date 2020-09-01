@@ -81,10 +81,10 @@ if __name__ == "__main__":
     parser.add_argument('--config', default='config/base_extraction.yml', type=str)
     args = parser.parse_args()
 
-    path_image = "/datasets/peta/processed/PETA-New/images/00009.png"
+    path_image = "/datasets/peta/processed/PETA-New/images/00010.png"
     image = imread(path_image)
     
     # result = extractor(args.config, image, 2)
-    result = extractor(path_config=args.config, path_attribute='peta_attribute.pkl', path_model="/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth", image=image, return_type=0)
+    # result = extractor(path_config=args.config, path_attribute='peta_attribute.pkl', path_model="/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth", image=image, return_type=0)
+    result = extractor(path_config=args.config, path_attribute="peta_attribute.pkl", path_model="model_best_accuracy.pth", image=image, return_type=0)
     print(result)
-

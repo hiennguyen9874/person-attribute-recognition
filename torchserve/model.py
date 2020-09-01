@@ -44,7 +44,7 @@ if __name__ == "__main__":
     # model.load_state_dict(checkpoint)
     # torch.save(model.state_dict(), os.path.join(os.path.dirname(os.path.realpath(__file__)), 'eager_model.pth'))
     
-    batch = torch.rand(64, 3, 256, 128)
+    batch = torch.rand(4, 3, 256, 128)
     traced_script_module = torch.jit.trace(model, batch)
     traced_script_module.save('eager_model.pt')
 
