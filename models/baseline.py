@@ -24,11 +24,13 @@ class Baseline(nn.Module):
         head='BNHead',
         bn_where='after',
         batch_norm_bias=True,
-        use_tqdm=True):
+        use_tqdm=True,
+        is_inference=False):
         
         super(Baseline, self).__init__()
         self.head_name = head
         self.num_classes = num_classes
+        self.is_inference = is_inference
         
         self.backbone, feature_dim = build_backbone(backbone, pretrained=pretrained, progress=use_tqdm)
         self.global_pooling = build_pooling(pooling, pooling_size)
@@ -39,6 +41,8 @@ class Baseline(nn.Module):
         # x.size = (batch_size, feature_dim, H, W)
         x = self.global_pooling(x)
         x = self.head(x)
+        if self.is_inference:
+            x = torch.sigmoid(x)
         return x
     
     def get_heat_maps_with_cam(self, x, return_output=True):

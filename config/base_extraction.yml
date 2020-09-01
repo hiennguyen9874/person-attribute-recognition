@@ -1,4 +1,4 @@
-resume: saved/checkpoints/0731_232453/model_best_accuracy.pth
+resume: "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth"
 
 n_gpu: 0
 
