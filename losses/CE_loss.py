@@ -24,6 +24,7 @@ class CEL_Sigmoid(nn.Module):
         loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
         return loss
 
+    @torch.jit.script
     def __ratio2weight(self, targets, ratio):
         ratio = ratio.type_as(targets)
         weights = torch.exp(targets * (1 - ratio) + (1 - targets) * ratio)
