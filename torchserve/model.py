@@ -24,11 +24,13 @@ if __name__ == "__main__":
 
     attribute_name = pickle.load(open(path_attribute, 'rb'))
 
-    model, _ = build_model(config, num_classes=len(attribute_name))
+    model, _ = build_model(config, num_classes=len(attribute_name), is_inference=True)
     
     checkpoint = torch.load(path_model, map_location=map_location)
     
     model.load_state_dict(checkpoint['state_dict'])
+    model.eval()
+    model.to(device)
 
     # torch.save(
     #     torch.load(
@@ -48,7 +50,9 @@ if __name__ == "__main__":
 
     """
     \cp "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth" /content/person_attribute_recognition/torchserve/
-    
+    cd torchserve
+    python3 model.py
+    pip3 install torchserve torch-model-archiver
     torch-model-archiver --model-name eager_model --version 1.0 --serialized-file eager_model.pt --handler handler.py --export-path model_store -f
 
     torchserve --start --ncs --model-store model_store --models eager_model=eager_model.mar --ts-config config.properties
