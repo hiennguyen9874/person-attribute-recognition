@@ -8,11 +8,16 @@ import argparse
 
 import numpy as np
 
-import albumentations as A
-from albumentations.pytorch import ToTensorV2
+from data import datamanager
+
+from PIL import Image
+from torchvision import transforms
 
 from models import build_model
-from utils import read_config, imread
+from utils import read_config
+
+def imread(path):
+    return Image.open(path)
 
 def extractor(path_config, path_attribute, path_model, image, return_type=0):
     r""" 
@@ -42,16 +47,13 @@ def extractor(path_config, path_attribute, path_model, image, return_type=0):
     model.eval()
     model.to(device)
 
-    tranform_extract = A.Compose([
-        A.Resize(config['data']['size'][0], config['data']['size'][1]),
-        A.Normalize(
-            mean=[0.485, 0.456, 0.406],
-            std=[0.229, 0.224, 0.225],
-        ),
-        ToTensorV2()
+    image_processing = transforms.Compose([
+        transforms.Resize(size=(256, 192)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    image = tranform_extract(image=image)['image']
+    image = image_processing(image)
     image = torch.unsqueeze(image, 0)
 
     out = model(image)
@@ -79,9 +81,10 @@ if __name__ == "__main__":
     parser.add_argument('--config', default='config/base_extraction.yml', type=str)
     args = parser.parse_args()
 
-    path_image = "D:/datasets/peta/processed/images/00009.png"
+    path_image = "/datasets/peta/processed/PETA-New/images/00009.png"
     image = imread(path_image)
     
-    result = extractor(args.config, image, 2)
+    # result = extractor(args.config, image, 2)
+    result = extractor(path_config=args.config, path_attribute='peta_attribute.pkl', path_model="/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth", image=image, return_type=0)
     print(result)
 

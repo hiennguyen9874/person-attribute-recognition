@@ -1,7 +1,7 @@
 import torch
 from .baseline import Baseline
 
-def build_model(config, num_classes, device=torch.device('cpu')):
+def build_model(config, num_classes, is_inference=False, device=torch.device('cpu')):
     cfg_model = config['model']
     dict_paramsters = None
     
@@ -24,7 +24,8 @@ def build_model(config, num_classes, device=torch.device('cpu')):
             head=cfg_model['head'],
             bn_where=cfg_model['bn_where'],
             batch_norm_bias=cfg_model['batch_norm_bias'],
-            use_tqdm=cfg_model['use_tqdm'])
+            use_tqdm=cfg_model['use_tqdm'],
+            is_inference=is_inference)
 
     else:
         raise KeyError('config[model][name] error')
