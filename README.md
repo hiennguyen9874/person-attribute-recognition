@@ -73,3 +73,7 @@
 | backbone          	| bn after linear 	| Head          	| Loss              	|   mA  	| Accuracy 	| Precision 	| Recall 	| F1-Score 	|
 |-------------------	|:---------------:	|---------------	|-------------------	|:-----:	|:--------:	|:---------:	|:------:	|:--------:	|
 | resnet50          	|     &check;     	| BNHead        	| CEL_Sigmoid       	|  79.50 	|   78.89  	|   88.17   	|  86.28 	|   86.80  	|
+
+
+
+## Deploy model with torchserve

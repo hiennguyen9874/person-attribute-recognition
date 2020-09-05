@@ -1,0 +1,9 @@
+# docker-compose.yml
+version: '3.5'
+services:
+  torchserve:
+    build: .
+    ports:
+     - "8080:8080"
+     - "8081:8081"
+    command: torchserve --start --ncs --model-store model_store --ts-config config.properties
