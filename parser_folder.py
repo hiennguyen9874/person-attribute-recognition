@@ -22,8 +22,8 @@ def copytree(src, dst, symlinks=False, ignore=None):
                 shutil.copy2(s, d)
 
 if __name__ == "__main__":
-    log_dir = '/content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/logs'
-    saved_folder = '/content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/saved'
+    log_dir = 'saved/logs'
+    saved_folder = 'saved/saved'
 
     all_saved_info = list()
     for f1 in [f.name for f in os.scandir(log_dir) if f.is_dir()]:
@@ -68,7 +68,7 @@ if __name__ == "__main__":
     rmdir(saved_folder)
     for x in tqdm(all_saved_info):
         source = x['path']
-        des = os.path.join(saved_folder, x['info']['Model'],  x['info']['Loss'], 'Freeze layer'.replace(' ', '') + '-' + str(x['info']['Freeze layer']), x['info']['Optimizer'], x['info']['Lr scheduler'], x['id'])
+        des = os.path.join(saved_folder, x['info']['Dataset'], x['info']['Model'],  x['info']['Loss'], 'Freeze layer'.replace(' ', '') + '-' + str(x['info']['Freeze layer']), x['info']['Optimizer'], x['info']['Lr scheduler'], x['id'])
         if not os.path.exists(des):
             os.makedirs(des, exist_ok=True)
             copytree(source, des)

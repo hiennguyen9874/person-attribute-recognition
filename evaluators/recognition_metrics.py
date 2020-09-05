@@ -10,6 +10,8 @@ import numpy as np
 from tqdm.auto import tqdm
 from easydict import EasyDict
 
+import matplotlib.pyplot as plt
+
 from models import build_model
 from data import build_datamanager
 from logger import setup_logging
@@ -148,6 +150,11 @@ def log_test(logger_func, attribute_name: list, weight, result_label, result_ins
         round(np.mean(result_label.precision)*100, 2),
         round(np.mean(result_label.recall)*100, 2),
         round(np.mean(result_label.f1_score)*100, 2)))
+
+def log_test_visual(logger_func, attribute_name: list, weight, result_label, result_instance):
+    plt.scatter(weight, result_label.accuracy*100)
+    plt.show()
+    pass
 
 def compare_class_based(logger_func, attribute_name, weight, result_label1, result_label2, color=COLOR.BOLD):
     r""" log result and the difference between result_label1 and result_label2
@@ -327,31 +334,52 @@ def test(config, datamanager, logger_func):
 
     return result_label, result_instance
 
+
 if __name__ == "__main__":
     config1 = "config/baseline_peta.yml"
-    config2 = "config/episode_peta.yml"
 
-    resume1 = "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth"
-    resume2 = "/content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/checkpoints/0809_231322/model_best_accuracy.pth"
-
+    resume1 = "saved/0731_232453/model_best_accuracy.pth"
+  
     config1 = read_config(config1)
     config1.update({'resume': resume1})
     config1.update({'colab': True})
 
-    config2 = read_config(config2)
-    config2.update({'resume': resume2})
-    config2.update({'colab': True})
-    
     datamanager1, _ = build_datamanager(config1['type'], config1['data'])
-    datamanager2, _ = build_datamanager(config2['type'], config2['data'])
 
     weight = datamanager1.datasource.get_weight('test')
 
-    # model1
-    result_label1, result_instance1 = test(config1, datamanager1, print)
+    result_label, result_instance = test(config1, datamanager1, print)
 
-    # model 2
-    result_label2, result_instance2 = test(config2, datamanager2, print)
+    plt.scatter(weight, result_label.accuracy)
+    plt.show()
 
-    compare_class_based(print, datamanager1.datasource.get_attribute(), weight, result_label1, result_label2, COLOR.BLUE)
+
+
+# if __name__ == "__main__":
+#     config1 = "config/baseline_peta.yml"
+#     config2 = "config/episode_peta.yml"
+
+#     resume1 = "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth"
+#     resume2 = "/content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/checkpoints/0809_231322/model_best_accuracy.pth"
+
+#     config1 = read_config(config1)
+#     config1.update({'resume': resume1})
+#     config1.update({'colab': True})
+
+#     config2 = read_config(config2)
+#     config2.update({'resume': resume2})
+#     config2.update({'colab': True})
+    
+#     datamanager1, _ = build_datamanager(config1['type'], config1['data'])
+#     datamanager2, _ = build_datamanager(config2['type'], config2['data'])
+
+#     weight = datamanager1.datasource.get_weight('test')
+
+#     # model1
+#     result_label1, result_instance1 = test(config1, datamanager1, print)
+
+#     # model 2
+#     result_label2, result_instance2 = test(config2, datamanager2, print)
+
+#     compare_class_based(print, datamanager1.datasource.get_attribute(), weight, result_label1, result_label2, COLOR.BLUE)
 

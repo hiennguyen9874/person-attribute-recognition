@@ -32,22 +32,10 @@ if __name__ == "__main__":
     model.eval()
     model.to(device)
 
-    # torch.save(
-    #     torch.load(
-    #         os.path.join(os.path.dirname(os.path.realpath(__file__)), 'model_best_accuracy.pth'), 
-    #         map_location=torch.device('cpu')
-    #     )['state_dict'], os.path.join(os.path.dirname(os.path.realpath(__file__)), 'eager_model.pth'))
-    
-    # checkpoint = torch.load(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'eager_model.pth'), map_location=torch.device('cpu'))
-    
-    # model = EagerModel()
-    # model.load_state_dict(checkpoint)
-    # torch.save(model.state_dict(), os.path.join(os.path.dirname(os.path.realpath(__file__)), 'eager_model.pth'))
-    
     batch = torch.rand(4, 3, 256, 128)
     traced_script_module = torch.jit.trace(model, batch)
     traced_script_module.save('eager_model.pt')
-
+    
     """
     \cp "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth" /content/person_attribute_recognition/torchserve/
     cd torchserve
