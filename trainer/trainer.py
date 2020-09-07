@@ -83,11 +83,15 @@ class Trainer(BaseTrainer):
 
         # summary model
         summary(
-            func=self.logger.info,
             model=self.model,
-            input_size=(3, self.datamanager.get_image_size()[0], self.datamanager.get_image_size()[1]),
-            batch_size=self.datamanager.get_batch_size(),
+            input_data=torch.zeros((
+                self.datamanager.get_batch_size(), 
+                3, 
+                self.datamanager.get_image_size()[0], 
+                self.datamanager.get_image_size()[1])),
+            batch_dim=None,
             device='cuda' if self.use_gpu else 'cpu',
+            print_func=self.logger.info,
             print_step=False)
 
         # resume model from last checkpoint
@@ -158,7 +162,7 @@ class Trainer(BaseTrainer):
 
         # wait for tensorboard flush all metrics to file
         self.writer.flush()
-        time.sleep(1*60)
+        # time.sleep(1*60)
         self.writer.close()
         # plot loss, accuracy and save them to plot.png in saved/logs/<run_id>/plot.png
         plot_loss_accuracy(
@@ -293,4 +297,3 @@ class Trainer(BaseTrainer):
             self.logger.info('Lr scheduler: %s ' % (self.config['lr_scheduler']['name']) + __prams_to_str(params_lr_scheduler))
         if clip_grad_norm_:
             self.logger.info('clip_grad_norm_, max_norm: %f' % self.config['clip_grad_norm_']['max_norm'])
-
