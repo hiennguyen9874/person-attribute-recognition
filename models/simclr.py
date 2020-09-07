@@ -5,10 +5,9 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 import torch
 import torch.nn as nn
 
-from torchsummary import summary
-
 from models.backbone import build_backbone
 from models.pooling import build_pooling
+from utils import summary
 
 class SimCLR(nn.Module):
     def __init__(

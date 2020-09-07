@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from torchsummary import summary
+from utils import summary
 from utils import pip_install
 
 try:
