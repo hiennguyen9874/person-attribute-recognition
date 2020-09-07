@@ -1,42 +1,62 @@
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../../'))
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..','..'))
 
-import requests
-import tarfile
-import zipfile
 import re
-import glob
-import gdown
 import scipy.io
 import numpy as np
-from tqdm.auto import tqdm
 from collections import defaultdict
+from tqdm.auto import tqdm
 
-from utils import download_file_from_google_drive, download_with_url
+from base import BaseDataSource
 
-class Market1501_Attribute(object):
-    dataset_dir = 'market1501_attribute'
-    dataset_id = '13GJogmW1neVqSOHxZ_EUo9KfoWuwsAQM'
-    file_name = 'Market-1501-v15.09.15-Attribute.zip'
-    google_drive_api = 'AIzaSyAVfS-7Dy34a3WjWgR509o-u_3Of59zizo'
+class Market1501_Attribute(BaseDataSource):
+    url = {
+        'Market-1501-v15.09.15-Attribute.zip': '1xnrvuFTzLh_fIJo5Gkf4vcG8lEGL8gBd'
+    }
+    file_path = {
+        'Market-1501-v15.09.15-Attribute.zip': '/content/drive/Shared drives/REID/HIEN/Datasets/Market-1501-v15.09.15-Attribute.zip',
+    }
 
-    def __init__(self, root_dir='datasets', download=True, extract=True, re_label_on_train=True):
-        self.root_dir = root_dir
+    def __init__(
+        self, 
+        root_dir='datasets', 
+        download=True, 
+        extract=True, 
+        use_tqdm=True, 
+        re_label_on_train=True,
+        **kwargs):
+
+        super(Market1501_Attribute, self).__init__(
+            root_dir,
+            dataset_dir='market1501_attribute',
+            **kwargs
+        )
+
         if download:
-            print("Downloading!")
-            self._download()
-            print("Downloaded!")
-        if extract:
-            print("Extracting!")
-            self._extract()
-            print("Extracted!")
+            for key, value in self.url.items():
+                try:
+                    self._download(file_name=key, file_path=self.file_path[key], use_tqdm=use_tqdm)
+                except:
+                    self._download(file_name=key, dataset_id=value, use_tqdm=use_tqdm)
+        if extract: 
+            for key, value in self.url.items():
+                self._extract(file_name=key, use_tqdm=use_tqdm)
+        
 
-        data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', 'Market-1501-v15.09.15-Attribute')
+        # data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', 'Market-1501-v15.09.15-Attribute')
+        self.data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
+        while True:
+            if os.path.exists(os.path.join(self.data_dir, 'Market-1501-v15.09.15-Attribute')):
+                self.data_dir = os.path.join(self.data_dir, 'Market-1501-v15.09.15-Attribute')
+            elif os.path.exists(os.path.join(self.data_dir, 'Market-1501-v150915-Attribute')):
+                self.data_dir = os.path.join(self.data_dir, 'Market-1501-v150915-Attribute')
+            else:
+                break
 
-        train_dir = os.path.join(data_dir, 'bounding_box_train')
-        query_dir = os.path.join(data_dir, 'query')
-        gallery_dir = os.path.join(data_dir, 'bounding_box_test')
+        train_dir = os.path.join(self.data_dir, 'bounding_box_train')
+        query_dir = os.path.join(self.data_dir, 'query')
+        gallery_dir = os.path.join(self.data_dir, 'bounding_box_test')
 
         self.pid_container = dict()
         self.camid_containter = dict()
@@ -55,7 +75,7 @@ class Market1501_Attribute(object):
         self.gallery, self.pid_container['gallery'], self.camid_containter['gallery'], self.frames_container['gallery'], pid2label['gallery'] = self._process_dir(
             gallery_dir, relabel=False)
 
-        f = scipy.io.loadmat(os.path.join(data_dir, 'attribute', 'market_attribute.mat'))
+        f = scipy.io.loadmat(os.path.join(self.data_dir, 'attribute', 'market_attribute.mat'))
         
         # print("Get attribute...")
         self.dict_attribute = dict()
@@ -121,30 +141,6 @@ class Market1501_Attribute(object):
                     data.append((img_path, person_id, camera_id))
                 pbar.update(1)
         return data, pid_container, camid_containter, frames_container, pid2label
-
-    def _download(self):
-        os.makedirs(os.path.join(self.root_dir,
-                                 self.dataset_dir, 'raw'), exist_ok=True)
-        download_with_url(self.google_drive_api, self.dataset_id, os.path.join(self.root_dir, self.dataset_dir, 'raw'), self.file_name)
-        
-
-    def _extract(self):
-        file_path = os.path.join(
-            self.root_dir, self.dataset_dir, 'raw', self.file_name)
-        extract_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
-        if self._exists(extract_dir):
-            return
-        try:
-            tar = tarfile.open(file_path)
-            os.makedirs(extract_dir, exist_ok=True)
-            for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers())):
-                tar.extract(member=member, path=extract_dir)
-            tar.close()
-        except:
-            zip_ref = zipfile.ZipFile(file_path, 'r')
-            for member in tqdm(iterable=zip_ref.infolist(), total=len(zip_ref.infolist())):
-                zip_ref.extract(member=member, path=extract_dir)
-            zip_ref.close()
 
     def _exists(self, extract_dir):
         if os.path.exists(os.path.join(extract_dir, 'Market-1501-v15.09.15-Attribute', 'bounding_box_train')) \
@@ -303,7 +299,13 @@ class Market1501_Attribute(object):
         return unified_attribute, test_label
 
 if __name__ == "__main__":
-    market1501 = Market1501_Attribute(root_dir='/home/hien/Documents/datasets', download=True, extract=True, re_label_on_train=True)
-    print('Train: len: {}, num_class: {}, num_camera: {}'.format(len(market1501.train), market1501.get_num_classes('train'), market1501.get_num_camera('train')))
-    print('Query: len: {}, num_class: {}, num_camera: {}'.format(len(market1501.query), market1501.get_num_classes('query'), market1501.get_num_camera('query')))
-    print('Gallery: len: {}, num_class: {}, num_camera: {}'.format(len(market1501.gallery), market1501.get_num_classes('gallery'), market1501.get_num_camera('gallery')))
+    market1501 = Market1501_Attribute(root_dir='/datasets', download=True, extract=True, re_label_on_train=True)
+    # print('Train: len: {}, num_class: {}, num_camera: {}'.format(len(market1501.train), market1501.get_num_classes('train'), market1501.get_num_camera('train')))
+    # print('Query: len: {}, num_class: {}, num_camera: {}'.format(len(market1501.query), market1501.get_num_classes('query'), market1501.get_num_camera('query')))
+    # print('Gallery: len: {}, num_class: {}, num_camera: {}'.format(len(market1501.gallery), market1501.get_num_classes('gallery'), market1501.get_num_camera('gallery')))
+
+
+
+    data = market1501.get_data('train')
+
+    
