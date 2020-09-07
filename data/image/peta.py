@@ -25,11 +25,19 @@ class Peta(BaseDataSource):
     }
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]
 
-    def __init__(self, root_dir='datasets', download=True, extract=True, use_tqdm=True, **kwargs):
+    def __init__(
+        self, 
+        root_dir='datasets', 
+        download=True, 
+        extract=True, 
+        use_tqdm=True, 
+        **kwargs):
+
         super(Peta, self).__init__(
             root_dir, 
             dataset_dir = 'peta', 
             image_size = (256, 192))
+        
         if download:
             for key, value in self.url.items():
                 try:
