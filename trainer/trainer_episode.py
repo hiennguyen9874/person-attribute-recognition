@@ -24,6 +24,8 @@ class Trainer_Episode(Trainer):
         """
         self.model.train()
         self.train_metrics.reset()
+        # zero gradient
+        self.optimizer.zero_grad()
         if self.cfg_trainer['use_tqdm']:
             tqdm_callback = Tqdm(epoch, len(self.datamanager.get_dataloader('train')), phase='train')
         for batch_idx, (data, labels, attribute_idx) in enumerate(self.datamanager.get_dataloader('train')):
@@ -32,9 +34,6 @@ class Trainer_Episode(Trainer):
                 start_time = time.time()
             # push data to device
             data, labels, attribute_idx = data.to(self.device), labels.to(self.device), attribute_idx.to(self.device)
-
-            # zero gradient
-            self.optimizer.zero_grad()
 
             with autocast():
                 # forward batch
@@ -66,6 +65,9 @@ class Trainer_Episode(Trainer):
 
                 # Updates the scale for next iteration.
                 self.scaler.update()
+
+                # zero gradient
+                self.optimizer.zero_grad()
             
                 # update loss and accuracy in MetricTracker
                 self.train_metrics.update('loss', loss.item())
