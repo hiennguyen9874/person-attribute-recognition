@@ -98,6 +98,9 @@ lr_scheduler:
       max_iters: 120
       eta_min_lr: 0.00000077
 
+# Gradient accumulation
+iters_to_accumulate: 1
+
 # clipping gradient
 clip_grad_norm_:
   enable: False

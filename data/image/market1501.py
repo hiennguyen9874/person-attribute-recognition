@@ -1,12 +1,13 @@
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..','..'))
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
 
 import re
 import scipy.io
 import numpy as np
-from collections import defaultdict
+
 from tqdm.auto import tqdm
+from collections import defaultdict
 
 from base import BaseDataSource
 
@@ -19,13 +20,13 @@ class Market1501_Attribute(BaseDataSource):
     }
 
     def __init__(
-        self, 
-        root_dir='datasets', 
-        download=True, 
-        extract=True, 
-        use_tqdm=True, 
-        re_label_on_train=True,
-        **kwargs):
+            self,
+            root_dir='datasets',
+            download=True,
+            extract=True,
+            use_tqdm=True,
+            re_label_on_train=True,
+            **kwargs):
 
         super(Market1501_Attribute, self).__init__(
             root_dir,
@@ -39,18 +40,18 @@ class Market1501_Attribute(BaseDataSource):
                     self._download(file_name=key, file_path=self.file_path[key], use_tqdm=use_tqdm)
                 except:
                     self._download(file_name=key, dataset_id=value, use_tqdm=use_tqdm)
-        if extract: 
+        if extract:
             for key, value in self.url.items():
                 self._extract(file_name=key, use_tqdm=use_tqdm)
-        
 
-        # data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', 'Market-1501-v15.09.15-Attribute')
         self.data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed')
         while True:
             if os.path.exists(os.path.join(self.data_dir, 'Market-1501-v15.09.15-Attribute')):
-                self.data_dir = os.path.join(self.data_dir, 'Market-1501-v15.09.15-Attribute')
+                self.data_dir = os.path.join(
+                    self.data_dir, 'Market-1501-v15.09.15-Attribute')
             elif os.path.exists(os.path.join(self.data_dir, 'Market-1501-v150915-Attribute')):
-                self.data_dir = os.path.join(self.data_dir, 'Market-1501-v150915-Attribute')
+                self.data_dir = os.path.join(
+                    self.data_dir, 'Market-1501-v150915-Attribute')
             else:
                 break
 
@@ -75,14 +76,17 @@ class Market1501_Attribute(BaseDataSource):
         self.gallery, self.pid_container['gallery'], self.camid_containter['gallery'], self.frames_container['gallery'], pid2label['gallery'] = self._process_dir(
             gallery_dir, relabel=False)
 
-        f = scipy.io.loadmat(os.path.join(self.data_dir, 'attribute', 'market_attribute.mat'))
-        
+        f = scipy.io.loadmat(os.path.join(
+            self.data_dir, 'attribute', 'market_attribute.mat'))
+
         # print("Get attribute...")
         self.dict_attribute = dict()
         self.dict_attribute_label = dict()
-        self.dict_attribute['train'], self.dict_attribute_label['train'] = self._get_dict_attribute(f, 'train', relabel=re_label_on_train, pid2label=pid2label['train'])
-        self.dict_attribute['test'], self.dict_attribute_label['test'] = self._get_dict_attribute(f, 'test', relabel=False)
-        
+        self.dict_attribute['train'], self.dict_attribute_label['train'] = self._get_dict_attribute(
+            f, 'train', relabel=re_label_on_train, pid2label=pid2label['train'])
+        self.dict_attribute['test'], self.dict_attribute_label['test'] = self._get_dict_attribute(
+            f, 'test', relabel=False)
+
     def get_data(self, mode='train'):
         if mode == 'train':
             return self.train
@@ -92,7 +96,7 @@ class Market1501_Attribute(BaseDataSource):
             return self.gallery
         else:
             raise ValueError('mode error')
-    
+
     def get_attribute(self, mode='train'):
         if mode == 'train':
             return self.dict_attribute['train'], self.dict_attribute_label['train']
@@ -144,8 +148,8 @@ class Market1501_Attribute(BaseDataSource):
 
     def _exists(self, extract_dir):
         if os.path.exists(os.path.join(extract_dir, 'Market-1501-v15.09.15-Attribute', 'bounding_box_train')) \
-            and os.path.exists(os.path.join(extract_dir, 'Market-1501-v15.09.15-Attribute', 'bounding_box_test')) \
-            and os.path.exists(os.path.join(extract_dir, 'Market-1501-v15.09.15-Attribute', 'query')):
+                and os.path.exists(os.path.join(extract_dir, 'Market-1501-v15.09.15-Attribute', 'bounding_box_test')) \
+                and os.path.exists(os.path.join(extract_dir, 'Market-1501-v15.09.15-Attribute', 'query')):
             return True
         return False
 
@@ -174,7 +178,7 @@ class Market1501_Attribute(BaseDataSource):
             41: 72107, 42: 72373, 43: 74810, 44: 74541, 45: 74910, 46: 50616, 47: 0, 48: 0,
             51: 161095, 52: 161724, 53: 103487, 54: 0, 55: 0, 56: 0, 57: 0, 58: 0,
             61: 87551, 62: 131268, 63: 95817, 64: 30952, 65: 0, 66: 0, 67: 0, 68: 0}
-        
+
         re_frame = 0
         for i in range(1, seq):
             re_frame += dict_cam_seq_max[int(str(cam) + str(i))]
@@ -182,9 +186,9 @@ class Market1501_Attribute(BaseDataSource):
 
     def get_name_dataset(self):
         return self.file_name.split('.zip')[0]
-    
-    def _get_dict_attribute(self, f, test_train, relabel = True, pid2label=None):
-        train_label=[
+
+    def _get_dict_attribute(self, f, test_train, relabel=True, pid2label=None):
+        train_label = [
             'age',
             'backpack',
             'bag',
@@ -212,8 +216,8 @@ class Market1501_Attribute(BaseDataSource):
             'hair',
             'hat',
             'gender']
-    
-        test_label=[
+
+        test_label = [
             'age',
             'backpack',
             'bag',
@@ -241,30 +245,33 @@ class Market1501_Attribute(BaseDataSource):
             'downblue',
             'downgreen',
             'downbrown']
-            
+
         attribute_dict = defaultdict(list)
 
-        pid_container_sorted = sorted(self.pid_container[test_train if test_train == 'train' else 'query'])
+        pid_container_sorted = sorted(
+            self.pid_container[test_train if test_train == 'train' else 'query'])
 
-        test_train = 0 if test_train == 'test' else (1 if test_train == 'train' else None)
+        test_train = 0 if test_train == 'test' else (
+            1 if test_train == 'train' else None)
 
         for attribute_id in range(len(f['market_attribute'][0][0][test_train][0][0])):
             if isinstance(f['market_attribute'][0][0][test_train][0][0][attribute_id][0][0], np.ndarray):
                 continue
             for person_id in range(len(f['market_attribute'][0][0][test_train][0][0][attribute_id][0])):
                 # print(f['market_attribute'][0][0][test_train][0][0][attribute_id][0][person_id])
-                attribute_dict[pid_container_sorted[person_id]].append(f['market_attribute'][0][0][test_train][0][0][attribute_id][0][person_id] - 1)
-        
+                attribute_dict[pid_container_sorted[person_id]].append(
+                    f['market_attribute'][0][0][test_train][0][0][attribute_id][0][person_id] - 1)
+
         unified_attribute = {}
         for k, v in attribute_dict.items():
             temp_atr = [0]*len(test_label)
             for i in range(len(test_label)):
-                temp_atr[i]=v[train_label.index(test_label[i])]
+                temp_atr[i] = v[train_label.index(test_label[i])]
             pid = k
             if relabel:
                 pid = pid2label[k]
             unified_attribute[pid] = temp_atr
-        
+
         for id in unified_attribute:
             if unified_attribute[id][0] == 0:
                 unified_attribute[id].pop(0)
@@ -292,20 +299,11 @@ class Market1501_Attribute(BaseDataSource):
                 unified_attribute[id].insert(3, 1)
 
         test_label.pop(0)
-        test_label.insert(0,'young')
-        test_label.insert(1,'teenager')
-        test_label.insert(2,'adult')
-        test_label.insert(3,'old')
+        test_label.insert(0, 'young')
+        test_label.insert(1, 'teenager')
+        test_label.insert(2, 'adult')
+        test_label.insert(3, 'old')
         return unified_attribute, test_label
 
 if __name__ == "__main__":
     market1501 = Market1501_Attribute(root_dir='/datasets', download=True, extract=True, re_label_on_train=True)
-    # print('Train: len: {}, num_class: {}, num_camera: {}'.format(len(market1501.train), market1501.get_num_classes('train'), market1501.get_num_camera('train')))
-    # print('Query: len: {}, num_class: {}, num_camera: {}'.format(len(market1501.query), market1501.get_num_classes('query'), market1501.get_num_camera('query')))
-    # print('Gallery: len: {}, num_class: {}, num_camera: {}'.format(len(market1501.gallery), market1501.get_num_classes('gallery'), market1501.get_num_camera('gallery')))
-
-
-
-    data = market1501.get_data('train')
-
-    

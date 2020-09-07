@@ -41,7 +41,7 @@ class Trainer_Epoch(Trainer):
                 out = self.model(data)
 
                 # calculate loss and accuracy
-                loss = self.criterion(out, labels)
+                loss = self.criterion(out, labels) / self.config['iters_to_accumulate']
 
                 # calculate instance-based accuracy
                 preds = torch.sigmoid(out)
@@ -52,45 +52,46 @@ class Trainer_Epoch(Trainer):
             # loss.backward()
             self.scaler.scale(loss).backward()
 
-            # Clips gradient norm of an iterable of parameters.
-            if self.config['clip_grad_norm_']['enable']:
-                self.scaler.unscale_(self.optimizer)
-                clip_grad_norm_(
-                    parameters=self.model.parameters(),
-                    max_norm=self.config['clip_grad_norm_']['max_norm'])
+            if (batch_idx+1) % self.config['iters_to_accumulate'] == 0:
+                # Clips gradient norm of an iterable of parameters.
+                if self.config['clip_grad_norm_']['enable']:
+                    self.scaler.unscale_(self.optimizer)
+                    clip_grad_norm_(
+                        parameters=self.model.parameters(),
+                        max_norm=self.config['clip_grad_norm_']['max_norm'])
 
-            # optimize
-            # self.optimizer.step()
-            self.scaler.step(self.optimizer)
+                # optimize
+                # self.optimizer.step()
+                self.scaler.step(self.optimizer)
 
-            # Updates the scale for next iteration.
-            self.scaler.update()
-            
-            # update loss and accuracy in MetricTracker
-            self.train_metrics.update('loss', loss.item())
-            self.train_metrics.update('mA', mean_accuracy)
-            self.train_metrics.update('accuracy', accuracy)
-            self.train_metrics.update('f1_score', f1_score)
+                # Updates the scale for next iteration.
+                self.scaler.update()
+                
+                # update loss and accuracy in MetricTracker
+                self.train_metrics.update('loss', loss.item())
+                self.train_metrics.update('mA', mean_accuracy)
+                self.train_metrics.update('accuracy', accuracy)
+                self.train_metrics.update('f1_score', f1_score)
 
-            # update process
-            if self.cfg_trainer['use_tqdm']:
-                tqdm_callback.on_batch_end({
-                    'loss': loss.item(),
-                    'mA': mean_accuracy,
-                    'accuracy': accuracy,
-                    'f1-score': f1_score})
-            else:
-                end_time = time.time()
-                if (batch_idx+1) % self.log_step[0] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('train')):
-                    self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.4f} mA: {:.4f} Acc: {:.4f} F1-score: {:.4f}'.format(
-                        epoch,
-                        batch_idx+1,
-                        len(self.datamanager.get_dataloader('train')),
-                        1/(end_time-start_time),
-                        loss.item(),
-                        mean_accuracy,
-                        accuracy,
-                        f1_score))
+                # update process
+                if self.cfg_trainer['use_tqdm']:
+                    tqdm_callback.on_batch_end({
+                        'loss': loss.item(),
+                        'mA': mean_accuracy,
+                        'accuracy': accuracy,
+                        'f1-score': f1_score})
+                else:
+                    end_time = time.time()
+                    if (batch_idx+1) % self.log_step[0] == 0 or (batch_idx+1) == len(self.datamanager.get_dataloader('train')):
+                        self.logger.info('Train Epoch: {} {}/{} {:.1f}batch/s Loss: {:.4f} mA: {:.4f} Acc: {:.4f} F1-score: {:.4f}'.format(
+                            epoch,
+                            batch_idx+1,
+                            len(self.datamanager.get_dataloader('train')),
+                            1/(end_time-start_time),
+                            loss.item(),
+                            mean_accuracy,
+                            accuracy,
+                            f1_score))
         if self.cfg_trainer['use_tqdm']:
             tqdm_callback.on_epoch_end()
         return self.train_metrics.result()
