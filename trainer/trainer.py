@@ -56,8 +56,8 @@ class Trainer(BaseTrainer):
         self.valid_metrics = MetricTracker('loss', *self.lst_metrics)
 
         # step log loss and accuracy
-        self.log_step = (len(self.datamanager.get_dataloader('train')) // 10,
-                        len(self.datamanager.get_dataloader('val')) // 10)
+        self.log_step = (len(self.datamanager.get_dataloader('train')) // 5,
+                        len(self.datamanager.get_dataloader('val')) // 5)
         self.log_step = (self.log_step[0] if self.log_step[0] > 0 else 1,
                         self.log_step[1] if self.log_step[1] > 0 else 1)
         
