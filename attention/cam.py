@@ -9,9 +9,6 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 
-from utils import pip_install
-pip_install('albumentations', '0.4.6')
-
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 

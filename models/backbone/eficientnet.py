@@ -7,13 +7,6 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 from utils import summary
-from utils import pip_install
-
-try:
-    from efficientnet_pytorch import EfficientNet
-except ImportError as e:
-    pip_install('efficientnet_pytorch')
-    from efficientnet_pytorch import EfficientNet
 
 class Efficient(nn.Module):
     def __init__(self, name='efficientnet-b5', advprop=True):
