@@ -40,7 +40,7 @@ class Trainer_Episode(Trainer):
                 out = self.model(data)
 
                 # calculate loss and accuracy
-                loss = self.criterion(out, labels, attribute_idx) / self.config['iters_to_accumulate']
+                loss = self.criterion(out, labels, attribute_idx)
 
                 # calculate instance-based accuracy
                 preds = torch.sigmoid(out)

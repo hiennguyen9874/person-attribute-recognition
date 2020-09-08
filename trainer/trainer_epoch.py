@@ -41,7 +41,7 @@ class Trainer_Epoch(Trainer):
                 out = self.model(data)
 
                 # calculate loss and accuracy
-                loss = self.criterion(out, labels) / self.config['iters_to_accumulate']
+                loss = self.criterion(out, labels)
 
                 # calculate instance-based accuracy
                 preds = torch.sigmoid(out)
