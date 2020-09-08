@@ -49,5 +49,5 @@ class BaseTrainer(object):
         """
         if os.path.isdir(self.logs_dir_saved):
             rmdir(self.logs_dir_saved, remove_parent=False)
-        os.makedirs(self.logs_dir_saved)
+        os.makedirs(self.logs_dir_saved, exist_ok=True)
         shutil.copytree(self.logs_dir, self.logs_dir_saved)
