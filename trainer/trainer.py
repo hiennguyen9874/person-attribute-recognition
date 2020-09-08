@@ -180,7 +180,7 @@ class Trainer(BaseTrainer):
         r""" Validation step
         """
         raise NotImplementedError
-
+    
     def test(self):
         r""" Test model after train
         TODO:

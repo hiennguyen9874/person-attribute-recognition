@@ -11,7 +11,7 @@ from datetime import datetime
 from torch.utils.tensorboard import SummaryWriter
 
 from logger import setup_logging
-from utils import config_to_str
+from utils import *
 
 class BaseTrainer(object):
     def __init__(self, config):
@@ -48,5 +48,5 @@ class BaseTrainer(object):
         r""" Save logs from google colab to google drive
         """
         if os.path.isdir(self.logs_dir_saved):
-            shutil.rmtree(self.logs_dir_saved)
+            rmdir(self.logs_dir_saved, remove_parent=False)
         shutil.copytree(self.logs_dir, self.logs_dir_saved)
