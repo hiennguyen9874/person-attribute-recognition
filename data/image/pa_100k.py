@@ -17,7 +17,7 @@ class PA_100K(BaseDataSource):
         'PA-100K.zip': '1Jfb3I8BK4oOX3eepaiYyd4fHoMNkgTaz'
     }
     file_path = {
-        'PA-100K.zip': '/content/drive/Shared drives/REID/HIEN/Datasets/PA-100K.zip',
+        'PA-100K.zip': '/content/drive/Shared drives/HIEN/Datasets/PA-100K.zip',
     }
     group_order = [7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 9, 10, 11, 12, 1, 2, 3, 0, 4, 5, 6]
 
