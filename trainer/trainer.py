@@ -158,12 +158,15 @@ class Trainer(BaseTrainer):
 
             # save logs to drive if using colab
             if self.config['colab']:
-                self._save_logs(epoch)
+                self._save_logs()
 
         # wait for tensorboard flush all metrics to file
         self.writer.flush()
         # time.sleep(1*60)
         self.writer.close()
+        # save logs to drive if using colab
+        if self.config['colab']:
+            self._save_logs()
         # plot loss, accuracy and save them to plot.png in saved/logs/<run_id>/plot.png
         plot_loss_accuracy(
             dpath=self.cfg_trainer['log_dir'],

@@ -44,7 +44,7 @@ class BaseTrainer(object):
         self.start_epoch = 1
         self.writer = SummaryWriter(self.logs_dir)
 
-    def _save_logs(self, epoch):
+    def _save_logs(self):
         r""" Save logs from google colab to google drive
         """
         if os.path.isdir(self.logs_dir_saved):
