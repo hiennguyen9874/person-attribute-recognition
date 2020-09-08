@@ -16,7 +16,7 @@ class Market1501_Attribute(BaseDataSource):
         'Market-1501-v15.09.15-Attribute.zip': '1xnrvuFTzLh_fIJo5Gkf4vcG8lEGL8gBd'
     }
     file_path = {
-        'Market-1501-v15.09.15-Attribute.zip': '/content/drive/Shared drives/REID/HIEN/Datasets/Market-1501-v15.09.15-Attribute.zip',
+        'Market-1501-v15.09.15-Attribute.zip': '/content/drive/Shared drives/HIEN/Datasets/Market-1501-v15.09.15-Attribute.zip',
     }
 
     def __init__(

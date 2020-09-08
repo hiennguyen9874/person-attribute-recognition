@@ -21,7 +21,7 @@ class Peta(BaseDataSource):
         'PETA-New.zip': '1Z2o5RyyCXBBGdEUey-Wi1ImFDFUTIVEo'
     }
     file_path = {
-        'PETA-New.zip': '/content/drive/Shared drives/REID/HIEN/Datasets/PETA-New.zip',
+        'PETA-New.zip': '/content/drive/Shared drives/HIEN/Datasets/PETA-New.zip',
     }
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]
 
