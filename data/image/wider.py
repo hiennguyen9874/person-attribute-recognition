@@ -13,6 +13,13 @@ from utils import read_json, neq
 class Wider(BaseDataSource):
     dataset_id = '1whFSGBMLm-92SQ6JXEAJwM49XrmQhUd5'
 
+    url = {
+        'Wider-data.zip': '1-4q2G6Mof7ArEysBUvU26jgscYt2NT2m'
+    }
+    file_path = {
+        'Wider-data.zip': '/content/drive/Shared drives/HIEN/Datasets/Wider-data.zip',
+    }
+
     def __init__(self, root_dir='datasets', download=True, extract=True, use_tqdm=True, validation_split=0.1):
         dataset_dir = 'wider'
         file_name = 'Wider-data.zip'
