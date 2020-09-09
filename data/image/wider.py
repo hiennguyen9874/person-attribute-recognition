@@ -40,9 +40,9 @@ class Wider(BaseDataSource):
         
         self.data = dict()
         self.weight = dict()
-        self.data['train'], attribute_train, self.weight['train'] = self._processes_dir(os.path.join(self.data_dir, 'wiger_attribute_train.json'), data_dir)
-        self.data['val'], attribute_val, self.weight['val'] = self._processes_dir(os.path.join(self.data_dir, 'wiger_attribute_val.json'), data_dir)
-        self.data['test'], attribute_test, self.weight['test'] = self._processes_dir(os.path.join(self.data_dir, 'wiger_attribute_test.json'), data_dir)
+        self.data['train'], attribute_train, self.weight['train'] = self._processes_dir(os.path.join(self.data_dir, 'wiger_attribute_train.json'), self.data_dir)
+        self.data['val'], attribute_val, self.weight['val'] = self._processes_dir(os.path.join(self.data_dir, 'wiger_attribute_val.json'), self.data_dir)
+        self.data['test'], attribute_test, self.weight['test'] = self._processes_dir(os.path.join(self.data_dir, 'wiger_attribute_test.json'), self.data_dir)
 
         assert neq(len(attribute_train), len(attribute_val), len(attribute_test))
         for i in range(len(attribute_train)):
