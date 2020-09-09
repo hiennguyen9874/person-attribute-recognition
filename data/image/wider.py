@@ -25,9 +25,14 @@ class Wider(BaseDataSource):
         file_name = 'Wider-data.zip'
         super(Wider, self).__init__(root_dir, dataset_dir, file_name, image_size = (256, 256))
         if download:
-            self._download(self.dataset_id, use_tqdm=use_tqdm)
-        if extract:
-            self._extract(use_tqdm=use_tqdm)
+            for key, value in self.url.items():
+                try:
+                    self._download(file_name=key, file_path=self.file_path[key], use_tqdm=use_tqdm)
+                except:
+                    self._download(file_name=key, dataset_id=value, use_tqdm=use_tqdm)
+        if extract: 
+            for key, value in self.url.items():
+                self._extract(file_name=key, use_tqdm=use_tqdm)
 
         data_dir = os.path.join(self.root_dir, self.dataset_dir, 'processed', 'Wider-data')
         
