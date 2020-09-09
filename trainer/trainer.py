@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
 import time
 import torch
@@ -15,8 +15,6 @@ from models import build_model
 from optimizers import build_optimizers
 from schedulers import build_lr_scheduler
 from utils import MetricTracker, summary
-
-from base import BaseTrainer
 
 class Trainer(BaseTrainer):
     r""" Trainer for person attribute recognition
@@ -183,44 +181,6 @@ class Trainer(BaseTrainer):
         r""" Validation step
         """
         raise NotImplementedError
-    
-    def test(self):
-        r""" Test model after train
-        TODO:
-        """
-        logger = logging.getLogger('test')
-
-        self.model.eval()
-        preds = []
-        labels = []
-        
-        if self.cfg_trainer['use_tqdm']:
-            tqdm_callback = Tqdm(total=len(self.datamanager.get_dataloader('test')))
-        with torch.no_grad():
-            for batch_idx, (data, _labels) in enumerate(self.datamanager.get_dataloader('test')):
-                if batch_idx == 5:
-                    break
-                data, _labels = data.to(self.device), _labels.to(self.device)
-
-                out = self.model(data)
-
-                _preds = torch.sigmoid(out)
-                preds.append(_preds)
-                labels.append(_labels)
-                if self.cfg_trainer['use_tqdm']:
-                    tqdm_callback.update()
-                else:
-                    if (batch_idx+1) % (len(self.datamanager.get_dataloader('test'))//10 + 1) or (batch_idx+1) == len(self.datamanager.get_dataloader('test'))-1:
-                        logger.info('Iter {}/{}'.format(batch_idx+1, len(self.datamanager.get_dataloader('test'))))
-        
-        preds = torch.cat(preds, dim=0)
-        labels = torch.cat(labels, dim=0)
-        preds = preds.cpu().numpy()
-        labels = labels.cpu().numpy()
-        
-        result_label, result_instance = recognition_metrics(labels, preds)
-
-        log_test(logger.info, self.datamanager.datasource.get_attribute(), self.datamanager.datasource.get_weight('test'), result_label, result_instance)
     
     def _save_checkpoint(self, epoch, save_best_loss, save_best_metrics):
         r""" Save model to file
