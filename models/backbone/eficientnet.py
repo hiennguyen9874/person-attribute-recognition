@@ -6,6 +6,8 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from efficientnet_pytorch import EfficientNet
+
 from utils import summary
 
 class Efficient(nn.Module):
