@@ -1,7 +1,7 @@
 # Copy from here: https://gist.github.com/grimpy/7dd579059d7c4c42d0528e4676edffaf
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
 import requests
 from tqdm.auto import tqdm

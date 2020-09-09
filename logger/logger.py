@@ -1,6 +1,6 @@
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '../'))
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
 import logging
 import logging.config
@@ -24,3 +24,5 @@ def setup_logging(save_dir, log_config='logger_config.json', default_level=loggi
     else:
         print("Warning: logging configuration file is not found in {}.".format(log_config))
         logging.basicConfig(level=default_level)
+
+
