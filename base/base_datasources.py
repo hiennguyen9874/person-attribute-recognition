@@ -107,3 +107,37 @@ class BaseDataSource(object):
             for path, label in self.get_data(phase):
                 if not os.path.exists(path):
                     raise FileExistsError
+
+
+    def show_some_image(self, num_image, num_per_row=10):
+        import cv2
+        import math
+        import matplotlib
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        from utils import imread
+        
+        all_rand_path = np.random.choice(range(len(self.get_data('train'))), num_image)
+        all_rand_image = [cv2.resize(imread(self.get_data('train')[x][0]), (128, 256)) for x in all_rand_path]
+        fig, ax = plt.subplots(math.ceil(num_image/num_per_row), num_per_row)
+        if math.ceil(num_image/num_per_row) == 1:
+            for j in range(num_per_row):
+                ax[j].axis('off')
+                ax[j].imshow(all_rand_image[j])
+        else:
+            # fig.tight_layout()
+            for i in range(math.ceil(num_image/num_per_row)):
+                for j in range(num_per_row):
+                    ax[i][j].axis('off')
+                    if i*num_per_row+j < num_image:
+                        ax[i][j].imshow(all_rand_image[i*num_per_row+j])
+        # plt.show()
+        # matplotlib.use("pgf")
+        # matplotlib.rcParams.update({
+        #     "pgf.texsystem": "pdflatex",
+        #     'font.family': 'serif',
+        #     'text.usetex': True,
+        #     'pgf.rcfonts': False,
+        # })
+        plt.savefig('{}_show.pdf'.format(self.dataset_dir))

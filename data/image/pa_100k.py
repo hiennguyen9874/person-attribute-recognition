@@ -126,7 +126,8 @@ class PA_100K(BaseDataSource):
         
 if __name__ == "__main__":
     datasource = PA_100K(root_dir='/datasets', download=True, extract=True)
-    datasource.summary_weight()
+    datasource.show_some_image(num_image=10, num_per_row=10)
+    # datasource.summary_weight()
     # print(np.expand_dims(datasource.get_weight('train'), axis=1))
     # print(np.around(np.stack((datasource.get_weight('train'), datasource.get_weight('test')), axis=1)*100, 2))
 
