@@ -70,6 +70,8 @@ optimizer:
 loss:
   name: Singular_BCE
   reduction: mean
+  alpha: 1
+  gamma: 2.5
 
 # freeze <layers> at first <epochs>.
 freeze:
