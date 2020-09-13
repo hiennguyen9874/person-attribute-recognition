@@ -29,7 +29,8 @@ class ReductionHead(nn.Module):
 
         self.linear.apply(weights_init_classifier)
         self.bottleneck.apply(weights_init_kaiming)
-        self.bnneck.apply(weights_init_kaiming)
+        if bn_where.lower() != 'none':
+            self.bnneck.apply(weights_init_kaiming)
 
     def forward(self, x):
         x = self.bottleneck(x)
