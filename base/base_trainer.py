@@ -47,6 +47,7 @@ class BaseTrainer(object):
     def _save_logs(self):
         r""" Save logs from google colab to google drive
         """
-        if os.path.isdir(self.logs_dir_saved):
-            rmdir(self.logs_dir_saved, remove_parent=True)
-        shutil.copytree(self.logs_dir, self.logs_dir_saved)
+        # if os.path.isdir(self.logs_dir_saved):
+        #     rmdir(self.logs_dir_saved, remove_parent=True)
+        # shutil.copytree(self.logs_dir, self.logs_dir_saved)
+        copyTree(self.logs_dir, self.logs_dir_saved)
