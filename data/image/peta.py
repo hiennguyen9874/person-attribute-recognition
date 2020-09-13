@@ -146,9 +146,9 @@ class Peta(BaseDataSource):
 if __name__ == "__main__":
     from utils import read_config
     config = read_config('config/base_epoch.yml', False)
-    datasource = Peta(root_dir=config['data']['data_dir'], download=True, extract=True)
+    datasource = Peta(root_dir=config['data']['data_dir'], download=False, extract=False)
 
-    datasource.summary_weight()
+    datasource.show_some_image(num_image=10, num_per_row=10)
     
     # show some image by attribute
     # import cv2
