@@ -19,7 +19,7 @@ class BNHead(nn.Module):
         else:
             self.bnneck = get_norm(out_features, '1d',  bias_freeze)
 
-        
+
         self.linear = nn.Linear(in_features * pooling_size * pooling_size, out_features)
 
         self.linear.apply(weights_init_classifier)
