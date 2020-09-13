@@ -14,7 +14,11 @@ class BNHead(nn.Module):
         super(BNHead, self).__init__()
         self.bn_where = bn_where
         
-        self.bnneck = get_norm(out_features, '1d',  bias_freeze)
+        if bn_where == 'before':
+            self.bnneck = get_norm(in_features * pooling_size * pooling_size, '1d',  bias_freeze)
+        else:
+            self.bnneck = get_norm(out_features, '1d',  bias_freeze)
+
         
         self.linear = nn.Linear(in_features * pooling_size * pooling_size, out_features)
 
