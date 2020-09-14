@@ -18,7 +18,7 @@ class FocalLoss(nn.Module):
         super(FocalLoss, self).__init__()
         assert reduction in ['sum', 'mean'], 'reduction must be mean or sum'
         self.pos_ratio = pos_ratio
-        self.alpha = alpha
+        # self.alpha = alpha
         self.gamma = gamma
         self.reduction = reduction
 
@@ -26,7 +26,8 @@ class FocalLoss(nn.Module):
         batch_size = inputs.shape[0]
         loss = F.binary_cross_entropy_with_logits(inputs, targets, reduction='none')
         pt = torch.exp(-loss)
-        alpha = targets * self.alpha + (1 - targets) * (1 - self.alpha)
+        # alpha = targets * self.alpha + (1 - targets) * (1 - self.alpha)
+        alpha = 1
         loss = alpha * (1-pt)**self.gamma * loss
         
         if self.pos_ratio is not None:
@@ -34,3 +35,5 @@ class FocalLoss(nn.Module):
             loss = (loss * weight)
         loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
         return loss
+
+
