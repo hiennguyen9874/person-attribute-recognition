@@ -8,6 +8,7 @@ import torch.nn as nn
 from losses.CE_loss import CEL_Sigmoid
 from losses.Singular_BCE import Singular_BCE
 from losses.Focal_loss import FocalLoss
+from losses.CE_loss_label_smooth import CEL_Sigmoid_Smooth
 
 def build_losses(config, pos_ratio, num_attribute, use_gpu=True, **kwargs):
     cfg_loss = config['loss']
@@ -31,6 +32,16 @@ def build_losses(config, pos_ratio, num_attribute, use_gpu=True, **kwargs):
                 'alpha': cfg_loss['alpha'],
                 'gamma': cfg_loss['gamma'],
             }
+    elif cfg_loss['name'] == 'CEL_Sigmoid_Smooth':
+        return CEL_Sigmoid_Smooth(
+            num_classes=num_attribute,
+            epsilon=cfg_loss['epsilon'],
+            pos_ratio=pos_ratio,
+            reduction=cfg_loss['reduction']
+        ), {
+            'reduction': cfg_loss['reduction'],
+            'epsilon': cfg_loss['epsilon']
+        }
     else:
         raise KeyError('config[loss][name] error')
 
