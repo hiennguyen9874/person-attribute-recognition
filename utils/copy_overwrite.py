@@ -22,7 +22,6 @@ def isAFlatDir(sDir):
             return False
     return True
 
-
 def copyTree(src, dst):
     r""" Move and overwrite files and folders
 
