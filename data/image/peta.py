@@ -18,10 +18,10 @@ class Peta(BaseDataSource):
         https://github.com/valencebond/Strong_Baseline_of_Pedestrian_Attribute_Recognition/blob/master/dataset/preprocess/format_peta.py
     """
     url = {
-        'PETA-New.zip': '1Z2o5RyyCXBBGdEUey-Wi1ImFDFUTIVEo'
+        'PETA-New.zip': '1Nec2n96zUFRGuJmtF5kemqbqY1tIA-5H'
     }
     file_path = {
-        'PETA-New.zip': '/content/drive/Shared drives/HIEN/Datasets/PETA-New.zip',
+        'PETA-New.zip': '/content/drive/My Drive/Colab/Datasets/PETA-New.zip',
     }
     group_order = [10, 18, 19, 30, 15, 7, 9, 11, 14, 21, 26, 29, 32, 33, 34, 6, 8, 12, 25, 27, 31, 13, 23, 24, 28, 4, 5, 17, 20, 22, 0, 1, 2, 3, 16]
 
