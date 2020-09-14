@@ -12,7 +12,7 @@ model:
   # ibn_a: https://github.com/XingangPan/IBN-Net
   backbone: resnet50
   pretrained: True
-  # global pooling support: [avg_pooling, gem_pooling]
+  # global pooling support: [avg_pooling, gem_pooling, max_pooling]
   pooling: gem_pooling
   pooling_size: 1
   # head support: [BNHead, ReductionHead]
