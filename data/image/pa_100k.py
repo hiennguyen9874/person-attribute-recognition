@@ -14,10 +14,10 @@ class PA_100K(BaseDataSource):
     r''' https://github.com/xh-liu/HydraPlus-Net/blob/master/README.md,
     '''
     url = {
-        'PA-100K.zip': '1Jfb3I8BK4oOX3eepaiYyd4fHoMNkgTaz'
+        'PA-100K.zip': '13XObupInli_BbcD1Mq6WdvljASoxkFBt'
     }
     file_path = {
-        'PA-100K.zip': '/content/drive/Shared drives/HIEN/Datasets/PA-100K.zip',
+        'PA-100K.zip': '/content/drive/My Drive/Colab/Datasets/PA-100K.zip',
     }
     group_order = [7, 8, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 9, 10, 11, 12, 1, 2, 3, 0, 4, 5, 6]
 

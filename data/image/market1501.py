@@ -13,10 +13,10 @@ from base import BaseDataSource
 
 class Market1501_Attribute(BaseDataSource):
     url = {
-        'Market-1501-v15.09.15-Attribute.zip': '1xnrvuFTzLh_fIJo5Gkf4vcG8lEGL8gBd'
+        'Market-1501-v15.09.15-Attribute.zip': '1J5cxrY0KKcsGLO8D7Qu_j1ZBV2_vpwJz'
     }
     file_path = {
-        'Market-1501-v15.09.15-Attribute.zip': '/content/drive/Shared drives/HIEN/Datasets/Market-1501-v15.09.15-Attribute.zip',
+        'Market-1501-v15.09.15-Attribute.zip': '/content/drive/My Drive/Colab/Datasets/Market-1501-v15.09.15-Attribute.zip',
     }
 
     def __init__(

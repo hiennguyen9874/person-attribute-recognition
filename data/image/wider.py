@@ -14,10 +14,10 @@ class Wider(BaseDataSource):
     dataset_id = '1whFSGBMLm-92SQ6JXEAJwM49XrmQhUd5'
 
     url = {
-        'Wider-data.zip': '1-4q2G6Mof7ArEysBUvU26jgscYt2NT2m'
+        'Wider-data.zip': '1Unt1qudE6wZdfOmZP3ljqThLhQYvprnD'
     }
     file_path = {
-        'Wider-data.zip': '/content/drive/Shared drives/HIEN/Datasets/Wider-data.zip',
+        'Wider-data.zip': '/content/drive/My Drive/Colab/Datasets/Wider-data.zip',
     }
 
     def __init__(self, root_dir='datasets', download=True, extract=True, use_tqdm=True, validation_split=0.1):
