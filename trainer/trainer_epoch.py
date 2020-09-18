@@ -35,7 +35,6 @@ class Trainer_Epoch(Trainer):
             # push data to device
             data, labels = data.to(self.device), labels.to(self.device)
 
-
             with autocast():
                 # forward batch
                 out = self.model(data)

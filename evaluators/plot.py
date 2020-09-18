@@ -18,7 +18,7 @@ def plot_loss_accuracy(dpath, list_dname, path_folder, title = None, com=0):
         output_path (str): path to save csv file after concat logs from different run time
         title (str): title for figure
         com (float [0, 1]): ratio for smooth line
-    """ 
+    """
     # check folder exists
     assert os.path.exists(dpath), "folder %s not exists" % dpath
     for dname in list_dname:

@@ -125,7 +125,6 @@ class Peta(BaseDataSource):
                     neg_dict[attribute].append(idx)
         return pos_dict, neg_dict
 
-    
     def summary_count(self):
         print('num image in training set: ', len(self.get_data('train')))
         print('num image in valid set: ', len(self.get_data('val')))
@@ -148,30 +147,30 @@ if __name__ == "__main__":
     config = read_config('config/base_epoch.yml', False)
     datasource = Peta(root_dir=config['data']['data_dir'], download=False, extract=False)
 
-    datasource.show_some_image(num_image=10, num_per_row=10)
+    # datasource.show_some_image(num_image=10, num_per_row=10)
     
     # show some image by attribute
-    # import cv2
-    # import matplotlib.pyplot as plt
+    import cv2
+    import matplotlib.pyplot as plt
     
-    # from shutil import copy2
-    # from utils import imread
-    # from tqdm.auto import tqdm
+    from shutil import copy2
+    from utils import imread
+    from tqdm.auto import tqdm
 
-    # for attribute in tqdm(datasource.get_attribute()):
-    #     pos_dict, neg_dict = datasource.pase_data(phase='train')
+    for attribute in tqdm(datasource.get_attribute()):
+        pos_dict, neg_dict = datasource.pase_data(phase='train')
         
-    #     list_idx_by_attribute = pos_dict[attribute]
-    #     for idx in list_idx_by_attribute:
-    #         path, _ = datasource.get_data('train')[idx]
-    #         os.makedirs(os.path.join(datasource.data_dir, 'positive', attribute), exist_ok=True)
-    #         copy2(path, os.path.join(datasource.data_dir, 'positive', attribute))
+        list_idx_by_attribute = pos_dict[attribute]
+        for idx in list_idx_by_attribute:
+            path, _ = datasource.get_data('train')[idx]
+            os.makedirs(os.path.join(datasource.data_dir, 'positive', attribute), exist_ok=True)
+            copy2(path, os.path.join(datasource.data_dir, 'positive', attribute))
         
-    #     list_idx_by_attribute = neg_dict[attribute]
-    #     for idx in list_idx_by_attribute:
-    #         path, _ = datasource.get_data('train')[idx]
-    #         os.makedirs(os.path.join(datasource.data_dir, 'neg', attribute), exist_ok=True)
-    #         copy2(path, os.path.join(datasource.data_dir, 'neg', attribute))
+        list_idx_by_attribute = neg_dict[attribute]
+        for idx in list_idx_by_attribute:
+            path, _ = datasource.get_data('train')[idx]
+            os.makedirs(os.path.join(datasource.data_dir, 'neg', attribute), exist_ok=True)
+            copy2(path, os.path.join(datasource.data_dir, 'neg', attribute))
 
     # datasource.summary()
     # datasource.parser_folder('train')
