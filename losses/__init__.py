@@ -23,7 +23,7 @@ def build_losses(config, pos_ratio, num_attribute, use_gpu=True, **kwargs):
         return Singular_BCE(num_attribute, reduction=cfg_loss['reduction']), {'reduction': cfg_loss['reduction']}
     elif cfg_loss['name'] == 'FocalLoss':
         return FocalLoss(
-            pos_ratio, 
+            pos_ratio=pos_ratio, 
             reduction=cfg_loss['reduction'],
             alpha=cfg_loss['alpha'],
             gamma=cfg_loss['gamma'],
