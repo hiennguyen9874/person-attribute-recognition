@@ -33,7 +33,7 @@ def read_config(path_config: str, base=True):
     r""" read config yml file, return dict
     """
     new_config = yaml.safe_load(open(path_config))
-    if not base:
+    if not base or 'base' not in new_config:
         return new_config
     base_config = yaml.safe_load(open(new_config['base']))
     all_config = update(base_config, new_config)
