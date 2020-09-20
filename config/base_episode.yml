@@ -6,8 +6,7 @@ type: episode
 
 model:
   name: baseline
-  # backbone support: [osnet, resnet50, resnet101, resnet50_nl, resnet101_nl, resnet50_ibn_a,
-  #                    resnet101_ibn_a, resnet50_ibn_a_nl, resnet101_ibn_a_nl]
+  # backbone support: [osnet, resnet50, resnet101, resnet50_nl, resnet101_nl, resnet50_ibn_a, resnet101_ibn_a, resnet50_ibn_a_nl, resnet101_ibn_a_nl]
   # nl: https://arxiv.org/abs/1711.07971
   # ibn_a: https://github.com/XingangPan/IBN-Net
   backbone: resnet50
