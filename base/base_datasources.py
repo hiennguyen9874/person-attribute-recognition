@@ -25,7 +25,7 @@ class BaseDataSource(object):
     def _exists(self, extract_dir):
         raise NotImplementedError
     
-    def _extract(self, file_name, use_tqdm=True):
+    def _extract(self, file_name, use_tqdm=True, pwd=None):
         r""" extract compressed file
         Args:
             use_tqdm (boolean): use tqdm process bar when extracting
@@ -35,22 +35,23 @@ class BaseDataSource(object):
         if self._exists(extract_dir):
             return
         print("Extracting...")
+        pwd = bytes(pwd, 'utf-8') if pwd != None else None
         try:
             tar = tarfile.open(file_path)
             os.makedirs(extract_dir, exist_ok=True)
             if use_tqdm:
                 for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers()), desc=file_name):
-                    tar.extract(member=member, path=extract_dir)
+                    tar.extract(member=member, path=extract_dir, pwd=pwd)
             else:
-                tar.extractall(path=extract_dir)
+                tar.extractall(path=extract_dir, pwd=pwd)
             tar.close()
         except:
             zip_ref = zipfile.ZipFile(file_path, 'r')
             if use_tqdm:
                 for member in tqdm(iterable=zip_ref.infolist(), total=len(zip_ref.infolist()), desc=file_name):
-                    zip_ref.extract(member=member, path=extract_dir)
+                    zip_ref.extract(member=member, path=extract_dir, pwd=pwd)
             else:
-                zip_ref.extractall(path=extract_dir)
+                zip_ref.extractall(path=extract_dir, pwd=pwd)
             zip_ref.close()
         print("Extracted!")
     
@@ -107,7 +108,6 @@ class BaseDataSource(object):
             for path, label in self.get_data(phase):
                 if not os.path.exists(path):
                     raise FileExistsError
-
 
     def show_some_image(self, num_image, num_per_row=10):
         import cv2
