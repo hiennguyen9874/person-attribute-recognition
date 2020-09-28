@@ -14,7 +14,3 @@ class TimmModel(nn.Module):
 
     def get_feature_dim(self):
         return self.feature_dim
-
-if __name__ == "__main__":
-    model = TimmModel('resnet50')
-    print(model.get_feature_dim())

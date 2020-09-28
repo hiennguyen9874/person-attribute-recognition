@@ -6,7 +6,6 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-    
 @torch.jit.script
 def _ratio2weight(targets, ratio):
     ratio = ratio.type_as(targets)
@@ -18,22 +17,23 @@ class FocalLoss(nn.Module):
         super(FocalLoss, self).__init__()
         assert reduction in ['sum', 'mean'], 'reduction must be mean or sum'
         self.pos_ratio = pos_ratio
-        # self.alpha = alpha
+        self.alpha = alpha
         self.gamma = gamma
         self.reduction = reduction
 
     def forward(self, inputs, targets):
-        batch_size = inputs.shape[0]
+        # batch_size = inputs.shape[0]
         loss = F.binary_cross_entropy_with_logits(inputs, targets, reduction='none')
         pt = torch.exp(-loss)
-        # alpha = targets * self.alpha + (1 - targets) * (1 - self.alpha)
-        alpha = 1
+        alpha = targets * self.alpha + (1 - targets) * (1 - self.alpha)
+        # alpha = 1
         loss = alpha * (1-pt)**self.gamma * loss
         
         if self.pos_ratio is not None:
             weight = _ratio2weight(targets, self.pos_ratio)
             loss = (loss * weight)
-        loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
-        return loss
+        # loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
+        loss = loss.mean(dim=0)
+        return loss.mean() if self.reduction == 'mean' else loss.sum()
 
 
