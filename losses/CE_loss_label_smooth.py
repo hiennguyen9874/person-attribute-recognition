@@ -24,11 +24,12 @@ class CEL_Sigmoid_Smooth(nn.Module):
         self.epsilon = epsilon
 
     def forward(self, inputs, targets):
-        batch_size = inputs.shape[0]
+        # batch_size = inputs.shape[0]
         smoothed = (1 - self.epsilon) * targets + self.epsilon / self.num_classes
         loss = F.binary_cross_entropy_with_logits(inputs, smoothed, reduction='none')
         if self.pos_ratio is not None:
             weight = _ratio2weight(targets, self.pos_ratio)
             loss = (loss * weight)
-        loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
-        return loss
+        # loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
+        loss = loss.mean(dim=0)
+        return loss.mean() if self.reduction == 'mean' else loss.sum()
