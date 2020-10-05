@@ -68,10 +68,12 @@ optimizer:
 # loss support: [Singular_BCE]
 loss:
   name: Singular_BCE
-  reduction: mean
-  alpha: 1
-  gamma: 2.5
-  epsilon: 0.1
+  default:
+    Singular_BCE:
+      reduction: mean
+      alpha: 1
+      gamma: 2.5
+      epsilon: 0.1
 
 # freeze <layers> at first <epochs>.
 freeze:

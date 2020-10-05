@@ -25,7 +25,8 @@ class Baseline(nn.Module):
         bn_where='after',
         batch_norm_bias=True,
         use_tqdm=True,
-        is_inference=False):
+        is_inference=False
+    ):
         
         super(Baseline, self).__init__()
         self.head_name = head

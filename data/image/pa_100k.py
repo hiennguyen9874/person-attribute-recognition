@@ -1,4 +1,3 @@
-
 import os
 import sys
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..', '..'))
@@ -12,6 +11,7 @@ from base import BaseDataSource
 
 class PA_100K(BaseDataSource):
     r''' https://github.com/xh-liu/HydraPlus-Net/blob/master/README.md,
+    https://github.com/valencebond/Strong_Baseline_of_Pedestrian_Attribute_Recognition
     '''
     url = {
         'PA-100K.zip': '13XObupInli_BbcD1Mq6WdvljASoxkFBt'

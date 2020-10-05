@@ -47,11 +47,12 @@ class Trainer(BaseTrainer):
             self.freeze = None
 
         # list of metrics
-        self.lst_metrics = ['mA', 'accuracy', 'f1_score']
+        self.lst_metrics = ['loss', 'mA', 'accuracy', 'f1_score']
+        self.type_metrics = ['min', 'max', 'max', 'max']
 
         # track metric
-        self.train_metrics = MetricTracker('loss', *self.lst_metrics)
-        self.valid_metrics = MetricTracker('loss', *self.lst_metrics)
+        self.train_metrics = MetricTracker(*self.lst_metrics)
+        self.valid_metrics = MetricTracker(*self.lst_metrics)
 
         # step log loss and accuracy
         self.log_step = (len(self.datamanager.get_dataloader('train')) // 5,
@@ -73,7 +74,8 @@ class Trainer(BaseTrainer):
             params_optimizers=params_optimizers,
             params_lr_scheduler=params_lr_scheduler,
             freeze_layers=False if self.freeze == None else True,
-            clip_grad_norm_=self.config['clip_grad_norm_']['enable'])
+            clip_grad_norm_=self.config['clip_grad_norm_']['enable']
+        )
 
         # send model to device
         self.model.to(self.device)
@@ -88,9 +90,12 @@ class Trainer(BaseTrainer):
                 self.datamanager.get_image_size()[0], 
                 self.datamanager.get_image_size()[1])),
             batch_dim=None,
-            device='cuda' if self.use_gpu else 'cpu',
+            col_width=99999,
+            depth=99999,
+            device=self.device,
             print_func=self.logger.info,
-            print_step=False)
+            print_step=False
+        )
 
         # resume model from last checkpoint
         if config['resume'] != '':
@@ -117,13 +122,6 @@ class Trainer(BaseTrainer):
                     else:
                         self.lr_scheduler.step()
             
-            # add scalars to tensorboard
-            self.writer.add_scalars('Loss',
-                {
-                    'Train': self.train_metrics.avg('loss'),
-                    'Val': self.valid_metrics.avg('loss')
-                }, global_step=epoch)
-            
             for metric in self.lst_metrics:
                 self.writer.add_scalars(metric,
                     {
@@ -140,19 +138,23 @@ class Trainer(BaseTrainer):
                 self.logger.info('    {:15s}: {}'.format(str(key), value))
 
             # save model
-            save_best_loss = False
-            if self.best_loss == None or self.best_loss >= self.valid_metrics.avg('loss'):
-                self.best_loss = self.valid_metrics.avg('loss')
-                save_best_loss = True
-
             save_best = dict()
-            for metric in self.lst_metrics:
+            # for metric in self.lst_metrics:
+            for idx_metric in range(len(self.lst_metrics)):
+                metric = self.lst_metrics[idx_metric]
                 save_best[metric] = False
-                if self.best_metrics[metric] == None or self.best_metrics[metric] <= self.valid_metrics.avg(metric):
-                    self.best_metrics[metric] = self.valid_metrics.avg(metric)
-                    save_best[metric] = True
+                if self.type_metrics[idx_metric] == 'max':
+                    if self.best_metrics[metric] == None or self.best_metrics[metric] <= self.valid_metrics.avg(metric):
+                        self.best_metrics[metric] = self.valid_metrics.avg(metric)
+                        save_best[metric] = True
+                elif self.type_metrics[idx_metric] == 'min':
+                    if self.best_metrics[metric] == None or self.best_metrics[metric] >= self.valid_metrics.avg(metric):
+                        self.best_metrics[metric] = self.valid_metrics.avg(metric)
+                        save_best[metric] = True
+                else:
+                    raise KeyError("Type of metric error")
 
-            self._save_checkpoint(epoch, save_best_loss, save_best)
+            self._save_checkpoint(epoch, save_best)
 
             # save logs to drive if using colab
             if self.config['colab']:
@@ -182,7 +184,7 @@ class Trainer(BaseTrainer):
         """
         raise NotImplementedError
     
-    def _save_checkpoint(self, epoch, save_best_loss, save_best_metrics):
+    def _save_checkpoint(self, epoch, save_best_metrics):
         r""" Save model to file
         """
         state = {
@@ -190,8 +192,7 @@ class Trainer(BaseTrainer):
             'state_dict': self.model.state_dict(),
             'loss': self.criterion.state_dict(),
             'optimizer': self.optimizer.state_dict(),
-            'lr_scheduler': self.lr_scheduler.state_dict(),
-            'best_loss': self.best_loss
+            'lr_scheduler': self.lr_scheduler.state_dict()
         }
         for metric in self.lst_metrics:
             state.update({'best_{}'.format(metric): self.best_metrics[metric]})
@@ -199,11 +200,6 @@ class Trainer(BaseTrainer):
         filename = os.path.join(self.checkpoint_dir, 'model_last.pth')
         self.logger.info("Saving last model: model_last.pth ...")
         torch.save(state, filename)
-        
-        if save_best_loss:
-            filename = os.path.join(self.checkpoint_dir, 'model_best_loss.pth')
-            self.logger.info("Saving current best loss: model_best_loss.pth ...")
-            torch.save(state, filename)
         
         for metric in self.lst_metrics:
             if save_best_metrics[metric]:
@@ -226,7 +222,6 @@ class Trainer(BaseTrainer):
         self.criterion.load_state_dict(checkpoint['loss'])
         self.optimizer.load_state_dict(checkpoint['optimizer'])
         self.lr_scheduler.load_state_dict(checkpoint['lr_scheduler'])
-        self.best_loss = checkpoint['best_loss']
         for metric in self.lst_metrics:
             self.best_metrics[metric] = checkpoint['best_{}'.format(metric)]
         self.logger.info("Checkpoint loaded. Resume training from epoch {}".format(self.start_epoch))
@@ -239,7 +234,8 @@ class Trainer(BaseTrainer):
         params_optimizers=None,
         params_lr_scheduler=None,
         freeze_layers=False,
-        clip_grad_norm_=False):
+        clip_grad_norm_=False
+    ):
         
         r""" print config into log file
         """

@@ -144,7 +144,6 @@ class RandomBatchSamplerAttribute(torch.utils.data.Sampler):
     def __len__(self):
         return self.num_iterator
 
-
 class RandomBatchSamplerAttribute1(torch.utils.data.Sampler):
     r""" Episode sampler, random attribute from multinomial distribution, 
         each attribute, random 'k' positive sampler and 'l' negative sampler.
@@ -528,7 +527,6 @@ class RandomBalanceBatchSampler(torch.utils.data.Sampler):
             left_index_dict[person_id].extend(left_index)
             right_index_dict[person_id].extend(right_index)
         return RandomBalanceBatchSampler(self.datasource, self.batch_size, self.num_instances, self.num_iterators, left_index_dict), RandomBalanceBatchSampler(self.datasource, self.batch_size, self.num_instances, num_iterators_val, right_index_dict)
-
 
 r""" build_sampler function
 """

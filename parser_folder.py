@@ -23,7 +23,7 @@ def copytree(src, dst, symlinks=False, ignore=None):
 
 if __name__ == "__main__":
     log_dir = 'saved/logs'
-    saved_folder = 'saved/saved'
+    saved_folder = 'saved/parsed'
 
     all_saved_info = list()
     for f1 in [f.name for f in os.scandir(log_dir) if f.is_dir()]:

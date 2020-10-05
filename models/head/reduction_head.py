@@ -46,4 +46,3 @@ class ReductionHead(nn.Module):
             x = x.view(x.size(0), -1)
             x = self.linear(x)
         return x
-    

@@ -4,8 +4,8 @@ sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
 
 import pytz
 import torch
-import logging
 import shutil
+import logging
 from datetime import datetime
 
 from torch.utils.tensorboard import SummaryWriter
@@ -34,14 +34,20 @@ class BaseTrainer(object):
         setup_logging(self.logs_dir)
         self.logger = logging.getLogger('train')
         
-        self.use_gpu = self.cfg_trainer['n_gpu'] > 0 and torch.cuda.is_available()
+        self.use_gpu = self.cfg_trainer['n_gpu'] > -1 and torch.cuda.is_available()
+        if self.cfg_trainer['n_gpu'] >= torch.cuda.device_count():
+            raise KeyError('n_gpu not in cuda visible!')
+        if not self.use_gpu:
+            self.device = torch.device(type='cpu')
+        else:
+            self.device = torch.device(type='cuda', index=self.cfg_trainer['n_gpu'])
+        torch.cuda.set_device(self.cfg_trainer['n_gpu'])
+
         if self.use_gpu:
             torch.backends.cudnn.benchmark = True
-        self.device = torch.device('cuda:0' if self.use_gpu else 'cpu')
-        self.map_location = torch.device('cuda:0' if self.use_gpu else 'cpu')
 
-        self.epochs = self.cfg_trainer['epochs']
         self.start_epoch = 1
+        self.epochs = self.cfg_trainer['epochs']
         self.writer = SummaryWriter(self.logs_dir)
 
     def _save_logs(self):

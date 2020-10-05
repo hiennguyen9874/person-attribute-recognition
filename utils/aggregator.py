@@ -86,7 +86,6 @@ def aggregate(dpath, list_dname, output_path=None):
                 if len(set(extracts_per_subpath[list_dname[i]]['list_part']).difference(set(extracts_per_subpath[list_dname[j]]['list_part']))) != 0:
                     raise KeyError
 
-
     list_part = [set(), set()]
     list_data_frame = dict()
     for key1, value1 in extracts_per_subpath.items():
@@ -140,4 +139,3 @@ def aggregate1(dpath, list_dname, output_path=None):
             data_frame.to_csv(file_name)
         ret[key] = data_frame
     return ret
-
