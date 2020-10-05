@@ -25,4 +25,3 @@ def setup_logging(save_dir, log_config='logger_config.json', default_level=loggi
         print("Warning: logging configuration file is not found in {}.".format(log_config))
         logging.basicConfig(level=default_level)
 
-

@@ -143,3 +143,5 @@ class RAPV1(BaseDataSource):
 
 if __name__ == "__main__":
     datasource = RAPV1(root_dir='/home/hien/Documents/datasets', download=True, extract=True, use_tqdm=True)
+    datasource.summary_weight()
+    datasource.summary_count()

@@ -95,7 +95,7 @@ class BaseDataSource(object):
         r""" get data, must return list of (image_path, label)
         """
         raise NotImplementedError
-    
+
     def get_phase(self):
         r""" get list of phase.
         """

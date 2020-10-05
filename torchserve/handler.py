@@ -19,4 +19,3 @@ class Multi_LabelClassifier(ImageClassifier):
         data[data>0.5] = 1
         data[data<=0.5] = 0
         return data.tolist()
-

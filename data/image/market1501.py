@@ -12,6 +12,8 @@ from collections import defaultdict
 from base import BaseDataSource
 
 class Market1501_Attribute(BaseDataSource):
+    r""" https://github.com/vana77/Market-1501_Attribute
+    """
     url = {
         'Market-1501-v15.09.15-Attribute.zip': '1J5cxrY0KKcsGLO8D7Qu_j1ZBV2_vpwJz'
     }
@@ -82,10 +84,8 @@ class Market1501_Attribute(BaseDataSource):
         # print("Get attribute...")
         self.dict_attribute = dict()
         self.dict_attribute_label = dict()
-        self.dict_attribute['train'], self.dict_attribute_label['train'] = self._get_dict_attribute(
-            f, 'train', relabel=re_label_on_train, pid2label=pid2label['train'])
-        self.dict_attribute['test'], self.dict_attribute_label['test'] = self._get_dict_attribute(
-            f, 'test', relabel=False)
+        self.dict_attribute['train'], self.dict_attribute_label['train'] = self._get_dict_attribute(f, 'train', relabel=re_label_on_train, pid2label=pid2label['train'])
+        self.dict_attribute['test'], self.dict_attribute_label['test'] = self._get_dict_attribute(f, 'test', relabel=False)
 
     def get_data(self, mode='train'):
         if mode == 'train':

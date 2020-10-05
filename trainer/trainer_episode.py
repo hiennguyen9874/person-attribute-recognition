@@ -18,7 +18,7 @@ class Trainer_Episode(Trainer):
 
         # Creates a GradScaler once at the beginning of training.
         self.scaler = GradScaler()
-        
+
     def _train_epoch(self, epoch):
         r""" Training step
         """

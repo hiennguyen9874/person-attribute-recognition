@@ -32,7 +32,7 @@ def build_backbone(name, pretrained=True, progress=True):
     # return __backbones[name][0](pretrained=pretrained, progress=progress), __backbones[name][1]
     if name in __backbones.keys():
         return __backbones[name][0](pretrained=pretrained, progress=progress), __backbones[name][1]
-    elif name.split('/')[0] == 'tim':
+    elif name.split('/')[0] == 'timm':
         model_name = name.split('/')[1]
         model = TimmModel(model_name, pretrained=pretrained)
         return model, model.get_feature_dim()

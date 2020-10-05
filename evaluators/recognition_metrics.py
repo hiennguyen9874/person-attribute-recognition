@@ -334,7 +334,6 @@ def test(config, datamanager, logger_func):
 
     return result_label, result_instance
 
-
 if __name__ == "__main__":
     config1 = "config/baseline_peta.yml"
 
@@ -352,8 +351,6 @@ if __name__ == "__main__":
 
     plt.scatter(weight, result_label.accuracy)
     plt.show()
-
-
 
 # if __name__ == "__main__":
 #     config1 = "config/baseline_peta.yml"

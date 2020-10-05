@@ -35,4 +35,3 @@ class BNHead(nn.Module):
             x = self.linear(x)
             x = self.bnneck(x)
         return x
-

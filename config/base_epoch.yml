@@ -58,10 +58,18 @@ optimizer:
 # loss support: [BCEWithLogitsLoss, CEL_Sigmoid, Non_BCEWithLogitsLoss]
 loss:
   name: CEL_Sigmoid
-  reduction: mean
-  alpha: 1
-  gamma: 2.5
-  epsilon: 0.1
+  default:
+    CEL_Sigmoid:
+      reduction: mean
+    Singular_BCE:
+      reduction: mean
+    FocalLoss:
+      alpha: 1
+      gamma: 2.5
+      reduction: mean
+    CEL_Sigmoid_Smooth:
+      epsilon: 0.1
+      reduction: mean
 
 # freeze <layers> at first <epochs>.
 freeze:

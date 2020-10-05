@@ -44,5 +44,3 @@ def build_losses(config, pos_ratio, num_attribute, use_gpu=True, **kwargs):
         }
     else:
         raise KeyError('config[loss][name] error')
-
-
