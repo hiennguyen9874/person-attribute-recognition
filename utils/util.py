@@ -18,7 +18,7 @@ __all__ = ['read_config', 'copyTree', 'imread', 'read_json', 'write_json', 'rmdi
            'config_to_str', 'array_interweave', 'array_interweave3', 'neq', 'pip_install', 'COLOR']
 
 
-def read_config(path_config: str, base=False):
+def read_config(path_config: str, base=True):
     r""" read config yml file, return dict
     """
     def update(d, u):

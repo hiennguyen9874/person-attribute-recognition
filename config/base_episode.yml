@@ -25,7 +25,8 @@ model:
 
 data:
   # folder will save data
-  data_dir: /datasets
+#   data_dir: /datasets
+  data_dir: "/workspace/HIEN/datasets"
   # name of dataset: [peta, pa100k, ppe, ppe_two, wider]
   name: peta
   image_size: [256, 192]
@@ -58,12 +59,16 @@ optimizer:
     enable: False
     lr: 0.1
     layers: [head]
-  weight_decay: 0.0005
-  adam_beta1: 0.9
-  adam_beta2: 0.99
-  momentum: 0.9
-  sgd_dampening: 0
-  sgd_nesterov: False
+  default:
+    adam:
+      weight_decay: 0.0005
+      beta1: 0.9
+      beta2: 0.99
+    sgd:
+      momentum: 0.9
+      weight_decay: 0.0005
+      dampening: 0
+      nesterov: False
 
 # loss support: [Singular_BCE]
 loss:

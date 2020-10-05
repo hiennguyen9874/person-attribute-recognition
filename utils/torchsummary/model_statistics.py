@@ -64,7 +64,8 @@ class ModelStatistics:
         """ Print results of the summary. """
         header_row = self.formatting.format_row("Layer (type:depth-idx)", HEADER_TITLES)
         layer_rows = self.layers_to_str()
-        divider = "=" * self.formatting.get_total_width()
+#         divider = "=" * self.formatting.get_total_width()
+        divider = "=" * 60
         if self.print_step:
             summary_str = (
                 "{0}\n{1}{0}\n{2}{0}"
