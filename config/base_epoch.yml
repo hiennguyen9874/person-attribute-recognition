@@ -65,16 +65,16 @@ loss:
   name: CEL_Sigmoid
   default:
     CEL_Sigmoid:
-      reduction: mean
+      reduction: sum
     Singular_BCE:
-      reduction: mean
+      reduction: sum
     FocalLoss:
       alpha: 1
       gamma: 2.5
-      reduction: mean
+      reduction: sum
     CEL_Sigmoid_Smooth:
       epsilon: 0.1
-      reduction: mean
+      reduction: sum
 
 # freeze <layers> at first <epochs>.
 freeze:
@@ -125,7 +125,7 @@ clip_grad_norm_:
 # use_tqdm: use tqdm process bar when training.
 trainer:
   # 0 if using cpu. > 0 if using gpu
-  n_gpu: 0
+  n_gpu: 1
   # maximum epoch
   epochs: 120
   # saved log folder
