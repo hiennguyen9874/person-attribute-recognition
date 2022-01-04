@@ -25,8 +25,8 @@ model:
 
 data:
   # folder will save data
-#   data_dir: "/home/hien/Documents/datasets"
-  data_dir: "/workspace/HIEN/datasets"
+  #   data_dir: "/home/hien/Documents/datasets"
+  data_dir: "./datasets"
   # name of dataset: [peta, pa100k, ppe, ppe_two]
   name: peta
   image_size: [256, 192]
