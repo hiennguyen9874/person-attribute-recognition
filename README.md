@@ -6,7 +6,7 @@
 
 ## Dataset
 
-- Automatic download from [github.com/dangweili/pedestrian-attribute-recognition-pytorch](https://github.com/dangweili/pedestrian-attribute-recognition-pytorch) and extract dataset.
+- Manual download from [github.com/dangweili/pedestrian-attribute-recognition-pytorch](https://github.com/dangweili/pedestrian-attribute-recognition-pytorch) and extract dataset.
   - PETA
     ```
     data_dir/
