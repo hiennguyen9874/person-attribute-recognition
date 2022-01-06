@@ -15,10 +15,7 @@ class PA_100K(BaseDataSource):
     r"""https://github.com/xh-liu/HydraPlus-Net/blob/master/README.md,
     https://github.com/valencebond/Strong_Baseline_of_Pedestrian_Attribute_Recognition
     """
-    url = {"PA-100K.zip": "13XObupInli_BbcD1Mq6WdvljASoxkFBt"}
-    file_path = {
-        "PA-100K.zip": "/content/drive/My Drive/Colab/Datasets/PA-100K.zip",
-    }
+    
     group_order = [
         7,
         8,
@@ -48,28 +45,14 @@ class PA_100K(BaseDataSource):
         6,
     ]
 
-    def __init__(self, root_dir="datasets", download=True, extract=True, use_tqdm=True):
+    def __init__(self, root_dir="datasets"):
 
         super(PA_100K, self).__init__(
             root_dir, dataset_dir="pa_100k", image_size=(256, 128)
         )
 
-        if download:
-            for key, value in self.url.items():
-                try:
-                    self._download(
-                        file_name=key, file_path=self.file_path[key], use_tqdm=use_tqdm
-                    )
-                except:
-                    self._download(file_name=key, dataset_id=value, use_tqdm=use_tqdm)
-        if extract:
-            for key, value in self.url.items():
-                self._extract(file_name=key, use_tqdm=use_tqdm)
-
-        data_dir = os.path.join(self.root_dir, self.dataset_dir, "processed")
-        if os.path.exists(
-            os.path.join(self.root_dir, self.dataset_dir, "processed", "PA-100K")
-        ):
+        data_dir = os.path.join(self.root_dir, self.dataset_dir)
+        if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, "PA-100K")):
             data_dir = os.path.join(data_dir, "PA-100K")
 
         f = scipy.io.loadmat(os.path.join(data_dir, "annotation.mat"))
@@ -170,14 +153,18 @@ class PA_100K(BaseDataSource):
 
 
 if __name__ == "__main__":
-    datasource = PA_100K(root_dir="/datasets", download=True, extract=True)
-    datasource.show_some_image(num_image=10, num_per_row=10)
-    # datasource.summary_weight()
-    # print(np.expand_dims(datasource.get_weight('train'), axis=1))
-    # print(np.around(np.stack((datasource.get_weight('train'), datasource.get_weight('test')), axis=1)*100, 2))
-
-    # datasource.save_attribute('pa100k_attribute.pkl')
-    pass
+    datasource = PA_100K(root_dir="/home/coder/project/datasets/")
+    datasource.summary_weight()
+    print(np.expand_dims(datasource.get_weight("train"), axis=1))
+    print(
+        np.around(
+            np.stack(
+                (datasource.get_weight("train"), datasource.get_weight("test")), axis=1
+            )
+            * 100,
+            2,
+        )
+    )
 
 """
 ['Female']:1

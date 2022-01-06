@@ -25,16 +25,10 @@ model:
 
 data:
   # folder will save data
-  #   data_dir: "/home/hien/Documents/datasets"
-  data_dir: "./datasets"
+  data_dir: "/home/coder/project/datasets/"
   # name of dataset: [peta, pa100k, ppe, ppe_two]
   name: peta
   image_size: [256, 192]
-  # automatic download and extract model from my drive
-  download: True
-  extract: True
-  # using tqdm process bar when download and extract dataset file
-  use_tqdm: True
   batch_size: 32
   shuffle: True
   num_workers: 4
@@ -120,8 +114,6 @@ clip_grad_norm_:
   enable: False
   max_norm: 10.0
 
-# if colab argument is true -> trainer_colab else -> trainer
-# train on local
 # use_tqdm: use tqdm process bar when training.
 trainer:
   # 0 if using cpu. > 0 if using gpu
@@ -133,15 +125,3 @@ trainer:
   log_dir: saved/logs
   output_dir: saved/outputs
   use_tqdm: True
-
-# train on colab
-# log_dir folder will copied to log_dir_saved at end of epoch
-# use_tqdm: use tqdm process bar when training.
-trainer_colab:
-  n_gpu: 1
-  epochs: 120
-  checkpoint_dir: /content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/checkpoints
-  log_dir: saved/logs
-  log_dir_saved: /content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/logs
-  output_dir: /content/drive/Shared drives/REID/HIEN/Models/person_attribute_recognition/outputs
-  use_tqdm: False

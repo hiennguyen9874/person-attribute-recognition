@@ -10,7 +10,6 @@ import numpy as np
 from collections import deque
 import torchvision.transforms.functional as F
 
-from data.image.ppe import PPE
 from data.image.pa_100k import PA_100K
 
 __all__ = ["RandomErasing"]

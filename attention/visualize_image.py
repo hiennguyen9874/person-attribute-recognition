@@ -22,11 +22,7 @@ def imread(path):
 def main(config):
     cfg_data = config["data"]
     datasource = build_datasource(
-        name=cfg_data["name"],
-        root_dir=cfg_data["data_dir"],
-        download=cfg_data["download"],
-        extract=cfg_data["extract"],
-        use_tqdm=True,
+        name=cfg_data["name"], root_dir=cfg_data["data_dir"], use_tqdm=True
     )
 
     attribute_name = datasource.get_attribute()

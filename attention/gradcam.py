@@ -133,11 +133,7 @@ class GradCam:
 
 def main(config):
     datasource = build_datasource(
-        name=config["data"]["name"],
-        root_dir=config["data"]["data_dir"],
-        download=config["data"]["download"],
-        extract=config["data"]["extract"],
-        use_tqdm=config["data"]["use_tqdm"],
+        name=config["data"]["name"], root_dir=config["data"]["data_dir"]
     )
 
     transform = transforms.Compose(
@@ -150,9 +146,7 @@ def main(config):
 
     model, _ = build_model(config["model"], num_classes=len(datasource.get_attribute()))
 
-    cfg_trainer = (
-        config["trainer_colab"] if config["colab"] == True else config["trainer"]
-    )
+    cfg_trainer = config["trainer"]
 
     use_gpu = cfg_trainer["n_gpu"] > 0 and torch.cuda.is_available()
     device = torch.device("cuda:0" if use_gpu else "cpu")

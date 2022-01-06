@@ -18,9 +18,7 @@ from evaluators import recognition_metrics, log_test
 
 
 def main(config):
-    cfg_trainer = (
-        config["trainer_colab"] if config["colab"] == True else config["trainer"]
-    )
+    cfg_trainer = config["trainer"]
     run_id = config["resume"].split("/")[-2]
     file_name = config["resume"].split("/")[-1].split(".")[0]
     output_dir = os.path.join(cfg_trainer["output_dir"], run_id, file_name)
@@ -138,16 +136,9 @@ if __name__ == "__main__":
     parser.add_argument(
         "--resume", default="", type=str, help="resume file path (default: .)"
     )
-    parser.add_argument(
-        "--colab",
-        default=False,
-        type=lambda x: (str(x).lower() == "true"),
-        help="train on colab (default: false)",
-    )
     args = parser.parse_args()
 
     config = read_config(args.config)
     config.update({"resume": args.resume})
-    config.update({"colab": args.colab})
 
     main(config)

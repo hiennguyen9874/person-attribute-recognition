@@ -2,41 +2,36 @@
 
 ## Install
 
-- Install [anaconda](https://docs.anaconda.com/)
-- `conda env create -f environment.yml`
-- `conda activate reid`
+- `pip3 install -r requirements.txt`
 
 ## Dataset
 
-- Automatic download and extract dataset.
-- Manual download from [github.com/dangweili/pedestrian-attribute-recognition-pytorch](https://github.com/dangweili/pedestrian-attribute-recognition-pytorch)
+- Automatic download from [github.com/dangweili/pedestrian-attribute-recognition-pytorch](https://github.com/dangweili/pedestrian-attribute-recognition-pytorch) and extract dataset.
   - PETA
     ```
     data_dir/
     |--peta/
-    |  |--processed/
-    |  |  |--images/
-    |  |  |  |--00001.png
-    |  |  |  |--00002.png
-    |  |  |  |--...
-    |  |  |--PETA.mat
+    |  |--images/
+    |  |  |--00001.png
+    |  |  |--00002.png
+    |  |  |--...
+    |  |--PETA.mat
     ```
   - PA-100K
     ```
     data_dir/
     |--pa_100k/
-    |  |--processed/
-    |  |  |--images/
-    |  |  |  |--0000001.png
-    |  |  |  |--0000002.png
-    |  |  |  |--...
-    |  |  |--annotation.mat
+    |  |--images/
+    |  |  |--0000001.png
+    |  |  |--0000002.png
+    |  |  |--...
+    |  |--annotation.mat
     ```
     data_dir in config file.
 
 ## Run
 
-- `python3 train.py --config <path/to/config_file.yml> --colab <true if run on colab else false>`
+- `python3 train.py --config <path/to/config_file.yml>`
 
 ## Config
 
@@ -59,12 +54,6 @@
 | resnet50_ibn_a_nl |                 | BNHead        | CEL_Sigmoid       | 82.24 |  78.57   |   88.48   | 84.20  |  85.91   |
 | osnet             |                 | ReductionHead | CEL_Sigmoid       | 77.93 |  73.00   |   83.82   | 80.65  |  81.81   |
 | osnet             |                 | BNHead        | CEL_Sigmoid       | 77.72 |  73.04   |   84.65   | 79.82  |  81.68   |
-
-### PPE dataset
-
-| backbone | bn after linear | Head   | Loss        |  mA   | Accuracy | Precision | Recall | F1-Score |
-| -------- | :-------------: | ------ | ----------- | :---: | :------: | :-------: | :----: | :------: |
-| resnet50 |     &check;     | BNHead | CEL_Sigmoid | 63.62 |  85.44   |   88.28   | 90.51  |  88.08   |
 
 ### PA-100K
 

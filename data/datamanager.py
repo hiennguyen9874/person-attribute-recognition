@@ -22,11 +22,7 @@ class BaseDataManger(object):
         self.data_name = config["name"]
 
         self.datasource = build_datasource(
-            name=self.data_name,
-            root_dir=config["data_dir"],
-            download=config["download"],
-            extract=config["extract"],
-            use_tqdm=config["use_tqdm"],
+            name=self.data_name, root_dir=config["data_dir"]
         )
 
         self.dataloader = dict()

@@ -15,38 +15,14 @@ from base import BaseDataSource
 
 class Market1501_Attribute(BaseDataSource):
     r"""https://github.com/vana77/Market-1501_Attribute"""
-    url = {"Market-1501-v15.09.15-Attribute.zip": "1J5cxrY0KKcsGLO8D7Qu_j1ZBV2_vpwJz"}
-    file_path = {
-        "Market-1501-v15.09.15-Attribute.zip": "/content/drive/My Drive/Colab/Datasets/Market-1501-v15.09.15-Attribute.zip",
-    }
 
-    def __init__(
-        self,
-        root_dir="datasets",
-        download=True,
-        extract=True,
-        use_tqdm=True,
-        re_label_on_train=True,
-        **kwargs
-    ):
+    def __init__(self, root_dir="datasets", re_label_on_train=True, **kwargs):
 
         super(Market1501_Attribute, self).__init__(
             root_dir, dataset_dir="market1501_attribute", **kwargs
         )
 
-        if download:
-            for key, value in self.url.items():
-                try:
-                    self._download(
-                        file_name=key, file_path=self.file_path[key], use_tqdm=use_tqdm
-                    )
-                except:
-                    self._download(file_name=key, dataset_id=value, use_tqdm=use_tqdm)
-        if extract:
-            for key, value in self.url.items():
-                self._extract(file_name=key, use_tqdm=use_tqdm)
-
-        self.data_dir = os.path.join(self.root_dir, self.dataset_dir, "processed")
+        self.data_dir = os.path.join(self.root_dir, self.dataset_dir)
         while True:
             if os.path.exists(
                 os.path.join(self.data_dir, "Market-1501-v15.09.15-Attribute")
@@ -410,5 +386,5 @@ class Market1501_Attribute(BaseDataSource):
 
 if __name__ == "__main__":
     market1501 = Market1501_Attribute(
-        root_dir="/datasets", download=True, extract=True, re_label_on_train=True
+        root_dir="/home/coder/project/datasets", re_label_on_train=True
     )

@@ -19,10 +19,6 @@ class Peta(BaseDataSource):
     https://github.com/dangweili/pedestrian-attribute-recognition-pytorch
     https://github.com/valencebond/Strong_Baseline_of_Pedestrian_Attribute_Recognition/blob/master/dataset/preprocess/format_peta.py
     """
-    url = {"PETA-New.zip": "1Nec2n96zUFRGuJmtF5kemqbqY1tIA-5H"}
-    file_path = {
-        "PETA-New.zip": "/content/drive/My Drive/Colab/Datasets/PETA-New.zip",
-    }
     group_order = [
         10,
         18,
@@ -61,28 +57,11 @@ class Peta(BaseDataSource):
         16,
     ]
 
-    def __init__(
-        self, root_dir="datasets", download=True, extract=True, use_tqdm=True, **kwargs
-    ):
-
+    def __init__(self, root_dir="datasets", **kwargs):
         super(Peta, self).__init__(root_dir, dataset_dir="peta", image_size=(256, 192))
 
-        if download:
-            for key, value in self.url.items():
-                try:
-                    self._download(
-                        file_name=key, file_path=self.file_path[key], use_tqdm=use_tqdm
-                    )
-                except:
-                    self._download(file_name=key, dataset_id=value, use_tqdm=use_tqdm)
-        if extract:
-            for key, value in self.url.items():
-                self._extract(file_name=key, use_tqdm=use_tqdm)
-
-        self.data_dir = os.path.join(self.root_dir, self.dataset_dir, "processed")
-        if os.path.exists(
-            os.path.join(self.root_dir, self.dataset_dir, "processed", "PETA-New")
-        ):
+        self.data_dir = os.path.join(self.root_dir, self.dataset_dir)
+        if os.path.exists(os.path.join(self.root_dir, self.dataset_dir, "PETA-New")):
             self.data_dir = os.path.join(self.data_dir, "PETA-New")
 
         f = scipy.io.loadmat(os.path.join(self.data_dir, "PETA.mat"))
@@ -100,7 +79,7 @@ class Peta(BaseDataSource):
             _train = f["peta"][0][0][3][idx][0][0][0][0][:, 0] - 1
             _val = f["peta"][0][0][3][idx][0][0][0][1][:, 0] - 1
             _test = f["peta"][0][0][3][idx][0][0][0][2][:, 0] - 1
-            # _trainval = np.concatenate((_train, _val), axis=0)
+            _trainval = np.concatenate((_train, _val), axis=0)
 
             self.data["train"].append(
                 [
@@ -120,7 +99,15 @@ class Peta(BaseDataSource):
                     for idx in _val
                 ]
             )
-            # self.data['trainval'].append([(os.path.join(self.data_dir, 'images', '%05d.png'%(idx+1)), label[idx]) for idx in _trainval])
+            self.data["trainval"].append(
+                [
+                    (
+                        os.path.join(self.data_dir, "images", "%05d.png" % (idx + 1)),
+                        label[idx],
+                    )
+                    for idx in _trainval
+                ]
+            )
             self.data["test"].append(
                 [
                     (
@@ -134,7 +121,7 @@ class Peta(BaseDataSource):
             self.weight["train"].append(np.mean(label[_train], axis=0))
             self.weight["val"].append(np.mean(label[_val], axis=0))
             self.weight["test"].append(np.mean(label[_test], axis=0))
-            # self.weight_trainval.append(np.mean(label[_trainval], axis=0))
+            self.weight["trainval"].append(np.mean(label[_trainval], axis=0))
         self._check_file_exits()
 
     def get_data(self, phase="train", partition=0):
@@ -204,3 +191,18 @@ class Peta(BaseDataSource):
                     round(self.get_weight("test")[idx] * 100, 2),
                 )
             )
+
+
+if __name__ == "__main__":
+    datasource = Peta(root_dir="/home/coder/project/datasets/")
+    datasource.summary_weight()
+    print(np.expand_dims(datasource.get_weight("train"), axis=1))
+    print(
+        np.around(
+            np.stack(
+                (datasource.get_weight("train"), datasource.get_weight("test")), axis=1
+            )
+            * 100,
+            2,
+        )
+    )

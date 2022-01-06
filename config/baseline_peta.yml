@@ -34,6 +34,3 @@ lr_scheduler:
 trainer:
   n_gpu: 0
   epochs: 120
-
-trainer_colab:
-  epochs: 120

@@ -89,6 +89,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     path_image = "/datasets/ClothingAttributeDataset/saved/0282.jpg"
+
     image = imread(path_image)
 
     # result = extractor(args.config, image, 2)

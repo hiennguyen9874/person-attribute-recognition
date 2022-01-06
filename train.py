@@ -37,17 +37,10 @@ if __name__ == "__main__":
         type=lambda x: (str(x).lower() == "true"),
         help="only resume model",
     )
-    parser.add_argument(
-        "--colab",
-        default=False,
-        type=lambda x: (str(x).lower() == "true"),
-        help="train on colab or no",
-    )
     args = parser.parse_args()
 
     config = read_config(args.config)
 
     config.update({"resume": args.resume})
-    config.update({"colab": args.colab})
     config.update({"only_model": args.only_model})
     main(config)

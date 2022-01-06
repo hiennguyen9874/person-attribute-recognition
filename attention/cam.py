@@ -20,11 +20,7 @@ from utils import read_config, imread
 
 def main(config):
     datasource = build_datasource(
-        name=config["data"]["name"],
-        root_dir=config["data"]["data_dir"],
-        download=config["data"]["download"],
-        extract=config["data"]["extract"],
-        use_tqdm=config["data"]["use_tqdm"],
+        name=config["data"]["name"], root_dir=config["data"]["data_dir"]
     )
 
     height, width = config["data"]["image_size"][0], config["data"]["image_size"][1]

@@ -20,7 +20,7 @@ class BaseTrainer(object):
         self.config = config
 
         self.cfg_trainer = (
-            config["trainer_colab"] if config["colab"] == True else config["trainer"]
+            config["trainer"]
         )
 
         # self.run_id = datetime.now().strftime(r'%m%d_%H%M%S')
@@ -36,10 +36,7 @@ class BaseTrainer(object):
         self.logs_dir = os.path.join(self.cfg_trainer["log_dir"], self.run_id)
         os.makedirs(self.logs_dir, exist_ok=True)
 
-        if self.config["colab"]:
-            self.logs_dir_saved = os.path.join(
-                self.cfg_trainer["log_dir_saved"], self.run_id
-            )
+
 
         setup_logging(self.logs_dir)
         self.logger = logging.getLogger("train")
@@ -60,9 +57,3 @@ class BaseTrainer(object):
         self.epochs = self.cfg_trainer["epochs"]
         self.writer = SummaryWriter(self.logs_dir)
 
-    def _save_logs(self):
-        r"""Save logs from google colab to google drive"""
-        # if os.path.isdir(self.logs_dir_saved):
-        #     rmdir(self.logs_dir_saved, remove_parent=True)
-        # shutil.copytree(self.logs_dir, self.logs_dir_saved)
-        copyTree(self.logs_dir, self.logs_dir_saved)
