@@ -20,7 +20,7 @@ def convert_to_grayscale(im_as_arr):
     grayscale_im = np.sum(np.abs(im_as_arr), axis=0)
     im_max = np.percentile(grayscale_im, 99)
     im_min = np.min(grayscale_im)
-    grayscale_im = (np.clip((grayscale_im - im_min) / (im_max - im_min), 0, 1))
+    grayscale_im = np.clip((grayscale_im - im_min) / (im_max - im_min), 0, 1)
     grayscale_im = np.expand_dims(grayscale_im, axis=0)
     return grayscale_im
 
@@ -32,13 +32,13 @@ def save_gradient_images(gradient, file_name):
         gradient (np arr): Numpy array of the gradient with shape (3, 224, 224)
         file_name (str): File name to be exported
     """
-    if not os.path.exists('../results'):
-        os.makedirs('../results')
+    if not os.path.exists("../results"):
+        os.makedirs("../results")
     # Normalize
     gradient = gradient - gradient.min()
     gradient /= gradient.max()
     # Save image
-    path_to_file = os.path.join('../results', file_name + '.jpg')
+    path_to_file = os.path.join("../results", file_name + ".jpg")
     save_image(gradient, path_to_file)
 
 
@@ -50,18 +50,18 @@ def save_class_activation_images(org_img, activation_map, file_name):
         activation_map (numpy arr): Activation map (grayscale) 0-255
         file_name (str): File name of the exported image
     """
-    if not os.path.exists('./results'):
-        os.makedirs('./results')
+    if not os.path.exists("./results"):
+        os.makedirs("./results")
     # Grayscale activation map
-    heatmap, heatmap_on_image = apply_colormap_on_image(org_img, activation_map, 'hsv')
+    heatmap, heatmap_on_image = apply_colormap_on_image(org_img, activation_map, "hsv")
     # Save colored heatmap
-    path_to_file = os.path.join('./results', file_name+'_Cam_Heatmap.png')
+    path_to_file = os.path.join("./results", file_name + "_Cam_Heatmap.png")
     save_image(heatmap, path_to_file)
     # Save heatmap on iamge
-    path_to_file = os.path.join('./results', file_name+'_Cam_On_Image.png')
+    path_to_file = os.path.join("./results", file_name + "_Cam_On_Image.png")
     save_image(heatmap_on_image, path_to_file)
     # SAve grayscale heatmap
-    path_to_file = os.path.join('./results', file_name+'_Cam_Grayscale.png')
+    path_to_file = os.path.join("./results", file_name + "_Cam_Grayscale.png")
     save_image(activation_map, path_to_file)
 
 
@@ -79,12 +79,12 @@ def apply_colormap_on_image(org_im, activation, colormap_name):
     # Change alpha channel in colormap to make sure original image is displayed
     heatmap = copy.copy(no_trans_heatmap)
     heatmap[:, :, 3] = 0.4
-    heatmap = Image.fromarray((heatmap*255).astype(np.uint8))
-    no_trans_heatmap = Image.fromarray((no_trans_heatmap*255).astype(np.uint8))
+    heatmap = Image.fromarray((heatmap * 255).astype(np.uint8))
+    no_trans_heatmap = Image.fromarray((no_trans_heatmap * 255).astype(np.uint8))
 
     # Apply heatmap on iamge
     heatmap_on_image = Image.new("RGBA", org_im.size)
-    heatmap_on_image = Image.alpha_composite(heatmap_on_image, org_im.convert('RGBA'))
+    heatmap_on_image = Image.alpha_composite(heatmap_on_image, org_im.convert("RGBA"))
     heatmap_on_image = Image.alpha_composite(heatmap_on_image, heatmap)
     return no_trans_heatmap, heatmap_on_image
 
@@ -112,7 +112,7 @@ def format_np_output(np_arr):
     # Phase/Case 4: NP arr is normalized between 0-1
     # Result: Multiply with 255 and change type to make it saveable by PIL
     if np.max(np_arr) <= 1:
-        np_arr = (np_arr*255).astype(np.uint8)
+        np_arr = (np_arr * 255).astype(np.uint8)
     return np_arr
 
 
@@ -142,12 +142,14 @@ def preprocess_image(pil_im, resize_im=True):
     mean = [0.485, 0.456, 0.406]
     std = [0.229, 0.224, 0.225]
 
-    #ensure or transform incoming image to PIL image
+    # ensure or transform incoming image to PIL image
     if type(pil_im) != Image.Image:
         try:
             pil_im = Image.fromarray(pil_im)
         except Exception as e:
-            print("could not transform PIL_img to a PIL Image object. Please check input.")
+            print(
+                "could not transform PIL_img to a PIL Image object. Please check input."
+            )
 
     # Resize image
     if resize_im:
@@ -178,7 +180,7 @@ def recreate_image(im_as_var):
         recreated_im (numpy arr): Recreated image in array
     """
     reverse_mean = [-0.485, -0.456, -0.406]
-    reverse_std = [1/0.229, 1/0.224, 1/0.225]
+    reverse_std = [1 / 0.229, 1 / 0.224, 1 / 0.225]
     recreated_im = copy.copy(im_as_var.data.numpy()[0])
     for c in range(3):
         recreated_im[c] /= reverse_std[c]
@@ -199,8 +201,8 @@ def get_positive_negative_saliency(gradient):
     returns:
         pos_saliency ( )
     """
-    pos_saliency = (np.maximum(0, gradient) / gradient.max())
-    neg_saliency = (np.maximum(0, -gradient) / -gradient.min())
+    pos_saliency = np.maximum(0, gradient) / gradient.max()
+    neg_saliency = np.maximum(0, -gradient) / -gradient.min()
     return pos_saliency, neg_saliency
 
 
@@ -217,20 +219,20 @@ def get_example_params(example_index):
         pretrained_model(Pytorch model): Model to use for the operations
     """
     # Pick one of the examples
-    example_list = (('./snake.jpg', 56),
-                    ('./cat_dog.png', 243),
-                    ('./spider.png', 72))
+    example_list = (("./snake.jpg", 56), ("./cat_dog.png", 243), ("./spider.png", 72))
     img_path = example_list[example_index][0]
     target_class = example_list[example_index][1]
-    file_name_to_export = img_path[img_path.rfind('/')+1:img_path.rfind('.')]
+    file_name_to_export = img_path[img_path.rfind("/") + 1 : img_path.rfind(".")]
     # Read image
-    original_image = Image.open(img_path).convert('RGB')
+    original_image = Image.open(img_path).convert("RGB")
     # Process image
     prep_img = preprocess_image(original_image)
     # Define model
     pretrained_model = models.alexnet(pretrained=True)
-    return (original_image,
-            prep_img,
-            target_class,
-            file_name_to_export,
-            pretrained_model)
+    return (
+        original_image,
+        prep_img,
+        target_class,
+        file_name_to_export,
+        pretrained_model,
+    )

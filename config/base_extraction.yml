@@ -1,5 +1,5 @@
 # resume: "/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth"
-resume: 'model_last.pth'
+resume: "model_last.pth"
 
 n_gpu: 0
 

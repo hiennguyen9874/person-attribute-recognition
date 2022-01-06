@@ -18,19 +18,21 @@ CORRECTED_INPUT_SIZE_TYPE = List[Union[Sequence[Any], torch.Size]]
 
 
 class ModelStatistics:
-    """ Class for storing results of the summary. """
+    """Class for storing results of the summary."""
 
     def __init__(
         self,
         summary_list: List[LayerInfo],
         input_size: CORRECTED_INPUT_SIZE_TYPE,
         formatting: FormattingOptions,
-        print_step
+        print_step,
     ):
         self.print_step = print_step
         self.summary_list = summary_list
         self.input_size = input_size
-        self.total_input = sum([abs(np.prod(sz)) for sz in input_size]) if input_size else 0
+        self.total_input = (
+            sum([abs(np.prod(sz)) for sz in input_size]) if input_size else 0
+        )
         self.formatting = formatting
         self.total_params, self.trainable_params = 0, 0
         self.total_output, self.total_mult_adds = 0, 0
@@ -50,21 +52,21 @@ class ModelStatistics:
 
     @staticmethod
     def to_bytes(num: int) -> float:
-        """ Converts a number (assume floats, 4 bytes each) to megabytes. """
+        """Converts a number (assume floats, 4 bytes each) to megabytes."""
         return num * 4 / (1024 ** 2)
 
     @staticmethod
     def to_readable(num: int) -> float:
-        """ Converts a number to millions or billions. """
+        """Converts a number to millions or billions."""
         if num >= 1e9:
             return num / 1e9
         return num / 1e6
 
     def __repr__(self) -> str:
-        """ Print results of the summary. """
+        """Print results of the summary."""
         header_row = self.formatting.format_row("Layer (type:depth-idx)", HEADER_TITLES)
         layer_rows = self.layers_to_str()
-#         divider = "=" * self.formatting.get_total_width()
+        #         divider = "=" * self.formatting.get_total_width()
         divider = "=" * 60
         if self.print_step:
             summary_str = (
@@ -89,7 +91,7 @@ class ModelStatistics:
                     divider,
                     self.total_params,
                     self.trainable_params,
-                    self.total_params - self.trainable_params
+                    self.total_params - self.trainable_params,
                 )
             )
         if self.input_size:
@@ -106,37 +108,49 @@ class ModelStatistics:
                     self.to_bytes(self.total_input),
                     self.to_bytes(self.total_output),
                     self.to_bytes(self.total_params),
-                    self.to_bytes(self.total_input + self.total_output + self.total_params),
+                    self.to_bytes(
+                        self.total_input + self.total_output + self.total_params
+                    ),
                 )
             )
         summary_str += divider
         return summary_str
 
-    def layer_info_to_row(self, layer_info: LayerInfo, reached_max_depth: bool = False) -> str:
-        """ Convert layer_info to string representation of a row. """
+    def layer_info_to_row(
+        self, layer_info: LayerInfo, reached_max_depth: bool = False
+    ) -> str:
+        """Convert layer_info to string representation of a row."""
 
         def get_start_str(depth: int) -> str:
             return "├─" if depth == 1 else "|    " * (depth - 1) + "└─"
 
         row_values = {
-            "kernel_size": str(layer_info.kernel_size) if layer_info.kernel_size else "--",
+            "kernel_size": str(layer_info.kernel_size)
+            if layer_info.kernel_size
+            else "--",
             "input_size": str(layer_info.input_size),
             "output_size": str(layer_info.output_size),
             "num_params": layer_info.num_params_to_str(reached_max_depth),
             "mult_adds": layer_info.macs_to_str(reached_max_depth),
         }
         depth = layer_info.depth
-        name = (get_start_str(depth) if self.formatting.use_branching else "") + str(layer_info)
+        name = (get_start_str(depth) if self.formatting.use_branching else "") + str(
+            layer_info
+        )
         new_line = self.formatting.format_row(name, row_values)
         if self.formatting.verbose == Verbosity.VERBOSE.value:
             for inner_name, inner_shape in layer_info.inner_layers.items():
-                prefix = get_start_str(depth + 1) if self.formatting.use_branching else "  "
+                prefix = (
+                    get_start_str(depth + 1) if self.formatting.use_branching else "  "
+                )
                 extra_row_values = {"kernel_size": str(inner_shape)}
-                new_line += self.formatting.format_row(prefix + inner_name, extra_row_values)
+                new_line += self.formatting.format_row(
+                    prefix + inner_name, extra_row_values
+                )
         return new_line
 
     def layers_to_str(self) -> str:
-        """ Print each layer of the model as tree or as a list. """
+        """Print each layer of the model as tree or as a list."""
         if self.formatting.use_branching:
             return self._layer_tree_to_str()
 
@@ -146,7 +160,7 @@ class ModelStatistics:
         return layer_rows
 
     def _layer_tree_to_str(self) -> str:
-        """ Print each layer of the model using a fancy branching diagram. """
+        """Print each layer of the model using a fancy branching diagram."""
         new_str = ""
         current_hierarchy = {}  # type: Dict[int, LayerInfo]
 

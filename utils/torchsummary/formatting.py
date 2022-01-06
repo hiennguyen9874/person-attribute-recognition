@@ -8,13 +8,13 @@ from .layer_info import LayerInfo
 
 @unique
 class Verbosity(Enum):
-    """ Contains verbosity levels. """
+    """Contains verbosity levels."""
 
     QUIET, DEFAULT, VERBOSE = 0, 1, 2
 
 
 class FormattingOptions:
-    """ Class that holds information about formatting the table output. """
+    """Class that holds information about formatting the table output."""
 
     def __init__(
         self,
@@ -31,7 +31,9 @@ class FormattingOptions:
         self.col_width = col_width
         self.layer_name_width = 40
 
-    def set_layer_name_width(self, summary_list: List[LayerInfo], align_val: int = 5) -> None:
+    def set_layer_name_width(
+        self, summary_list: List[LayerInfo], align_val: int = 5
+    ) -> None:
         """
         Set layer name width by taking the longest line length and rounding up to
         the nearest multiple of align_val.
@@ -44,11 +46,11 @@ class FormattingOptions:
             self.layer_name_width = math.ceil(max_length / align_val) * align_val
 
     def get_total_width(self) -> int:
-        """ Calculate the total width of all lines in the table. """
+        """Calculate the total width of all lines in the table."""
         return len(self.col_names) * self.col_width + self.layer_name_width
 
     def format_row(self, layer_name: str, row_values: Dict[str, str]) -> str:
-        """ Get the string representation of a single layer of the model. """
+        """Get the string representation of a single layer of the model."""
         info_to_use = [row_values.get(row_type, "") for row_type in self.col_names]
         new_line = "{:<{}} ".format(layer_name, self.layer_name_width)
         for info in info_to_use:

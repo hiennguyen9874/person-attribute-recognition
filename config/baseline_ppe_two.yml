@@ -40,11 +40,9 @@ clip_grad_norm_:
 
 trainer:
   epochs: 120
-    
+
 trainer_colab:
   epochs: 120
-
-
 # note:
 # mkdir -p /home/ubuntu/Documents/datasets/ppe/raw && cp /content/drive/My\ Drive/Private_Datasets/ppe.zip /home/ubuntu/Documents/datasets/ppe/raw/
 

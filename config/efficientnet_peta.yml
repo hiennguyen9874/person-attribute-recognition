@@ -40,6 +40,6 @@ clip_grad_norm_:
 
 trainer:
   epochs: 120
-  
+
 trainer_colab:
   epochs: 120

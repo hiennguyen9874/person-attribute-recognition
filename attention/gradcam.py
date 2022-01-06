@@ -1,6 +1,7 @@
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".."))
 
 import torch
 import argparse
@@ -18,13 +19,15 @@ from utils import read_config, rmdir
 from data.image import build_datasource
 from models import build_model
 
+
 def imread(path):
     image = Image.open(path)
     return image
 
-class FeatureExtractor():
-    r""" Class for extracting activations and 
-    registering gradients from targetted intermediate layers """
+
+class FeatureExtractor:
+    r"""Class for extracting activations and
+    registering gradients from targetted intermediate layers"""
 
     def __init__(self, model, target_layers):
         self.model = model
@@ -45,11 +48,11 @@ class FeatureExtractor():
         return outputs, x
 
 
-class ModelOutputs():
-    r""" Class for making a forward pass, and getting:
+class ModelOutputs:
+    r"""Class for making a forward pass, and getting:
     1. The network output.
     2. Activations from intermeddiate targetted layers.
-    3. Gradients from intermeddiate targetted layers. """
+    3. Gradients from intermeddiate targetted layers."""
 
     def __init__(self, model, feature_module, target_layers):
         self.model = model
@@ -66,11 +69,12 @@ class ModelOutputs():
                 target_activations, x = self.feature_extractor(x)
             elif "avgpool" in name.lower():
                 x = module(x)
-                x = x.view(x.size(0),-1)
+                x = x.view(x.size(0), -1)
             else:
                 x = module(x)
-        
+
         return target_activations, x
+
 
 class GradCam:
     def __init__(self, model, feature_module, target_layer_names, use_cuda):
@@ -81,7 +85,9 @@ class GradCam:
         if self.cuda:
             self.model = model.cuda()
 
-        self.extractor = ModelOutputs(self.model, self.feature_module, target_layer_names)
+        self.extractor = ModelOutputs(
+            self.model, self.feature_module, target_layer_names
+        )
 
     def forward(self, input):
         return self.model(input)
@@ -124,62 +130,73 @@ class GradCam:
         cam = cam / np.max(cam)
         return cam
 
+
 def main(config):
     datasource = build_datasource(
-        name=config['data']['name'],
-        root_dir=config['data']['data_dir'],
-        download=config['data']['download'],
-        extract=config['data']['extract'],
-        use_tqdm=config['data']['use_tqdm'])
-    
-    transform = transforms.Compose([
-        transforms.Resize(size=datasource.get_image_size()),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ])
+        name=config["data"]["name"],
+        root_dir=config["data"]["data_dir"],
+        download=config["data"]["download"],
+        extract=config["data"]["extract"],
+        use_tqdm=config["data"]["use_tqdm"],
+    )
 
-    model, _ = build_model(config['model'], num_classes=len(datasource.get_attribute()))
+    transform = transforms.Compose(
+        [
+            transforms.Resize(size=datasource.get_image_size()),
+            transforms.ToTensor(),
+            transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]),
+        ]
+    )
 
-    cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
+    model, _ = build_model(config["model"], num_classes=len(datasource.get_attribute()))
 
-    use_gpu = cfg_trainer['n_gpu'] > 0 and torch.cuda.is_available()
-    device = torch.device('cuda:0' if use_gpu else 'cpu')
-    map_location = "cuda:0" if use_gpu else torch.device('cpu')
+    cfg_trainer = (
+        config["trainer_colab"] if config["colab"] == True else config["trainer"]
+    )
 
-    print('Loading checkpoint: {} ...'.format(config['resume']))
-    checkpoint = torch.load(config['resume'], map_location=map_location)
+    use_gpu = cfg_trainer["n_gpu"] > 0 and torch.cuda.is_available()
+    device = torch.device("cuda:0" if use_gpu else "cpu")
+    map_location = "cuda:0" if use_gpu else torch.device("cpu")
 
-    model.load_state_dict(checkpoint['state_dict'])
+    print("Loading checkpoint: {} ...".format(config["resume"]))
+    checkpoint = torch.load(config["resume"], map_location=map_location)
+
+    model.load_state_dict(checkpoint["state_dict"])
     # model.eval()
     # model.to(device)
 
     width, height = datasource.get_image_size()
     attribute_name = datasource.get_attribute()
 
-    grad_cam = GradCam(model=model, feature_module=model.backbone, target_layer_names=["7"], use_cuda=use_gpu)
+    grad_cam = GradCam(
+        model=model,
+        feature_module=model.backbone,
+        target_layer_names=["7"],
+        use_cuda=use_gpu,
+    )
 
     list_image = defaultdict(list)
-    data_test = datasource.get_data('test')
+    data_test = datasource.get_data("test")
     random.shuffle(data_test)
     for i, (img_path, label) in enumerate(data_test):
-        if i == config['num']:
+        if i == config["num"]:
             break
         label = label.astype(bool)
         img_orig = imread(img_path)
         img = torch.unsqueeze(transform(img_orig), dim=0)
         img = img.to(device)
-        
+
         output = model(img)
         output = torch.sigmoid(output)
         output = torch.squeeze(output).cpu().detach().numpy()
         output[output > 0.5] = 1
         output[output <= 0.5] = 0
         output = output.astype(bool)
-        
+
         # RGB image
         img_orig = cv2.cvtColor(np.array(img_orig), cv2.COLOR_RGB2BGR)
         img_orig = cv2.resize(img_orig, (height, width))
-        
+
         # list_image = [img_orig]
         # title = ''
         for i, attribute in enumerate(attribute_name):
@@ -195,10 +212,10 @@ def main(config):
             am = cv2.applyColorMap(am, cv2.COLORMAP_JET)
 
             # overlapped
-            overlapped = img_orig*0.7 + am*0.3
+            overlapped = img_orig * 0.7 + am * 0.3
             overlapped[overlapped > 255] = 255
             overlapped = overlapped.astype(np.uint8)
-            
+
             if output[i] == True:
                 list_image[attribute].append(overlapped)
             # list_image.append(overlapped)
@@ -215,13 +232,13 @@ def main(config):
 
         # mng = plt.get_current_fig_manager()
         # mng.resize(*mng.window.maxsize())
-        
+
         # plt.imshow(img)
         # plt.show()
 
-        cfg_testing = 'outputs'
+        cfg_testing = "outputs"
         rmdir(cfg_testing)
-        output_dir = os.path.join(cfg_testing, 'visualize')
+        output_dir = os.path.join(cfg_testing, "visualize")
         os.makedirs(output_dir, exist_ok=True)
         dict_index = defaultdict(int)
         for i, (key, value) in enumerate(list_image.items()):
@@ -229,18 +246,28 @@ def main(config):
             os.makedirs(path_attribute, exist_ok=True)
             dict_index[key] = 0
             for j, x in enumerate(value):
-                plt.imsave(os.path.join(path_attribute, str(dict_index[key])+'.png'), x)
+                plt.imsave(
+                    os.path.join(path_attribute, str(dict_index[key]) + ".png"), x
+                )
                 dict_index[key] += 1
 
+
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--config', default='config.json', type=str, help='config file path (default: ./config.json)')
-    parser.add_argument('--resume', default='', type=str, help='resume file path (default: .)')
-    parser.add_argument('--num', default=5, type=int, help='num attribute visualize')
-    
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument(
+        "--config",
+        default="config.json",
+        type=str,
+        help="config file path (default: ./config.json)",
+    )
+    parser.add_argument(
+        "--resume", default="", type=str, help="resume file path (default: .)"
+    )
+    parser.add_argument("--num", default=5, type=int, help="num attribute visualize")
+
     args = parser.parse_args()
     config = read_config(args.config)
-    config.update({'resume': args.resume})
-    config.update({'num': args.num})
+    config.update({"resume": args.resume})
+    config.update({"num": args.num})
 
     main(config)

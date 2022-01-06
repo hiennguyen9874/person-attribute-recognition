@@ -24,6 +24,6 @@ lr_scheduler:
 
 trainer:
   epochs: 120
-  
+
 trainer_colab:
   epochs: 120

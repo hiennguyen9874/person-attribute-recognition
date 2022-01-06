@@ -1,10 +1,12 @@
 import os
 import sys
-sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), '..'))
+
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".."))
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 
 @torch.jit.script
 def _ratio2weight(targets, ratio):
@@ -12,21 +14,22 @@ def _ratio2weight(targets, ratio):
     weights = torch.exp(targets * (1 - ratio) + (1 - targets) * ratio)
     return weights
 
+
 class CEL_Sigmoid(nn.Module):
-    r""" https://arxiv.org/pdf/2005.11909.pdf
-    """
-    def __init__(self, pos_ratio=None, reduction='mean', **kwargs):
+    r"""https://arxiv.org/pdf/2005.11909.pdf"""
+
+    def __init__(self, pos_ratio=None, reduction="mean", **kwargs):
         super(CEL_Sigmoid, self).__init__()
-        assert reduction in ['sum', 'mean'], 'reduction must be mean or sum'
+        assert reduction in ["sum", "mean"], "reduction must be mean or sum"
         self.pos_ratio = pos_ratio
         self.reduction = reduction
 
     def forward(self, inputs, targets):
         # batch_size = inputs.shape[0]
-        loss = F.binary_cross_entropy_with_logits(inputs, targets, reduction='none')
+        loss = F.binary_cross_entropy_with_logits(inputs, targets, reduction="none")
         if self.pos_ratio is not None:
             weight = _ratio2weight(targets, self.pos_ratio)
-            loss = (loss * weight)
+            loss = loss * weight
         # loss = loss.sum() / batch_size if self.reduction == 'mean' else loss.sum()
         loss = loss.mean(dim=0)
-        return loss.mean() if self.reduction == 'mean' else loss.sum()
+        return loss.mean() if self.reduction == "mean" else loss.sum()

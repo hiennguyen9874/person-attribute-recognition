@@ -1,5 +1,6 @@
 import os
 import sys
+
 sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__))))
 
 import argparse
@@ -15,36 +16,45 @@ from logger import setup_logging
 from utils import read_config, rmdir
 from evaluators import recognition_metrics, log_test
 
+
 def main(config):
-    cfg_trainer = config['trainer_colab'] if config['colab'] == True else config['trainer']
-    run_id = config['resume'].split('/')[-2]
-    file_name = config['resume'].split('/')[-1].split('.')[0]
-    output_dir = os.path.join(cfg_trainer['output_dir'], run_id, file_name)
-    (os.path.exists(output_dir) or os.makedirs(output_dir, exist_ok=True)) and rmdir(output_dir, remove_parent=False)
+    cfg_trainer = (
+        config["trainer_colab"] if config["colab"] == True else config["trainer"]
+    )
+    run_id = config["resume"].split("/")[-2]
+    file_name = config["resume"].split("/")[-1].split(".")[0]
+    output_dir = os.path.join(cfg_trainer["output_dir"], run_id, file_name)
+    (os.path.exists(output_dir) or os.makedirs(output_dir, exist_ok=True)) and rmdir(
+        output_dir, remove_parent=False
+    )
     setup_logging(output_dir)
-    logger = logging.getLogger('test')
+    logger = logging.getLogger("test")
 
-    use_gpu = cfg_trainer['n_gpu'] > 0 and torch.cuda.is_available()
-    device = torch.device('cuda:0' if use_gpu else 'cpu')
-    map_location = "cuda:0" if use_gpu else torch.device('cpu')
+    use_gpu = cfg_trainer["n_gpu"] > 0 and torch.cuda.is_available()
+    device = torch.device("cuda:0" if use_gpu else "cpu")
+    map_location = "cuda:0" if use_gpu else torch.device("cpu")
 
-    datamanager, _ = build_datamanager(config['type'], config['data'])
-    
-    model, _ = build_model(config, num_classes=len(datamanager.datasource.get_attribute()))
+    datamanager, _ = build_datamanager(config["type"], config["data"])
 
-    logger.info('Loading checkpoint: {} ...'.format(config['resume']))
-    checkpoint = torch.load(config['resume'], map_location=map_location)
+    model, _ = build_model(
+        config, num_classes=len(datamanager.datasource.get_attribute())
+    )
 
-    model.load_state_dict(checkpoint['state_dict'])
+    logger.info("Loading checkpoint: {} ...".format(config["resume"]))
+    checkpoint = torch.load(config["resume"], map_location=map_location)
+
+    model.load_state_dict(checkpoint["state_dict"])
     model.eval()
     model.to(device)
-    
+
     preds = []
     labels = []
 
-    with tqdm(total=len(datamanager.get_dataloader('test'))) as epoch_pbar:
+    with tqdm(total=len(datamanager.get_dataloader("test"))) as epoch_pbar:
         with torch.no_grad():
-            for batch_idx, (data, _labels) in enumerate(datamanager.get_dataloader('test')):
+            for batch_idx, (data, _labels) in enumerate(
+                datamanager.get_dataloader("test")
+            ):
                 data, _labels = data.to(device), _labels.to(device)
 
                 out = model(data)
@@ -60,7 +70,7 @@ def main(config):
 
     # # get best threshold
     # from sklearn.metrics import roc_curve, auc, precision_recall_curve
-    
+
     # precision = dict()
     # recall = dict()
     # thresholds_pr = dict()
@@ -76,7 +86,7 @@ def main(config):
     #     precision[i], recall[i], thresholds_pr[i] = precision_recall_curve(labels[:, i], preds[:, i])
     #     pr_auc[i] = auc(recall[i], precision[i])
     #     best_threshold[i] = np.argmax((2 * precision[i] * recall[i]) / (precision[i] + recall[i]))
-        
+
     #     fpr[i], tpr[i], thresholds_roc[i] = roc_curve(labels[:, i], preds[:, i])
     #     roc_auc[i] = auc(fpr[i], tpr[i])
 
@@ -104,22 +114,40 @@ def main(config):
     #     ax2.set_ylabel('True Positive Rate')
     #     ax2.set_title('Attribute: %s' % datamanager.datasource.get_attribute()[i])
     #     # ax2.legend(loc="lower right")
-    
+
     # plt.show()
 
     result_label, result_instance = recognition_metrics(labels, preds)
-    log_test(logger.info, datamanager.datasource.get_attribute(), datamanager.datasource.get_weight('test'), result_label, result_instance)
+    log_test(
+        logger.info,
+        datamanager.datasource.get_attribute(),
+        datamanager.datasource.get_weight("test"),
+        result_label,
+        result_instance,
+    )
+
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='')
-    parser.add_argument('--config', default='base/config.json', type=str, help='config file path (default: base/config.json)')
-    parser.add_argument('--resume', default='', type=str, help='resume file path (default: .)')
-    parser.add_argument('--colab', default=False, type=lambda x: (str(x).lower() == 'true'), help='train on colab (default: false)')
+    parser = argparse.ArgumentParser(description="")
+    parser.add_argument(
+        "--config",
+        default="base/config.json",
+        type=str,
+        help="config file path (default: base/config.json)",
+    )
+    parser.add_argument(
+        "--resume", default="", type=str, help="resume file path (default: .)"
+    )
+    parser.add_argument(
+        "--colab",
+        default=False,
+        type=lambda x: (str(x).lower() == "true"),
+        help="train on colab (default: false)",
+    )
     args = parser.parse_args()
 
     config = read_config(args.config)
-    config.update({'resume': args.resume})
-    config.update({'colab': args.colab})
-    
-    main(config)
+    config.update({"resume": args.resume})
+    config.update({"colab": args.colab})
 
+    main(config)

@@ -35,6 +35,6 @@ clip_grad_norm_:
 
 trainer:
   epochs: 50
-  
+
 trainer_colab:
   epochs: 50

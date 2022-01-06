@@ -11,18 +11,30 @@ import yaml
 import cv2
 import os
 import sys
-sys.path.append(os.path.join(
-    os.path.dirname(os.path.realpath(__file__)), '..'))
 
-__all__ = ['read_config', 'copyTree', 'imread', 'read_json', 'write_json', 'rmdir',
-           'config_to_str', 'array_interweave', 'array_interweave3', 'neq', 'pip_install', 'COLOR']
+sys.path.append(os.path.join(os.path.dirname(os.path.realpath(__file__)), ".."))
+
+__all__ = [
+    "read_config",
+    "copyTree",
+    "imread",
+    "read_json",
+    "write_json",
+    "rmdir",
+    "config_to_str",
+    "array_interweave",
+    "array_interweave3",
+    "neq",
+    "pip_install",
+    "COLOR",
+]
 
 
 def read_config(path_config: str, base=True):
-    r""" read config yml file, return dict
-    """
+    r"""read config yml file, return dict"""
+
     def update(d, u):
-        r""" deep update dict.
+        r"""deep update dict.
         copied from here: https://stackoverflow.com/questions/3232943/update-value-of-a-nested-dictionary-of-varying-depth
         """
         for k, v in u.items():
@@ -34,7 +46,7 @@ def read_config(path_config: str, base=True):
 
     def deep_merge(config, name):
         new_config = copy.deepcopy(config)
-        for key, value in config[name]['default'][config[name]['name']].items():
+        for key, value in config[name]["default"][config[name]["name"]].items():
             if key not in config[name]:
                 new_config[name][key] = value
         return new_config
@@ -43,22 +55,23 @@ def read_config(path_config: str, base=True):
     if not base:
         return new_config
 
-    base_config = yaml.safe_load(open(new_config['base']))
+    base_config = yaml.safe_load(open(new_config["base"]))
     all_config = update(base_config, new_config)
-    all_config = deep_merge(all_config, 'loss')
-    all_config = deep_merge(all_config, 'optimizer')
-    if all_config['lr_scheduler']['enable']:
-        all_config = deep_merge(all_config, 'lr_scheduler')
+    all_config = deep_merge(all_config, "loss")
+    all_config = deep_merge(all_config, "optimizer")
+    if all_config["lr_scheduler"]["enable"]:
+        all_config = deep_merge(all_config, "lr_scheduler")
     return all_config
 
 
 def copyTree(src, dst):
-    r""" Move and overwrite files and folders
+    r"""Move and overwrite files and folders
 
     Args:
         src (str): [description]
         dst (str): [description]
     """
+
     def forceMergeFlatDir(srcDir, dstDir):
         if not os.path.exists(dstDir):
             os.makedirs(dstDir)
@@ -101,13 +114,13 @@ def imread(path):
 
 def read_json(fname):
     fname = Path(fname)
-    with fname.open('rt') as handle:
+    with fname.open("rt") as handle:
         return json.load(handle, object_hook=OrderedDict)
 
 
 def write_json(content, fname):
     fname = Path(fname)
-    with fname.open('wt') as handle:
+    with fname.open("wt") as handle:
         json.dump(content, handle, indent=4, sort_keys=False)
 
 
@@ -146,7 +159,7 @@ def neq(x, y, z):
 
 
 def pip_install(package, version=None):
-    r""" install package from pip
+    r"""install package from pip
 
     Args:
         package (str): name of package
@@ -156,20 +169,20 @@ def pip_install(package, version=None):
         if pkg_resources.get_distribution(package).version == version:
             return
         subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", package+"=="+version])
+            [sys.executable, "-m", "pip", "install", package + "==" + version]
+        )
     else:
-        subprocess.check_call(
-            [sys.executable, "-m", "pip", "install", package])
+        subprocess.check_call([sys.executable, "-m", "pip", "install", package])
 
 
 class COLOR:
-    PURPLE = '\033[95m'
-    CYAN = '\033[96m'
-    DARKCYAN = '\033[36m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    YELLOW = '\033[93m'
-    RED = '\033[91m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
-    END = '\033[0m'
+    PURPLE = "\033[95m"
+    CYAN = "\033[96m"
+    DARKCYAN = "\033[36m"
+    BLUE = "\033[94m"
+    GREEN = "\033[92m"
+    YELLOW = "\033[93m"
+    RED = "\033[91m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
+    END = "\033[0m"
