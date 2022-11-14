@@ -11,3 +11,4 @@ tensorboard==2.6.0
 ptflops==0.6.6
 matplotlib
 easydict
+gdown
