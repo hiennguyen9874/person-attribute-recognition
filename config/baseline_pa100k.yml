@@ -7,7 +7,7 @@ model:
   bn_where: after
 
 data:
-  name: pa_100k
+  name: pa100k
   image_size: [256, 128]
   batch_size: 32
 

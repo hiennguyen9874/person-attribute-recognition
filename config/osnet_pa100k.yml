@@ -7,7 +7,7 @@ model:
   bn_where: before
 
 data:
-  name: pa_100k
+  name: pa100k
   image_size: [256, 128]
 
 optimizer:

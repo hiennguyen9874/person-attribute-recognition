@@ -175,3 +175,6 @@ draft.*
 *.pth
 *.mar
 *.pt
+
+.DS_Store
+data_dir/

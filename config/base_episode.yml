@@ -1,5 +1,5 @@
 # timezone, it will use to get run_id
-timezone: Asia/Ho_Chi_Minh
+timezone: Asia/Jakarta
 
 # training type
 type: episode
@@ -25,9 +25,9 @@ model:
 
 data:
   # folder will save data
-  data_dir: "/home/coder/project/datasets/"
+  data_dir: "./data/pa100k"
   # name of dataset: [peta, pa100k, ppe, ppe_two, wider]
-  name: peta
+  name: pa100k
   image_size: [256, 192]
   num_workers: 4
   pin_memory: True
