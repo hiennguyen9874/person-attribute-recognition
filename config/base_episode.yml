@@ -25,9 +25,9 @@ model:
 
 data:
   # folder will save data
-  data_dir: "/kaggle/output/PersonAttributeRecognition/data_dir"
+  data_dir: "data_dir"
   # name of dataset: [peta, pa100k, ppe, ppe_two, wider]
-  name: pa100k
+  name: pa_100k
   image_size: [256, 192]
   num_workers: 4
   pin_memory: True
