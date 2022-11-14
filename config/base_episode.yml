@@ -123,7 +123,7 @@ trainer:
   # 0 if using cpu. > 0 if using gpu
   n_gpu: 0
   # maximum epoch
-  epochs: 120
+  epochs: 50
   # saved log folder
   checkpoint_dir: saved/checkpoints
   log_dir: saved/logs

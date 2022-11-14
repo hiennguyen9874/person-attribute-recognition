@@ -39,4 +39,4 @@ clip_grad_norm_:
   max_norm: 10.0
 
 trainer:
-  epochs: 120
+  epochs: 50
