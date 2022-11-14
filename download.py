@@ -8,6 +8,7 @@ def check_dir(dir_name: str) -> bool:
 def download_data(dir_name: str = "data_dir") -> None:
     if not check_dir(dir_name):
         os.mkdir(dir_name)
+        os.mkdir(f"{dir_name}/pa_100k")
 
     os.chdir(dir_name)
     print("[INFO] Downloading data....")
