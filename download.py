@@ -21,9 +21,9 @@ def download_data(dir_name: str = "data_dir") -> None:
     )
     print("[INFO] Extracting zip file....")
     with zipfile.ZipFile("pa100k.zip", 'r') as zip_ref:
-        zip_ref.extractall("pa100k/images")
+        zip_ref.extractall("pa_100k/images")
     with zipfile.ZipFile("annotation.zip", 'r') as zip_ref:
-        zip_ref.extractall("pa100k")
+        zip_ref.extractall("pa_100k")
     os.remove("pa100k.zip")
     os.remove("annotation.zip")
     os.chdir("..")
