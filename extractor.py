@@ -88,7 +88,7 @@ if __name__ == "__main__":
     parser.add_argument("--config", default="config/base_extraction.yml", type=str)
     args = parser.parse_args()
 
-    path_image = "/datasets/ClothingAttributeDataset/saved/0282.jpg"
+    path_image = "./data_dir/pa_100k/images/000001.jpg"
 
     image = imread(path_image)
 
@@ -96,8 +96,8 @@ if __name__ == "__main__":
     # result = extractor(path_config=args.config, path_attribute='peta_attribute.pkl', path_model="/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth", image=image, return_type=0)
     result = extractor(
         path_config=args.config,
-        path_attribute="peta_attribute.pkl",
-        path_model="model_last.pth",
+        path_attribute="pa100k_attribute.pkl",
+        path_model="saved/checkpoints/1114_224647/model_last.pth",
         image=image,
         return_type=1,
     )
