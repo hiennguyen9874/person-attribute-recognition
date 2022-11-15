@@ -17,6 +17,7 @@ from torchvision import transforms
 from models import build_model
 from utils import read_config
 
+import time
 
 def imread(path):
     return Image.open(path)
@@ -88,12 +89,14 @@ if __name__ == "__main__":
     parser.add_argument("--config", default="config/base_extraction.yml", type=str)
     args = parser.parse_args()
 
-    path_image = "./data_dir/pa_100k/images/000001.jpg"
+    path_image = "./data_dir/pa_100k/images/100000.jpg"
 
     image = imread(path_image)
 
     # result = extractor(args.config, image, 2)
     # result = extractor(path_config=args.config, path_attribute='peta_attribute.pkl', path_model="/content/drive/Shared drives/REID/HIEN/Models/OSNet_Person_Attribute_Refactor/checkpoints/0731_232453/model_best_accuracy.pth", image=image, return_type=0)
+
+    start_time = time.time()
     result = extractor(
         path_config=args.config,
         path_attribute="pa100k_attribute.pkl",
@@ -101,5 +104,6 @@ if __name__ == "__main__":
         image=image,
         return_type=1,
     )
-
+    end_time = time.time()
     print(result)
+    print(f"Inference time: {(end_time - start_time):.3f}s")
