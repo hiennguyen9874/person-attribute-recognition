@@ -23,4 +23,4 @@ lr_scheduler:
   delay_iters: 30
 
 trainer:
-  epochs: 120
+  epochs: 50
