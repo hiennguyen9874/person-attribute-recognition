@@ -3,7 +3,7 @@ import random
 import torch
 import torch.nn as nn
 
-from models.detector.common import Conv, DWConv
+from models.common import Conv, DWConv
 from utils.detector.google_utils import attempt_download
 
 

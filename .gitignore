@@ -178,3 +178,6 @@ draft.*
 
 .DS_Store
 data_dir/
+
+#results 
+crop/
